@@ -1155,8 +1155,8 @@ function imgui.OnDrawFrame()
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(700, 290), imgui.Cond.FirstUseEver)
-                imgui.Begin(u8('FBI Tools | Обновление'), updwindows, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
-                imgui.Text(u8('Вышло обновление скрипта FBI Tools! Что бы обновиться нажмите кнопку внизу. Список изменений:'))
+                imgui.Begin(u8('Inst Tools | Обновление'), updwindows, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
+                imgui.Text(u8('Вышло обновление скрипта Inst Tools. Что бы обновиться нажмите кнопку внизу. Список изменений:'))
                 imgui.Separator()
                 imgui.BeginChild("uuupdate", imgui.ImVec2(690, 200))
                 for line in ttt:gmatch('[^\r\n]+') do
@@ -2093,8 +2093,8 @@ function update()
 			    if info and info.latest then
                     version = tonumber(info.latest)
                     if version > tonumber(thisScript().version) then
-                        ftext('Обнаружено обновление {9966cc}FBI Tools{ffffff}. Для обновления нажмите кнопку в окошке.')
-                        ftext('Примечание: Если у вас не появилось окошко введите /ft')
+                        ftext('Обнаружено обновление.')
+                        ftext('Примечание: Если у вас не появилось окошко введите /tset')
 					    updwindows.v = true
                     else
                         ftext('Обновлений скрипта не обнаружено. Приятной игры.', -1)
