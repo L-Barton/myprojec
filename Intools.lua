@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.5')
+script_version('2.6')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -436,6 +436,12 @@ function giverank(pam)
         if id and rangg then
 		if plus == '-' or plus == '+' then
 		ranks = getrang(rangg)
+		        local _, handle = sampGetCharHandleBySampPlayerId(id)
+				if doesCharExist(handle) then
+				local x, y, z = getCharCoordinates(handle)
+				local mx, my, mz = getCharCoordinates(PLAYER_PED)
+				local dist = getDistanceBetweenCoords3d(mx, my, mz, x, y, z)	
+				if dist <= 5 then
 				sampSendChat('/me снял(а) старый бейджик с человека напротив стоящего')
 				wait(1500)
 				sampSendChat('/me убрал(а) старый бейджик в карман')
@@ -444,6 +450,9 @@ function giverank(pam)
 				wait(1500)
 				sampSendChat('/me закрепила(а) на рубашку человеку на против новый бейджик')
 				wait(1500)
+				else
+				end
+				end
 				sampSendChat(string.format('/giverank %s %s', id, rangg))
 				wait(1500)
 				if cfg.main.tarb then
@@ -1381,17 +1390,17 @@ function pkmmenu(id)
     return
     {
       {
-        title = "{ffffff}» Цены лицензий",
-        onclick = function()
-        pID = tonumber(args)
-        submenus_show(pricemenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
-        end
-      },
-      {
         title = "{ffffff}» Инструктор",
         onclick = function()
         pID = tonumber(args)
         submenus_show(instmenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        end
+      },
+	  {
+        title = "{ffffff}» Цены лицензий",
+        onclick = function()
+        pID = tonumber(args)
+        submenus_show(pricemenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
       {
@@ -1458,7 +1467,7 @@ function questimenu(args)
         onclick = function()
         sampSendChat("Вы попали в ДТП. Ваши действия?")
 		wait(1500)
-		sampAddChatMessage("{47f4f0}[IT] {FFFFFF}- Правильный ответ: {A52A2A}Оказать первую помощь пострадавшим. Вызвать МЧС и ПД и ждать их прибытия.", -1)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}Оказать первую помощь пострадавшим. Вызвать МЧС и ПД и ждать их прибытия.", -1)
         end
       },
 	  {
@@ -1469,7 +1478,7 @@ function questimenu(args)
       {
         title = '{ffffff}Оружие',
         onclick = function()
-        sampSendChat("Зачем вам оружие?")
+        sampSendChat("Зачем вам лицензия на оружие?")
         end
       },
 	  {
