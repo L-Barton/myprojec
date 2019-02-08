@@ -1,6 +1,7 @@
 {
-  "latest": "2.5",
+  "latest": "2.6",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Автообновление"
+  1. Обновлен /giverank на дистанцию
+  2. Исправлено парочку мелких багов"
 }
