@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.6')
+script_version('2.7')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -131,7 +131,7 @@ local instools =
   commands = 
   {
     ticket = false,
-	zaderjka = 5000
+	zaderjka = 5
   },
    keys =
   {
@@ -373,6 +373,26 @@ function dmb()
 		krimemb = false
 		gotovo = false
 		status = false
+		players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
+		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
+		gcount = nil
+	end)
+end
+
+function dmch()
+	lua_thread.create(function()
+		statusc = true
+		sampSendChat('/members')
+		while not gotovo do wait(0) end
+		if gosmb then
+			sampShowDialog(716, "{ffffff}В сети: "..gcount.." | {ae433d}Организация | {ffffff}Time: "..os.date("%H:%M:%S"), table.concat(players2, "\n"), "x", _, 5) -- Показываем информацию.
+		elseif krimemb then
+			sampShowDialog(716, "{ffffff}В сети: "..gcount.." | {ae433d}Организация | {ffffff}Time: "..os.date("%H:%M:%S"), table.concat(players1, "\n"), "x", _, 5) -- Показываем информацию.
+		end
+		gosmb = false
+		krimemb = false
+		gotovo = false
+		statusc = false
 		players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
 		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 		gcount = nil
@@ -637,6 +657,17 @@ function fastmenu(id)
 	ftext('Ваш ранг недостаточно высок')
 	end
 	end
+   },
+   {
+   title = "{FFFFFF}Список {47f4f0}сотрудников находящихся не в офисе",
+    onclick = function()
+	pX, pY, pZ = getCharCoordinates(playerPed)
+	if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+	dmch()
+	else
+	ftext('Вы должны находиться в офисе')
+	end
+	end
    }
 }
 end
@@ -799,49 +830,49 @@ function fthmenu(id)
     title = "{FFFFFF}Лекция для {47f4f0}Стажёра",
     onclick = function()
 	    sampSendChat("Приветствую. Вы приняты на Стажировку в Автошколу. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("/me передал(а) бейджик Стажера Автошколы ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("/b /clist 23 ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Стажировка длится до того момента, пока вы не будете повышены до Консультанта. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Запрещено просить повышения или назначения на управляющую должность в любой форме. Как придет срок Вас вызовут. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Обязанности стажёров: ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Смотреть как работают коллеги и учиться у них. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("В рабочее время находиться в офисе. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Изучать устав и правила автошколы. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Для повышения в должности, Вам нужно будет сдать экзамен.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Всего у вас будет один экзамен - для повышения до консультанта. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Экзамен состоит из двух частей: Устав и расценки на лицензии. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Экзамен состоится не раньше чем через 3 часа после принятия.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("/b Устав и расценки на лицензии можно найти на форуме. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Дабы отбросить частые вопросы:")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Стажер может выдавать только права. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Стажерами считаются сотрудники, находящиеся на должности Стажёр и Экзаменатор (по заявке). ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Офис разрешено покидать только с разрешения ст. Состава. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Вертолет можно брать тоже только с разрешения ст. Состава. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("За столами спать запрещено. Спать разрешено только в комнате отдыха. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать! ')
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо,что прослушали мою лекцию. ")
     end
   },
@@ -849,37 +880,37 @@ function fthmenu(id)
     title = "{FFFFFF}Лекция для {47f4f0}Экзаменатора",
     onclick = function()
 	sampSendChat("Приветствую")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Поскольку вы приняты по заявке на должность Экзаменатора, вам необходимо определиться с отделом.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("/b /clist 19")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("ОС - отдел стажировки, занимающийся непосредственно обучением стажёров.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("ID - Inspection Department, занимающийся профилактикой нарушений и аварийных ситуаций.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("С участием транспорта, через проведение лекций и проверок гос. структур")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("После четерех дней активной работы.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Вы получите бейджик Мл.Инструктора и будете считаться полноценным сотрудником.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Запрещено просить повышения или назначения на управляющую должность в любой форме.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Как придет срок Вашего повышения - обратитесь к ст. Составу")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Офис разрешено покидать только с разрешения ст. Состава.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Вертолет можно брать тоже только с разрешения ст. Состава.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("За столами спать запрещено. Спать разрешено только в комнате отдыха.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Стажерами считаются сотрудники, находящиеся на должности Стажёр и Экзаменатор (по заявке).")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать!')
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо, что прослушали мою лекцию.")
 	end
    },
@@ -889,35 +920,35 @@ function fthmenu(id)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat('Сейчас я проведу лекцию на тему "ПДД". ')
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("1. Скоростной режим в штате: ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("В городе ограничение скорости 50 км/ч. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("В жилой зоне - 30 км/ч. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("За пределами города скорость не ограничена. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("2. Водитель обязан: ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("При ДТП вызывать полицию и оказать мед. помощь при необходимости. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("При виде машин со спец. сигналами прижаться к обочине и пропустить.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Останавливаться по первому требованию сотрудников полиции. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Двигаться по правой полосе, не пересекая сплошную линию. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Пристегнуться перед началом движения. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Пропускать пешеходов на пешеходных переходах.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ездить исключительно в трезвом состоянии. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Двигаться, не создавая помех другому транспорту.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом лекция окончена. Спасибо за внимание.")
 	end
    },
@@ -927,35 +958,35 @@ function fthmenu(id)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat('Сейчас я проведу лекцию на тему "Обращение с оружием".')
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Гражданам запрещено носить оружие не имея на него лицензию")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Для сотрудников силовых структур делается исключение. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Оружие разрешено использовать в случае:")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("1.Самообороны, при нападении на вас. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("2.Для выполнения своих служебных обязанностей.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("3.По прямому приказу людей, имеющих на это полномочия. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Тем не менее, существует ряд запретов связанных с оружием: ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("1.Запрещено носить оружие в открытом виде в многолюдных местах. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("2.Запрещено приобретать оружие незаконно. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("3.Запрещено расстреливать жителей без весомой причины.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("4.Запрещено использвать оружие для достижения личных целей. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("В случае нарушения этих правил, у вас будет изъята лицензия. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Так же за подобные нарушения вас могут заключить под стражу. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 	end
    },
@@ -965,37 +996,37 @@ function fthmenu(id)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat('Сейчас я проведу лекцию на тему "Правила управления водным транспортом".')
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("1. Прежде, чем отправится в плавание вы должны:")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Убедиться в исправности мотора.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Проверить, нет ли водотечности в корпусе судна.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Проверить, не забыли ли вы взять с собой лицензию на право управления водным транспортом.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Позаботиться о спасательных средствах для каждого человека в лодке (катере).")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("2. Запрещается:")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Передавать управление водным транспортом другому лицу без соответствующих на то документов, особенно детям.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Выходить в плавание в условия ограниченной видимости, если ваша лодка не оборудована сигнальными огнями.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Перевозить людей в нетрезвом состоянии.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Создавать помехи для плавания судов.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Перемещение с одного судна на другое во время их движения.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Перевозить взрывоопасные и огнеопасные грузы на судах, для этого не предназначенных.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Принимать перед выходом наркотические вещества, спиртные напитки, тонизирующие лекарства и препараты.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ослаблять бдительность и внимание в процессе управления водным транспортом.")
-		wait(cfg.commands.zaderjka)
+		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 	end
    },
@@ -1005,25 +1036,25 @@ function fthmenu(id)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat('Сейчас я проведу лекцию на тему "Правила рыбной ловли".')
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("1. Правила рыбной ловли:")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу разрешается только в разрешенных местах. (причал на пляже г.Лос-Сантос и за гольф клубом в г.Лас-Вентурас)")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Рыбная ловля разрешена только разрешёнными орудиями ужения. (одна удочка с одним крючком либо спиннинг)")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Рыбная ловля разрешена исключительно в черте населенного пункта.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("2. Запрещается:")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу с лодки.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу с применением взрывчатых и отравляющих веществ, с помощью электротока, с использованием колющих орудий.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу без наличия лицензии рыболова.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу в радиусе 500 метров от хозяйств, разводящих рыбу.")
 	end
    },
@@ -1033,27 +1064,27 @@ function fthmenu(id)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat('Сейчас я проведу лекцию на тему "Пилотирование". ')
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("1. Правила пилотирования: ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("При совершении полета нужно четко выполнять все инструкции и не отклоняться от выбранного курса. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Перед началом полета надо проверить технику на которой вы будете совершать полет. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Тренировочные полеты совершаются только при опытных пилотах. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Принимать перед вылетом наркотические вещества, спиртные напитки, тонизирующие лекарства и препараты.")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ослаблять бдительность и внимание в процессе полета. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Полеты в запретных и опасных зонах, информации о которых нет на полетных картах. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Полет над населенными пунктами и скоплениями людей на открытой местности на высоте менее 300 метров.")
-       wait(cfg.commands.zaderjka)
+       wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Сближение самолетов ближе установленных правил расстояний. ")
-        wait(cfg.commands.zaderjka)
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 	end
    }
@@ -1075,10 +1106,10 @@ function imgui.OnDrawFrame()
     local iScreenWidth, iScreenHeight = getScreenResolution()
 	local btn_size = imgui.ImVec2(-0.1, 0)
 	imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth/2, iScreenHeight/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-	imgui.SetNextWindowSize(imgui.ImVec2(380, 320), imgui.Cond.FirstUseEver)
+	imgui.SetNextWindowSize(imgui.ImVec2(500, 300), imgui.Cond.FirstUseEver)
     imgui.Begin(u8'Настройки##1', first_window)
-	imgui.PushItemWidth(100)
-	imgui.Text(u8("Использовать автотег"))
+	imgui.PushItemWidth(200)
+	imgui.AlignTextToFramePadding(); imgui.Text(u8("Использовать автотег"))
 	imgui.SameLine()
 	if imgui.ToggleButton(u8'Использовать автотег', tagb) then
     cfg.main.tarb = not cfg.main.tarb
@@ -1113,7 +1144,7 @@ function imgui.OnDrawFrame()
 	if imgui.ToggleButton(u8'Использовать отыгровку /giverank', givra) then
         cfg.main.givra = not cfg.main.givra
     end
-	if imgui.InputInt(u8'Задержка в лекциях', waitbuffer) then
+	if imgui.SliderInt(u8'Задержка в лекциях (сек)', waitbuffer,  4, 10) then
      cfg.commands.zaderjka = waitbuffer.v
     end
     if imgui.CustomButton(u8('Сохранить настройки'), imgui.ImVec4(0.11, 0.79, 0.07, 0.40), imgui.ImVec4(0.11, 0.79, 0.07, 1.00), imgui.ImVec4(0.11, 0.79, 0.07, 0.76), btn_size) then
@@ -1262,6 +1293,17 @@ function onHotKey(id, keys)
 			end
 		end
 	end
+end
+
+function showHelp(param) -- "вопросик" для скрипта
+    imgui.TextDisabled('(?)')
+    if imgui.IsItemHovered() then
+        imgui.BeginTooltip()
+        imgui.PushTextWrapPos(imgui.GetFontSize() * 35.0)
+        imgui.TextUnformatted(param)
+        imgui.PopTextWrapPos()
+        imgui.EndTooltip()
+    end
 end
 
 function onScriptTerminate(scr)
@@ -2179,6 +2221,50 @@ function sampev.onServerMessage(color, text)
 	if color == -8224086 then
         local colors = ("{%06X}"):format(bit.rshift(color, 8))
         table.insert(departament, os.date(colors.."[%H:%M:%S] ") .. text)
+    end
+	if statusc then
+		if text:match('ID: .+ | .+: .+ %- .+') and not fstatus then
+			gosmb = true
+			local id, nick, rang, stat = text:match('ID: (%d+) | (.+): (.+) %- (.+)')
+			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+		    src_good = ""
+            src_bad = ""
+			local _, handle = sampGetCharHandleBySampPlayerId(id)
+				if doesCharExist(handle) then
+					local x, y, z = getCharCoordinates(handle)
+					local mx, my, mz = getCharCoordinates(PLAYER_PED)
+					local dist = getDistanceBetweenCoords3d(mx, my, mz, x, y, z)
+					
+					if dist <= 50 then
+						src_good = src_good ..sampGetPlayerNickname(id).. ""
+					else
+						src_bad = src_bad ..sampGetPlayerNickname(id).. ""
+					end
+					else
+						src_bad = src_bad ..sampGetPlayerNickname(id).. ""
+			table.insert(players2, string.format('{'..color..'}%s[%s]{ffffff}\t%s\t%s', src_bad, id, rang, stat))
+			return false
+		end
+		end
+		if text:match('Всего: %d+ человек') then
+			local count = text:match('Всего: (%d+) человек')
+			gcount = count
+			gotovo = true
+			return false
+		end
+		if color == -1 then
+			return false
+		end
+		if color == 647175338 then
+			return false
+        end
+        if text:match('ID: .+ | .+: .+') and not fstatus then
+			krimemb = true
+			local id, nick, rang = text:match('ID: (%d+) | (.+): (.+)')
+			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+			table.insert(players1, string.format('{'..color..'}%s[%s]{ffffff}\t%s', nick, id, rang))
+			return false
+        end
     end
 	if status then
 		if text:match('ID: .+ | .+: .+ %- .+') and not fstatus then
