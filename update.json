@@ -1,7 +1,7 @@
 {
-  "latest": "2.6",
+  "latest": "2.7",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Обновлен /giverank на дистанцию
+  1. В быстрое меню F2, добавлена функция проверки сотрудников вне офиса
   2. Исправлено парочку мелких багов"
 }
