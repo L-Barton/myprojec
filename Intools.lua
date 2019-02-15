@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.7')
+script_version('2.8')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -28,7 +28,7 @@ require 'lib.sampfuncs'
 seshsps = 1
 ctag = "ITools {ffffff}|"
 players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
-players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
+players2 = {'{ffffff}Дата принятия\t{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
 frak = nil
 rang = nil
 ttt = nil
@@ -362,6 +362,8 @@ local fpt = [[
 function dmb()
 	lua_thread.create(function()
 		status = true
+		players2 = {'{ffffff}Дата принятия\t{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
+		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 		sampSendChat('/members')
 		while not gotovo do wait(0) end
 		if gosmb then
@@ -373,8 +375,6 @@ function dmb()
 		krimemb = false
 		gotovo = false
 		status = false
-		players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
-		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 		gcount = nil
 	end)
 end
@@ -382,6 +382,8 @@ end
 function dmch()
 	lua_thread.create(function()
 		statusc = true
+		players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
+		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 		sampSendChat('/members')
 		while not gotovo do wait(0) end
 		if gosmb then
@@ -393,8 +395,6 @@ function dmch()
 		krimemb = false
 		gotovo = false
 		statusc = false
-		players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
-		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 		gcount = nil
 	end)
 end
@@ -874,6 +874,8 @@ function fthmenu(id)
         sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу. ")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо,что прослушали мою лекцию. ")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Если у вас имеются вопросы, задавайте. ")
     end
   },
    {
@@ -912,6 +914,8 @@ function fthmenu(id)
         sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу.")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо, что прослушали мою лекцию.")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Если у вас имеются вопросы, задавайте. ")
 	end
    },
    {
@@ -1462,12 +1466,21 @@ function pkmmenu(id)
 	  {
         title = "{ffffff}» Ударить шокером",
         onclick = function()
-        sampSendChat("/me снял шокер с пояса.")
+		if cfg.main.male == true then
+        sampSendChat("/me снял шокер с пояса")
         wait(1500)
         sampSendChat("/itazer")
         wait(1500)
         sampSendChat("/me повесил шокер на пояс")
         end
+	    if cfg.main.male == false then
+        sampSendChat("/me сняла шокер с пояса")
+        wait(1500)
+        sampSendChat("/itazer")
+        wait(1500)
+        sampSendChat("/me повесила шокер на пояс")
+        end
+		end
       }
     }
 end
@@ -1510,6 +1523,14 @@ function questimenu(args)
         sampSendChat("Вы попали в ДТП. Ваши действия?")
 		wait(1500)
 		ftext("{FFFFFF}- Правильный ответ: {A52A2A}Оказать первую помощь пострадавшим. Вызвать МЧС и ПД и ждать их прибытия.", -1)
+        end
+      },
+	  {
+        title = '{ffffff}» Действия при остановке',
+        onclick = function()
+        sampSendChat("За вами едет автомобиль с включённой сиреной. Ваши действия?")
+		wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}Сбавить скорость и прижаться к обочине.", -1)
         end
       },
 	  {
@@ -2166,11 +2187,15 @@ end)
 end
 
 function sampev.onSendSpawn()
-    if cfg.main.clistb and rabden then
+    pX, pY, pZ = getCharCoordinates(playerPed)
+    if cfg.main.clistb and getDistanceBetweenCoords3d(pX, pY, pZ, 2337.3574,1666.1699,3040.9524) < 20 then
         lua_thread.create(function()
             wait(1200)
-            ftext('Цвет ника сменен на: {9966cc}' .. cfg.main.clist)
-            sampSendChat('/clist '..cfg.main.clist)
+			sampSendChat('/clist '..cfg.main.clist)
+			wait(500)
+			local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+			local color = ("%06X"):format(bit.band(sampGetPlayerColor(myid), 0xFFFFFF))
+            ftext('Цвет ника сменен на: {'..color..'}' .. cfg.main.clist)
         end)
     end
 end
@@ -2181,8 +2206,11 @@ function sampev.onServerMessage(color, text)
 		if rabden == false then
             lua_thread.create(function()
                 wait(100)
-                ftext('Цвет ника сменен на: {9966cc}' .. cfg.main.clist)
-                sampSendChat('/clist '..tonumber(cfg.main.clist))
+				sampSendChat('/clist '..tonumber(cfg.main.clist))
+				wait(500)
+                local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+			    local color = ("%06X"):format(bit.band(sampGetPlayerColor(myid), 0xFFFFFF))
+                ftext('Цвет ника сменен на: {'..color..'}' .. cfg.main.clist)
                 rabden = true
 				wait(1000)
 				if cfg.main.clisto then
@@ -2267,11 +2295,11 @@ function sampev.onServerMessage(color, text)
         end
     end
 	if status then
-		if text:match('ID: .+ | .+: .+ %- .+') and not fstatus then
+		if text:match('ID: .+ | .+ | .+: .+ %- .+') and not fstatus then
 			gosmb = true
-			local id, nick, rang, stat = text:match('ID: (%d+) | (.+): (.+) %- (.+)')
+			local id, data, nick, rang, stat = text:match('ID: (%d+) | (.+) | (.+): (.+) %- (.+)')
 			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
-			table.insert(players2, string.format('{'..color..'}%s[%s]{ffffff}\t%s\t%s', nick, id, rang, stat))
+			table.insert(players2, string.format('{ffffff}%s\t {'..color..'}%s[%s]{ffffff}\t%s\t%s', data, nick, id, rang, stat))
 			return false
 		end
 		if text:match('Всего: %d+ человек') then
