@@ -3,5 +3,5 @@
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
   1. Исправлено несколько багов
-  Примечение: Если лекции не работают, удалите файл moonloader\config\instools\config.cfg и перезапустите скрипт"
+  Примечение: Если лекции не работают, удалите файл moonloader/config/instools/config.cfg и перезапустите скрипт"
 }
