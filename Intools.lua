@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.8')
+script_version('2.9')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -36,59 +36,75 @@ rabden = false
 tload = false
 tLastKeys = {}
 departament = {}
-function apply_custom_style()
-  imgui.SwitchContext()
-local style = imgui.GetStyle()
-local colors = style.Colors
-local clr = imgui.Col
-local ImVec4 = imgui.ImVec4
+function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрипте ранее
 
-style.Alpha = 1.0
-style.ChildWindowRounding = 3
-style.WindowRounding = 3
-style.GrabRounding = 1
-style.GrabMinSize = 20
-style.FrameRounding = 3
+	imgui.SwitchContext()
+    local style = imgui.GetStyle()
+    local colors = style.Colors
+    local clr = imgui.Col
+    local ImVec4 = imgui.ImVec4
+    local ImVec2 = imgui.ImVec2
 
-colors[clr.Text] = ImVec4(0.00, 1.00, 1.00, 1.00)
-colors[clr.TextDisabled] = ImVec4(0.00, 0.40, 0.41, 1.00)
-colors[clr.WindowBg] = ImVec4(0.00, 0.00, 0.00, 1.00)
-colors[clr.ChildWindowBg] = ImVec4(0.00, 0.00, 0.00, 0.00)
-colors[clr.Border] = ImVec4(0.00, 1.00, 1.00, 0.65)
-colors[clr.BorderShadow] = ImVec4(0.00, 0.00, 0.00, 0.00)
-colors[clr.FrameBg] = ImVec4(0.44, 0.80, 0.80, 0.18)
-colors[clr.FrameBgHovered] = ImVec4(0.44, 0.80, 0.80, 0.27)
-colors[clr.FrameBgActive] = ImVec4(0.44, 0.81, 0.86, 0.66)
-colors[clr.TitleBg] = ImVec4(0.14, 0.18, 0.21, 0.73)
-colors[clr.TitleBgCollapsed] = ImVec4(0.00, 0.00, 0.00, 0.54)
-colors[clr.TitleBgActive] = ImVec4(0.00, 1.00, 1.00, 0.27)
-colors[clr.MenuBarBg] = ImVec4(0.00, 0.00, 0.00, 0.20)
-colors[clr.ScrollbarBg] = ImVec4(0.22, 0.29, 0.30, 0.71)
-colors[clr.ScrollbarGrab] = ImVec4(0.00, 1.00, 1.00, 0.44)
-colors[clr.ScrollbarGrabHovered] = ImVec4(0.00, 1.00, 1.00, 0.74)
-colors[clr.ScrollbarGrabActive] = ImVec4(0.00, 1.00, 1.00, 1.00)
-colors[clr.ComboBg] = ImVec4(0.16, 0.24, 0.22, 0.60)
-colors[clr.CheckMark] = ImVec4(0.00, 1.00, 1.00, 0.68)
-colors[clr.SliderGrab] = ImVec4(0.00, 1.00, 1.00, 0.36)
-colors[clr.SliderGrabActive] = ImVec4(0.00, 1.00, 1.00, 0.76)
-colors[clr.Button] = ImVec4(0.00, 0.65, 0.65, 0.46)
-colors[clr.ButtonHovered] = ImVec4(0.01, 1.00, 1.00, 0.43)
-colors[clr.ButtonActive] = ImVec4(0.00, 1.00, 1.00, 0.62)
-colors[clr.Header] = ImVec4(0.00, 1.00, 1.00, 0.33)
-colors[clr.HeaderHovered] = ImVec4(0.00, 1.00, 1.00, 0.42)
-colors[clr.HeaderActive] = ImVec4(0.00, 1.00, 1.00, 0.54)
-colors[clr.ResizeGrip] = ImVec4(0.00, 1.00, 1.00, 0.54)
-colors[clr.ResizeGripHovered] = ImVec4(0.00, 1.00, 1.00, 0.74)
-colors[clr.ResizeGripActive] = ImVec4(0.00, 1.00, 1.00, 1.00)
-colors[clr.CloseButton] = ImVec4(0.00, 0.78, 0.78, 0.35)
-colors[clr.CloseButtonHovered] = ImVec4(0.00, 0.78, 0.78, 0.47)
-colors[clr.CloseButtonActive] = ImVec4(0.00, 0.78, 0.78, 1.00)
-colors[clr.PlotLines] = ImVec4(0.00, 1.00, 1.00, 1.00)
-colors[clr.PlotLinesHovered] = ImVec4(0.00, 1.00, 1.00, 1.00)
-colors[clr.PlotHistogram] = ImVec4(0.00, 1.00, 1.00, 1.00)
-colors[clr.PlotHistogramHovered] = ImVec4(0.00, 1.00, 1.00, 1.00)
-colors[clr.TextSelectedBg] = ImVec4(0.00, 1.00, 1.00, 0.22)
-colors[clr.ModalWindowDarkening] = ImVec4(0.04, 0.10, 0.09, 0.51)
+    style.WindowPadding = ImVec2(15, 15)
+    style.WindowRounding = 5.0
+    style.FramePadding = ImVec2(5, 5)
+    style.FrameRounding = 4.0
+    style.ItemSpacing = ImVec2(12, 8)
+    style.ItemInnerSpacing = ImVec2(8, 6)
+    style.IndentSpacing = 25.0
+    style.ScrollbarSize = 15.0
+    style.ScrollbarRounding = 9.0
+    style.GrabMinSize = 5.0
+	style.GrabRounding = 3.0
+	style.WindowTitleAlign = ImVec2(0.5, 0.5)
+
+
+	colors[clr.Text] = ImVec4(0.80, 0.80, 0.83, 1.00)
+    colors[clr.TextDisabled] = ImVec4(0.24, 0.23, 0.29, 1.00)
+    colors[clr.ChildWindowBg] = ImVec4(0.07, 0.07, 0.09, 0.50)
+    colors[clr.PopupBg] = ImVec4(0.07, 0.07, 0.09, 0.80)
+    colors[clr.Border] = ImVec4(0.80, 0.80, 0.83, 0.88)
+    colors[clr.BorderShadow] = ImVec4(0.92, 0.91, 0.88, 0.00)
+	--colors[clr.TitleBgCollapsed] = ImVec4(0.00, 0.00, 0.00, 0.51)
+	colors[clr.TitleBgCollapsed] = ImVec4(0.24, 0.23, 0.29, 1.00)
+    colors[clr.TitleBgActive] = ImVec4(0.07, 0.07, 0.09, 1.00)
+	colors[clr.MenuBarBg] = ImVec4(0.10, 0.09, 0.12, 0.50) 	
+    colors[clr.ScrollbarBg] = ImVec4(0.10, 0.09, 0.12, 1.00)
+    colors[clr.ScrollbarGrab] = ImVec4(0.80, 0.80, 0.83, 0.31)
+    colors[clr.ScrollbarGrabHovered] = ImVec4(0.56, 0.56, 0.58, 1.00)
+    colors[clr.ScrollbarGrabActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
+    colors[clr.ComboBg] = ImVec4(0.19, 0.18, 0.21, 0.50)
+    colors[clr.CheckMark] = ImVec4(0.80, 0.80, 0.83, 0.31)
+    colors[clr.SliderGrab] = ImVec4(0.80, 0.80, 0.83, 0.31)
+    colors[clr.SliderGrabActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
+    colors[clr.Button] = ImVec4(0.10, 0.09, 0.12, 1.00)
+    colors[clr.ButtonHovered] = ImVec4(0.24, 0.23, 0.29, 1.00)
+    colors[clr.ButtonActive] = ImVec4(0.56, 0.56, 0.58, 1.00)
+    colors[clr.Header] = ImVec4(0.10, 0.09, 0.12, 1.00)
+    --colors[clr.HeaderHovered] = ImVec4(0.56, 0.56, 0.58, 1.00)
+    colors[clr.HeaderHovered] = ImVec4(0.24, 0.23, 0.29, 1.00)
+    colors[clr.HeaderActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
+    colors[clr.ResizeGrip] = ImVec4(0.00, 0.00, 0.00, 0.00)
+    colors[clr.ResizeGripHovered] = ImVec4(0.56, 0.56, 0.58, 1.00)
+    colors[clr.ResizeGripActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
+    colors[clr.CloseButton] = ImVec4(0.40, 0.39, 0.38, 0.16)
+    colors[clr.CloseButtonHovered] = ImVec4(0.40, 0.39, 0.38, 0.39)
+    colors[clr.CloseButtonActive] = ImVec4(0.40, 0.39, 0.38, 1.00)
+    colors[clr.PlotLines] = ImVec4(0.40, 0.39, 0.38, 0.63)
+    colors[clr.PlotLinesHovered] = ImVec4(0.25, 1.00, 0.00, 1.00)
+    colors[clr.PlotHistogram] = ImVec4(0.40, 0.39, 0.38, 0.63)
+    colors[clr.PlotHistogramHovered] = ImVec4(0.25, 1.00, 0.00, 1.00)
+    colors[clr.TextSelectedBg] = ImVec4(0.25, 1.00, 0.00, 0.43)
+    --colors[clr.ModalWindowDarkening] = ImVec4(1.00, 0.98, 0.95, 0.70)
+    colors[clr.ModalWindowDarkening] = ImVec4(0.00, 0.00, 0.00, 0.80)
+
+	colors[clr.WindowBg] = ImVec4(0.06, 0.05, 0.07, 0.98)
+    --colors[clr.FrameBg] = ImVec4(0.10, 0.09, 0.12, 1.00)
+    colors[clr.FrameBg] = ImVec4(0.13, 0.12, 0.15, 1.00)
+    colors[clr.FrameBgHovered] = ImVec4(0.24, 0.23, 0.29, 1.00)
+    colors[clr.FrameBgActive] = ImVec4(0.56, 0.56, 0.58, 1.00)
+	colors[clr.TitleBg] = ImVec4(0.10, 0.09, 0.12, 0.50)
+
 end
 apply_custom_style()
 
@@ -197,6 +213,7 @@ function main()
   sampRegisterChatCommand('thelp', thelp)
   sampRegisterChatCommand('dlog', dlog)
   sampRegisterChatCommand('dmb', dmb)
+  sampRegisterChatCommand('where', where)
   sampRegisterChatCommand('tset', tset)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
@@ -431,6 +448,28 @@ end
 end
 end
 
+function where(params) -- запрос местоположения
+   if rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+	if params:match("^%d+") then
+		params = tonumber(params:match("^(%d+)"))
+		if sampIsPlayerConnected(params) then
+			local name = string.gsub(sampGetPlayerNickname(params), "_", " ")
+			 if cfg.main.tarb then
+			    sampSendChat(string.format("/r [%s]: %s, доложите свое местоположение. На ответ 20 секунд.", cfg.main.tarr, name))
+			else
+			sampSendChat(string.format("/r %s, доложите свое местоположение. На ответ 20 секунд.", name))
+			end
+			else
+			ftext('{FFFFFF} Игрок с данным ID не подключен к серверу или указан ваш ID.', 0x046D63)
+		end
+		else
+		ftext('{FFFFFF} Используйте: /where [ID].', 0x046D63)
+		end
+		else
+		ftext('{FFFFFF}Данная команда доступна с 6 ранга.', 0x046D63)
+	end
+end
+
 function getrang(rangg)
 local ranks = 
         {
@@ -585,6 +624,13 @@ function thelpsub()
         onclick = function()
             sampSetChatInputEnabled(true)
             sampSetChatInputText('/dmb ')
+        end
+    },
+	{
+        title = '{47f4f0}/where [ID] {ffffff} - Запросить местоположение',
+        onclick = function()
+            sampSetChatInputEnabled(true)
+            sampSetChatInputText('/where ')
         end
     },
 	{
@@ -1110,8 +1156,8 @@ function imgui.OnDrawFrame()
     local iScreenWidth, iScreenHeight = getScreenResolution()
 	local btn_size = imgui.ImVec2(-0.1, 0)
 	imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth/2, iScreenHeight/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-	imgui.SetNextWindowSize(imgui.ImVec2(500, 300), imgui.Cond.FirstUseEver)
-    imgui.Begin(u8'Настройки##1', first_window)
+	imgui.SetNextWindowSize(imgui.ImVec2(500, 340), imgui.Cond.FirstUseEver)
+    imgui.Begin(u8'Настройки##1', first_window, imgui.WindowFlags.NoResize)
 	imgui.PushItemWidth(200)
 	imgui.AlignTextToFramePadding(); imgui.Text(u8("Использовать автотег"))
 	imgui.SameLine()
@@ -1173,20 +1219,32 @@ function imgui.OnDrawFrame()
     imgui.LockPlayer = true
     imgui.ShowCursor = true
     local x, y = getScreenResolution()
-    local btn_size = imgui.ImVec2(-0.1, 0)
+    local btn_size1 = imgui.ImVec2(70, 0)
+	local btn_size = imgui.ImVec2(130, 0)
     imgui.SetNextWindowPos(imgui.ImVec2(x/2, y/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-    imgui.SetNextWindowSize(imgui.ImVec2(300, 300), imgui.Cond.FirstUseEver)
+    imgui.SetNextWindowSize(imgui.ImVec2(370, 140), imgui.Cond.FirstUseEver)
     imgui.Begin('Inst Tools | Main Menu', second_window, imgui.WindowFlags.NoResize)
-	if imgui.Button(u8'Биндер', btn_size) then
+	local text = 'Разработчик:'
+    imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
+    imgui.Text(u8(text))
+	imgui.SameLine()
+	imgui.TextColored(imgui.ImVec4(0.12, 0.70 , 0.38, 1.0), 'Damien_Requeste')
+    imgui.Separator()
+	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
     end
-    if imgui.Button(u8'Настройки скрипта', btn_size) then
+	imgui.SameLine()
+    if imgui.Button(u8'Настройки скрипта', imgui.ImVec2(120, 30)) then
       first_window.v = not first_window.v
     end
-    if imgui.Button(u8'Перезагрузить скрипт', btn_size) then
+	imgui.SameLine()
+    if imgui.Button(u8'Перезагрузить скрипт', imgui.ImVec2(150, 30)) then
       showCursor(false)
       thisScript():reload()
     end
+	imgui.Separator()
+	imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8("Текущая дата: %s")).x)/3.5)
+	imgui.Text(u8(string.format("Текущая дата: %s", os.date())))
     imgui.End()
   end
     if updwindows.v then
@@ -1221,7 +1279,7 @@ function imgui.OnDrawFrame()
 	local tLastKeys = {}
    
    imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-   imgui.SetNextWindowSize(imgui.ImVec2(800, 500), imgui.Cond.FirstUseEver)
+   imgui.SetNextWindowSize(imgui.ImVec2(800, 530), imgui.Cond.FirstUseEver)
 
    imgui.Begin(u8("IT | Биндер##main"), bMainWindow, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
 	imgui.BeginChild("##bindlist", imgui.ImVec2(795, 442))
