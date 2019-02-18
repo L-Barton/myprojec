@@ -1,6 +1,7 @@
 {
-  "latest": "2.8",
+  "latest": "2.9",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Исправлено несколько багов"
+  1. Добавлена команда /where [id]
+  2. Изменен интерфейс"
 }
