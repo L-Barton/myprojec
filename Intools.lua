@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.9')
+script_version('3.0')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -17,6 +17,7 @@ local bMainWindow = imgui.ImBool(false)
 local sInputEdit = imgui.ImBuffer(128)
 local bIsEnterEdit = imgui.ImBool(false)
 local ystwindow = imgui.ImBool(false)
+local helps = imgui.ImBool(false)
 local updwindows = imgui.ImBool(false)
 local tEditData = {
 	id = -1,
@@ -162,7 +163,7 @@ local libs = {'sphere.lua', 'rkeys.lua', 'imcustom/hotkey.lua', 'imgui.lua', 'Mo
 function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
-    ftext("Скрипт успешно загружен. /thelp - помощь по командам, /tset - настройки скрипта.", -1)
+    ftext("Скрипт успешно загружен. /tset - основное меню.", -1)
 	ftext('Автором данного скрипта является Damien_Requeste')
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
@@ -210,7 +211,6 @@ function main()
   end
   sampRegisterChatCommand('r', r)
   sampRegisterChatCommand('f', f)
-  sampRegisterChatCommand('thelp', thelp)
   sampRegisterChatCommand('dlog', dlog)
   sampRegisterChatCommand('dmb', dmb)
   sampRegisterChatCommand('where', where)
@@ -248,7 +248,7 @@ function main()
                 submenus_show(pkmmenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] Уровень - "..sampGetPlayerScore(id).." ")
             end
         end
-		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v
+		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v or updwindows.v
   end
   function rkeys.onHotKey(id, keys)
 	if sampIsChatInputActive() or sampIsDialogActive() or isSampfuncsConsoleActive() then
@@ -589,81 +589,6 @@ function invite(pam)
    end)
  end
  
-function thelp()
-    lua_thread.create(function()
-        submenus_show(thelpsub(), '{47f4f0}Inst Tools {ffffff}| Help')
-    end)
-end
-
-function thelpsub()
-    return
-{
-    {
-        title = '{47f4f0}/tset {ffffff}- Открыть меню скрипта',
-        onclick = function()
-            sampSetChatInputEnabled(true)
-            sampSetChatInputText('/tset')
-        end
-    },
-    {
-        title = '{47f4f0}/thelp {ffffff} - Помощь по скрипту',
-        onclick = function()
-            sampSetChatInputEnabled(true)
-            sampSetChatInputText('/thelp ')
-        end
-    },
-    {
-        title = '{47f4f0}/vig [id] Причина{ffffff} - Выдать выговор по рации',
-        onclick = function()
-            sampSetChatInputEnabled(true)
-            sampSetChatInputText('/vig ')
-        end
-    },
-	{
-        title = '{47f4f0}/dmb {ffffff} - Открыть /members в диалоге',
-        onclick = function()
-            sampSetChatInputEnabled(true)
-            sampSetChatInputText('/dmb ')
-        end
-    },
-	{
-        title = '{47f4f0}/where [ID] {ffffff} - Запросить местоположение',
-        onclick = function()
-            sampSetChatInputEnabled(true)
-            sampSetChatInputText('/where ')
-        end
-    },
-	{
-        title = '{47f4f0}/yst {ffffff} - Открыть устав АШ',
-        onclick = function()
-            sampSetChatInputEnabled(true)
-            sampSetChatInputText('/yst ')
-        end
-    },
-	{
-        title = '{47f4f0}/dlog{ffffff} - Открыть лог 25 последних сообщений в департамент',
-        onclick = function()
-            sampSetChatInputText('/dlog')
-            sampSetChatInputEnabled(true)
-        end
-    },
-    {
-        title = '{47f4f0}Клавиши:',
-        onclick = function()
-        end
-    },
-	{
-        title = '{47f4f0}ПКМ+Z на игрока {ffffff}- Меню взаимодействия',
-        onclick = function()
-        end
-    },
-    {
-        title = '{47f4f0}'..key.id_to_name(cfg.keys.fastmenu)..' {ffffff}- "Быстрое меню"',
-        onclick = function()
-        end
-    }
-}
-end
 
 function fastmenu(id)
  return
@@ -973,32 +898,46 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat('Сейчас я проведу лекцию на тему "ПДД". ')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1. Скоростной режим в штате: ")
+        sampSendChat("Каждый водитель должен быть пристегнут ремнем безопасности... ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В городе ограничение скорости 50 км/ч. ")
+        sampSendChat("... и только после этого начинать движение. ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В жилой зоне - 30 км/ч. ")
+        sampSendChat("Водитель обязан пропускать пешеходов в специальных местах для перехода. ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("За пределами города скорость не ограничена. ")
+        sampSendChat("В случае, если кончается бензин или поломка двигателя необходимо сдвинуть автомобиль...")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2. Водитель обязан: ")
+        sampSendChat("...или доехать до обочины и дождаться механика. ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("При ДТП вызывать полицию и оказать мед. помощь при необходимости. ")
+        sampSendChat("В Штате установлен скоростной режим: ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("При виде машин со спец. сигналами прижаться к обочине и пропустить.")
+        sampSendChat("В пределах города разрешается движение транспортных средств со скоростью не более 50 км/ч.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Останавливаться по первому требованию сотрудников полиции. ")
+        sampSendChat("В жилых зонах и на дворовых территориях скорость движения не более 30 км/ч.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Двигаться по правой полосе, не пересекая сплошную линию. ")
+        sampSendChat("За пределами городов и на автомагистралях ограничений по скорости нет. ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Пристегнуться перед началом движения. ")
+        sampSendChat("Если произошло ДТП, водитель обязан вызвать полицию и ждать приезда сотрудников. ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Пропускать пешеходов на пешеходных переходах.")
+        sampSendChat("Обгон ТС разрешен только с левой стороны, при этом водитель обязан убедиться...")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ездить исключительно в трезвом состоянии. ")
+        sampSendChat("... что встречная полоса свободна для обгона. ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Двигаться, не создавая помех другому транспорту.")
+        sampSendChat("Запрещена парковка в неположенных местах. ")
         wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Разрешено парковаться: Обочина дороги, специально для этого отведенные места (стоянки). ")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Водителю запрещается: ")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Пересекать сплошную полосу. ")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Превышать допустимую скорость на определенном участке дороги. ")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Покидать место ДТП без договоренности с другим участником этого ДТП. ")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Создавать помехи другим транспортным средствам. ")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Садится за руль в нетрезвом состоянии. ")
+		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом лекция окончена. Спасибо за внимание.")
 	end
    },
@@ -1222,7 +1161,7 @@ function imgui.OnDrawFrame()
     local btn_size1 = imgui.ImVec2(70, 0)
 	local btn_size = imgui.ImVec2(130, 0)
     imgui.SetNextWindowPos(imgui.ImVec2(x/2, y/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-    imgui.SetNextWindowSize(imgui.ImVec2(370, 140), imgui.Cond.FirstUseEver)
+    imgui.SetNextWindowSize(imgui.ImVec2(440, 140), imgui.Cond.FirstUseEver)
     imgui.Begin('Inst Tools | Main Menu', second_window, imgui.WindowFlags.NoResize)
 	local text = 'Разработчик:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
@@ -1242,18 +1181,39 @@ function imgui.OnDrawFrame()
       showCursor(false)
       thisScript():reload()
     end
+	imgui.SameLine()
+    if imgui.Button(u8'Помощь', imgui.ImVec2(55, 30)) then
+      helps.v = not helps.v
+    end
 	imgui.Separator()
 	imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8("Текущая дата: %s")).x)/3.5)
 	imgui.Text(u8(string.format("Текущая дата: %s", os.date())))
     imgui.End()
   end
+    if helps.v then
+                local iScreenWidth, iScreenHeight = getScreenResolution()
+                imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
+                imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
+                imgui.Text(u8 '/tset - Открыть меню скрипта')
+                imgui.Separator()
+                imgui.Text(u8 '/vig [id] [Причина] - Выдать выговор по рации')
+                imgui.Text(u8 '/dmb - Открыть /members в диалоге')
+                imgui.Text(u8 '/where [id] - Запросить местоположение по рации')
+                imgui.Text(u8 '/yst - Открыть устав АШ')
+                imgui.Text(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
+				imgui.Separator()
+                imgui.Text(u8 'Клавиши: ')
+                imgui.Text(u8 'ПКМ+Z на игрока - Меню взаимодействия')
+                imgui.Text(u8 'F2 - "Быстрое меню"')
+                imgui.End()
+    end
     if updwindows.v then
                 local updlist = ttt
                 imgui.LockPlayer = true
                 imgui.ShowCursor = true
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-                imgui.SetNextWindowSize(imgui.ImVec2(700, 290), imgui.Cond.FirstUseEver)
+                imgui.SetNextWindowSize(imgui.ImVec2(700, 330), imgui.Cond.FirstUseEver)
                 imgui.Begin(u8('Inst Tools | Обновление'), updwindows, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
                 imgui.Text(u8('Вышло обновление скрипта Inst Tools. Что бы обновиться нажмите кнопку внизу. Список изменений:'))
                 imgui.Separator()
@@ -2323,8 +2283,6 @@ function sampev.onServerMessage(color, text)
 					
 					if dist <= 50 then
 						src_good = src_good ..sampGetPlayerNickname(id).. ""
-					else
-						src_bad = src_bad ..sampGetPlayerNickname(id).. ""
 					end
 					else
 						src_bad = src_bad ..sampGetPlayerNickname(id).. ""
