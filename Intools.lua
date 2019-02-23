@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.0')
+script_version('3.1')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -501,15 +501,25 @@ function giverank(pam)
 				local mx, my, mz = getCharCoordinates(PLAYER_PED)
 				local dist = getDistanceBetweenCoords3d(mx, my, mz, x, y, z)	
 				if dist <= 5 then
-				sampSendChat('/me снял(а) старый бейджик с человека напротив стоящего')
+				if cfg.main.male == true then
+				sampSendChat('/me снял старый бейджик с человека напротив стоящего')
 				wait(1500)
-				sampSendChat('/me убрал(а) старый бейджик в карман')
+				sampSendChat('/me убрал старый бейджик в карман')
 				wait(1500)
-                sampSendChat(string.format('/me достал(а) новый бейджик с надписью "%s"', ranks))
+                sampSendChat(string.format('/me достал новый бейджик с надписью "%s"', ranks))
 				wait(1500)
-				sampSendChat('/me закрепила(а) на рубашку человеку на против новый бейджик')
+				sampSendChat('/me закрепил на рубашку человеку напротив новый бейджик')
 				wait(1500)
 				else
+				sampSendChat('/me сняла старый бейджик с человека напротив стоящего')
+				wait(1500)
+				sampSendChat('/me убрала старый бейджик в карман')
+				wait(1500)
+                sampSendChat(string.format('/me достала новый бейджик с надписью "%s"', ranks))
+				wait(1500)
+				sampSendChat('/me закрепила на рубашку человеку напротив новый бейджик')
+				wait(1500)
+				end
 				end
 				end
 				sampSendChat(string.format('/giverank %s %s', id, rangg))
@@ -2275,7 +2285,9 @@ function sampev.onServerMessage(color, text)
 			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
 		    src_good = ""
             src_bad = ""
+			local _, myid = sampGetPlayerIdByCharHandle(playerPed)
 			local _, handle = sampGetCharHandleBySampPlayerId(id)
+			local myname = sampGetPlayerNickname(myid)
 				if doesCharExist(handle) then
 					local x, y, z = getCharCoordinates(handle)
 					local mx, my, mz = getCharCoordinates(PLAYER_PED)
@@ -2286,8 +2298,10 @@ function sampev.onServerMessage(color, text)
 					end
 					else
 						src_bad = src_bad ..sampGetPlayerNickname(id).. ""
+			if src_bad ~= myname then
 			table.insert(players2, string.format('{'..color..'}%s[%s]{ffffff}\t%s\t%s', src_bad, id, rang, stat))
 			return false
+		end
 		end
 		end
 		if text:match('Всего: %d+ человек') then
