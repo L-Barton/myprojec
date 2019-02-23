@@ -1,7 +1,6 @@
 {
-  "latest": "3.0",
+  "latest": "3.1",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Исправлен баг с запросом обновления
-  2. Изменена лекция про ПДД по просьбе Главы ID"
+  1. Исправлен баг с отображением своего ника в сотрудниках вне офиса"
 }
