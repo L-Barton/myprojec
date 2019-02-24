@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.1')
+script_version('3.2')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
