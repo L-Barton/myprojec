@@ -1,6 +1,7 @@
 {
-  "latest": "3.1",
+  "latest": "3.2",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Исправлен баг с отображением своего ника в сотрудниках вне офиса"
+  1. Добавлена команда /smsjob - Вызвать на работу весь мл.состав по смс
+  2. Добавлена лекция по просьбе главы ID"
 }
