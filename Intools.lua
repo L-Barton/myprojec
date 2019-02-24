@@ -37,6 +37,7 @@ rabden = false
 tload = false
 tLastKeys = {}
 departament = {}
+vixodid = {}
 function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрипте ранее
 
 	imgui.SwitchContext()
@@ -213,6 +214,7 @@ function main()
   sampRegisterChatCommand('f', f)
   sampRegisterChatCommand('dlog', dlog)
   sampRegisterChatCommand('dmb', dmb)
+  sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
   sampRegisterChatCommand('tset', tset)
   sampRegisterChatCommand('vig', vig)
@@ -489,7 +491,6 @@ end
 function giverank(pam)
     lua_thread.create(function()
     local id, rangg, plus = pam:match('(%d+) (%d+)%s+(.+)')
-	if cfg.main.givra then
 	if sampIsPlayerConnected(id) then
 	  if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
         if id and rangg then
@@ -541,7 +542,6 @@ function giverank(pam)
 	  else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
 	  end
-	end
    end)
  end
 
@@ -556,9 +556,9 @@ function invite(pam)
 				sampSendChat(string.format('/invite %s', id))
 				wait(5000)
 				if cfg.main.tarb then
-                sampSendChat(string.format('/r [%s]: Новый сотрудник Автошколы - '..sampGetPlayerNickname(id):gsub('_', ' ')..'.', cfg.main.tarr))
+                sampSendChat(string.format('/r [%s]: Новый сотрудник Автошколы - '..sampGetPlayerNickname(id):gsub('_', ' ')..'. Добро пожаловать.', cfg.main.tarr))
                 else
-				sampSendChat('/r Новый сотрудник Автошколы - '..sampGetPlayerNickname(id):gsub('_', ' ')..'.')
+				sampSendChat('/r Новый сотрудник Автошколы - '..sampGetPlayerNickname(id):gsub('_', ' ')..'. Добро пожаловать.')
             end
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
@@ -583,9 +583,9 @@ function invite(pam)
 				sampSendChat(string.format('/uninvite %s %s', id, pri4ina))
 				wait(2000)
 				if cfg.main.tarb then
-                sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - Уволен по причине "%s".', cfg.main.tarr, pri4ina))
+                sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - Уволен(а) по причине "%s".', cfg.main.tarr, pri4ina))
                 else
-				sampSendChat(string.format('/r '..sampGetPlayerNickname(id):gsub('_', ' ')..' - Уволен по причине "%s".', pri4ina))
+				sampSendChat(string.format('/r '..sampGetPlayerNickname(id):gsub('_', ' ')..' - Уволен(а) по причине "%s".', pri4ina))
             end
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
@@ -1029,6 +1029,62 @@ function fthmenu(id)
         sampSendChat("На этом все, спасибо за внимание.")
 	end
    },
+         {
+    title = '{FFFFFF}Лекция {47f4f0}"Как вести себя в экстремальных ситуациях"',
+    onclick = function()
+	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat('Сейчас я проведу лекцию на тему "Как себя вести в экстремальных ситуациях".')
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Тормоза придумали трусы, а умные ещё и «нафаршировали» их электроникой.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Так говорят люди, которые зачастую погибают.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Тормоз это пожалуй одна из главных частей автомобиля.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("- Самыми распространёнными причинами отказа тормозов являються...")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("...потеря тормозной жидкости из-за негерметичности системы.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("- Но вне зависимости от причин, следствие одно - автомобиль не возможно остановить обычным способом.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("- Поэтому нужно использовать один из следующих вариантов: ")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("1. Торможение двигателем.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Нужно применить торможение двигателем, то есть постепенно понижать передачи одну за другой.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("2.Включение первой передачи или «паркинга».")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Если другого выхода нет, то можно замедлить машину перейдя на первую передачу и заглушив двигатель.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("3. Контактное торможение.")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Остановка с помощью препятствий бывает двух видов: ")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Первый, когда нет угрозы жизни, и есть возможность замедлить движение.")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Это можно сделать, выехав на обочину или притираясь к бордюру.")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Вторая — самая критическая ситуация.")
+		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Когда продолжение движения может вызвать необратимые последствия.")
+		wait(cfg.commands.zaderjka * 1000)
+		sampSendChat("Нужно тормозить в препятствие.")
+		wait(cfg.commands.zaderjka * 1000)
+		sampSendChat("Оптимально для этого подойдут кусты или сугробы, хуже — заборы и отбойники.")
+		wait(cfg.commands.zaderjka * 1000)
+		sampSendChat("И самое последнее — другие автомобили, фонарные столбы, остановки.")
+		wait(cfg.commands.zaderjka * 1000)
+		sampSendChat("Это были самые основные способы остановки автомобиля.")
+		wait(cfg.commands.zaderjka * 1000)
+		sampSendChat("Главное не паниковать и вы сможете спасть свою и возможно чью-то жизнь.")
+		wait(cfg.commands.zaderjka * 1000)
+		sampSendChat("На этом всё, спасибо за внимание, берегите себя и своих близких.")
+	end
+   },
         {
     title = "{FFFFFF}Лекция про {47f4f0}Правила рыбной ловли",
     onclick = function()
@@ -1098,14 +1154,12 @@ function imgui.OnDrawFrame()
 	local tagb = imgui.ImBool(cfg.main.tarb)
 	local clistb = imgui.ImBool(cfg.main.clistb)
 	local clisto = imgui.ImBool(cfg.main.clisto)
-	local givra = imgui.ImBool(cfg.main.givra)
 	local stateb = imgui.ImBool(cfg.main.male)
 	local waitbuffer = imgui.ImInt(cfg.commands.zaderjka)
 	local clistbuffer = imgui.ImInt(cfg.main.clist)
     local iScreenWidth, iScreenHeight = getScreenResolution()
 	local btn_size = imgui.ImVec2(-0.1, 0)
-	imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth/2, iScreenHeight/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-	imgui.SetNextWindowSize(imgui.ImVec2(500, 340), imgui.Cond.FirstUseEver)
+    imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
     imgui.Begin(u8'Настройки##1', first_window, imgui.WindowFlags.NoResize)
 	imgui.PushItemWidth(200)
 	imgui.AlignTextToFramePadding(); imgui.Text(u8("Использовать автотег"))
@@ -1138,11 +1192,6 @@ function imgui.OnDrawFrame()
 	if imgui.ToggleButton(u8'Мужские отыгровки', stateb) then
         cfg.main.male = not cfg.main.male
     end
-	imgui.Text(u8("Использовать отыгровку /giverank"))
-	imgui.SameLine()
-	if imgui.ToggleButton(u8'Использовать отыгровку /giverank', givra) then
-        cfg.main.givra = not cfg.main.givra
-    end
 	if imgui.SliderInt(u8'Задержка в лекциях (сек)', waitbuffer,  4, 10) then
      cfg.commands.zaderjka = waitbuffer.v
     end
@@ -1167,11 +1216,10 @@ function imgui.OnDrawFrame()
   if second_window.v then
     imgui.LockPlayer = true
     imgui.ShowCursor = true
-    local x, y = getScreenResolution()
+    local iScreenWidth, iScreenHeight = getScreenResolution()
     local btn_size1 = imgui.ImVec2(70, 0)
 	local btn_size = imgui.ImVec2(130, 0)
-    imgui.SetNextWindowPos(imgui.ImVec2(x/2, y/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-    imgui.SetNextWindowSize(imgui.ImVec2(440, 140), imgui.Cond.FirstUseEver)
+    imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
     imgui.Begin('Inst Tools | Main Menu', second_window, imgui.WindowFlags.NoResize)
 	local text = 'Разработчик:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
@@ -1210,6 +1258,7 @@ function imgui.OnDrawFrame()
                 imgui.Text(u8 '/dmb - Открыть /members в диалоге')
                 imgui.Text(u8 '/where [id] - Запросить местоположение по рации')
                 imgui.Text(u8 '/yst - Открыть устав АШ')
+				imgui.Text(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
                 imgui.Text(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
 				imgui.Separator()
                 imgui.Text(u8 'Клавиши: ')
@@ -2203,6 +2252,29 @@ function update()
     end)
 end
 
+function smsjob()
+  if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+    lua_thread.create(function()
+        vixodid = {}
+		status = true
+		sampSendChat('/members')
+        while not gotovo do wait(0) end
+        wait(1200)
+        for k, v in pairs(vixodid) do
+            sampSendChat('/sms '..v..' На работу')
+            wait(1200)
+        end
+        players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
+		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
+		gotovo = false
+        status = false
+        vixodid = {}
+	end)
+	else 
+	ftext('Данная команда доступна с 7 ранга')
+	end
+end
+
 function goupdate()
     ftext('Началось скачивание обновления. Скрипт перезагрузится через пару секунд.', -1)
     wait(300)
@@ -2329,6 +2401,10 @@ function sampev.onServerMessage(color, text)
 			gosmb = true
 			local id, data, nick, rang, stat = text:match('ID: (%d+) | (.+) | (.+): (.+) %- (.+)')
 			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+			local nmrang = rang:match('.+%[(%d+)%]')
+            if stat:find('Выходной') and tonumber(nmrang) < 7 then
+                table.insert(vixodid, id)
+            end
 			table.insert(players2, string.format('{ffffff}%s\t {'..color..'}%s[%s]{ffffff}\t%s\t%s', data, nick, id, rang, stat))
 			return false
 		end
