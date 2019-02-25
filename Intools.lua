@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.2')
+script_version('3.3')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -220,6 +220,7 @@ function main()
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('invite', invite)
+  sampRegisterChatCommand('oinv', oinv)
   sampRegisterChatCommand('uninvite', uninvite)
   sampRegisterChatCommand('yst', function() ystwindow.v = not ystwindow.v end)
   while true do wait(0)
@@ -280,6 +281,8 @@ local fpt = [[
 
 Общее положение Автошколы:
 
+[1] Общее положение Автошколы:
+
 • 1.1 Устав Автошколы устанавливает положения, которым должны следовать все сотрудники Автошколы.
 • 1.2 Сотрудники Автошколы обязаны подчиняться старшим по должности.
 • 1.3 Сотрудники Автошколы обязаны качественно обслуживать своих клиентов.
@@ -299,12 +302,13 @@ local fpt = [[
 • 2.5.1 Сотрудники старшего состава обязаны носить Бейджик - № 15. 
 • 2.5.2 Cотрудники без отдела обязаны носить Бейджик - № 4. 
 • 2.5.3 Глава отдела носит Бейджик №12.
-• 2.5.4 Заместитель главы отдела стажировки носит Бейджик №25.
-• 2.5.5 Сотрудник Отдела Инспекции обязан носить Бейджик №21.
-• 2.5.6 Сотрудник Отдела Стажировки обязан носить Бейджик №30.
-• 2.5.7 Сотрудник который приходится Экзаменатором по заявке обязан носить Бейджик № 19.
-• 2.5.8 Сотрудники находящиеся на стажировке обязаны носить бейджик Бейджик - № 23.
-• 2.5.9 Куратор автошколы может носить любой бейджик.
+• 2.5.4 Заместитель главы отдела носит Бейджик №8.
+• 2.5.5 Сотрудник Отдела Inspection Department обязан носить Бейджик №21.
+• 2.5.6 Сотрудник Отдела Стажировки обязан носить Бейджик №6.
+• 2.5.7 Ответственный за работу в Филиале Бейджик №26
+• 2.5.8 Сотрудник который приходится Экзаменатором по заявке обязан носить Бейджик № 19.
+• 2.5.9 Сотрудники находящиеся на стажировке обязаны носить бейджик Бейджик - № 23.
+• 2.5.10 Куратор автошколы должен носить Бейджик - № 28.
 • 2.6 Сотрудник Автошколы обязан подчиняться старшим по должности.
 • 2.7 В рабочее время сотрудник обязан носить униформу выданную в офисе.
 • 2.8 Сотрудник Автошколы обязан выбрать отдел после получения им должности "Экзаменатор". (Сотрудники без отдела не будут повышаться).
@@ -373,6 +377,8 @@ local fpt = [[
 • Мат считается неприемлемым. 
 • Следует с уважением относиться к человеку старше вас по должности, если вам кажется что он в чем-то не прав, то пишите лидеру в ЛС. 
 • Не допускается выдача информации старшим сотрудником получившим её от младшего, которая может изменить отношение окружающих к нему ( допустим если игрок согласно пункту выше, пожаловался лидеру в ЛС, лидер не имеет право раскрывать это никому, кроме администрации).
+
+Примечания:
 
 За нарушение этих правил в IC вы будете уволены с причиной "нарушение проф. этики". 
 За нарушение этих правил в ООС вы будете уволены с причиной "аморальное поведение", согласно РП легенде для всех вы совершили некий аморальный поступок.
@@ -572,6 +578,37 @@ function invite(pam)
    end)
  end
  
+ function oinv(pam)
+    lua_thread.create(function()
+        local id = pam:match('(%d+)')
+		local _, handle = sampGetCharHandleBySampPlayerId(id)
+	if id then
+	if doesCharExist(handle) then
+		local x, y, z = getCharCoordinates(handle)
+		local mx, my, mz = getCharCoordinates(PLAYER_PED)
+		local dist = getDistanceBetweenCoords3d(mx, my, mz, x, y, z)	
+	  if dist <= 5 then
+	  if cfg.main.tarb then
+		if sampIsPlayerConnected(id) then
+                submenus_show(oinvite(id), "{47f4f0}IT {ffffff}| Выбор отдела")
+				else 
+			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
+            end
+		else 
+			ftext('Включите автотег в настройках')
+		end
+		else 
+			ftext('Рядом с вами нет данного человека')
+	  end
+	  else 
+			ftext('Рядом с вами нет данного человека')
+	end
+	  else 
+			ftext('Введите: /oinv [id]')
+	end
+	  end)
+   end
+ 
  function uninvite(pam)
     lua_thread.create(function()
         local id, pri4ina = pam:match('(%d+)%s+(.+)')
@@ -599,7 +636,35 @@ function invite(pam)
    end)
  end
  
-
+function oinvite(id)
+ return
+{
+  {
+   title = "{FFFFFF}Отдел {47f4f0}Стажировки",
+    onclick = function()
+	sampSendChat('/me достал(а) бейджик Сотрудника Отдела Стажировки и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	wait(1500)
+	sampSendChat('/b /clist 6')
+	wait(1500)
+	sampSendChat('/b тег в /r [Сотрудник ОС]')
+	wait(1500)
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник Отдела Стажировки.', cfg.main.tarr))
+	end
+   },
+   {
+   title = "{FFFFFF}Inspection {47f4f0}Department",
+    onclick = function()
+	sampSendChat('/me достал(а) бейджик Сотрудника ID и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	wait(1500)
+	sampSendChat('/b /clist 21')
+	wait(1500)
+	sampSendChat('/b тег в /r [Emp.ID]')
+	wait(1500)
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник ID.', cfg.main.tarr))
+	end
+   },
+ }
+end
 function fastmenu(id)
  return
 {
@@ -1208,7 +1273,7 @@ function imgui.OnDrawFrame()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(iScreenWidth/2, iScreenHeight / 2), imgui.Cond.FirstUseEver)
                 imgui.Begin(u8('Inst Tools | Устав АШ'), ystwindow)
-                for line in io.lines('moonloader\\instools\\yst.txt') do
+                for line in io.lines('moonloader\\instools\\ystt.txt') do
                     imgui.TextWrapped(u8(line))
                 end
                 imgui.End()
@@ -1860,7 +1925,7 @@ function instmenu(id)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("Здравствуйте. Я сотрудник автошколы "..myname:gsub('_', ' ')..", чем могу помочь?")
 		wait(1500)
-		sampSendChat('/do На рубашке бейджик с надписью "'..rank..'" | '..myname:gsub('_', ' ')..'.')  
+		sampSendChat('/do На рубашке бейджик с надписью "'..rank..' | '..myname:gsub('_', ' ')..'".')  
 		end
       },
       {
@@ -1896,8 +1961,8 @@ function instmenu(id)
 end
 
 function ystf()
-    if not doesFileExist('moonloader/instools/yst.txt') then
-        local file = io.open("moonloader/instools/yst.txt", "w")
+    if not doesFileExist('moonloader/instools/ystt.txt') then
+        local file = io.open("moonloader/instools/ystt.txt", "w")
         file:write(fpt)
         file:close()
         file = nil
@@ -2325,7 +2390,7 @@ function sampev.onServerMessage(color, text)
                 wait(1500)
                 sampSendChat("/me нацепил бейджик на рубашку")
                 wait(1500)
-                sampSendChat('/do На рубашке бейджик с надписью "'..rank..'" | '..myname:gsub('_', ' ')..'.')  
+                sampSendChat('/do На рубашке бейджик с надписью "'..rank..' | '..myname:gsub('_', ' ')..'".')  
 				end
 				if cfg.main.male == false then
 				sampSendChat("/me открыла шкафчик")
@@ -2336,7 +2401,7 @@ function sampev.onServerMessage(color, text)
                 wait(1500)
                 sampSendChat("/me нацепила бейджик на рубашку")
                 wait(1500)
-                sampSendChat('/do На рубашке бейджик с надписью "'..rank..'" | '..myname:gsub('_', ' ')..'.')
+                sampSendChat('/do На рубашке бейджик с надписью "'..rank..' | '..myname:gsub('_', ' ')..'".')
 				end
 			end
             end)
