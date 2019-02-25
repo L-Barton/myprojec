@@ -1,7 +1,7 @@
 {
-  "latest": "3.2",
+  "latest": "3.3",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Добавлена команда /smsjob - Вызвать на работу весь мл.состав по смс
-  2. Добавлена лекция по просьбе главы ID"
+  1. Добавлена команда /oinv для Глав/Заместителей Отделов
+  2. Обновлен устав"
 }
