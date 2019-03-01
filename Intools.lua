@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.4')
+script_version('3.5')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -639,15 +639,15 @@ function oinvite(id)
  return
 {
   {
-   title = "{FFFFFF}Отдел {47f4f0}Стажировки",
+   title = "{FFFFFF}Human Resources {47f4f0}Department",
     onclick = function()
-	sampSendChat('/me достал(а) бейджик Сотрудника Отдела Стажировки и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	sampSendChat('/me достал(а) бейджик Сотрудника HRD и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 	wait(1500)
 	sampSendChat('/b /clist 6')
 	wait(1500)
-	sampSendChat('/b тег в /r [Emd.HRD]')
+	sampSendChat('/b тег в /r [Emd of HRD]')
 	wait(1500)
-	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник Отдела Стажировки.', cfg.main.tarr))
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник HRD.', cfg.main.tarr))
 	end
    },
    {
