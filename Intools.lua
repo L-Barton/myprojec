@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.3')
+script_version('3.4')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -304,7 +304,7 @@ local fpt = [[
 • 2.5.3 Глава отдела носит Бейджик №12.
 • 2.5.4 Заместитель главы отдела носит Бейджик №8.
 • 2.5.5 Сотрудник Отдела Inspection Department обязан носить Бейджик №21.
-• 2.5.6 Сотрудник Отдела Стажировки обязан носить Бейджик №6.
+• 2.5.6 Сотрудник Отдела Human Resources Department обязан носить Бейджик №6.
 • 2.5.7 Ответственный за работу в Филиале Бейджик №26
 • 2.5.8 Сотрудник который приходится Экзаменатором по заявке обязан носить Бейджик № 19.
 • 2.5.9 Сотрудники находящиеся на стажировке обязаны носить бейджик Бейджик - № 23.
@@ -412,15 +412,14 @@ function dmch()
 		sampSendChat('/members')
 		while not gotovo do wait(0) end
 		if gosmb then
-			sampShowDialog(716, "{ffffff}В сети: "..gcount.." | {ae433d}Организация | {ffffff}Time: "..os.date("%H:%M:%S"), table.concat(players2, "\n"), "x", _, 5) -- Показываем информацию.
+			sampShowDialog(716, "{47f4f0}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players2, "\n"), "x", _, 5) -- Показываем информацию.
 		elseif krimemb then
-			sampShowDialog(716, "{ffffff}В сети: "..gcount.." | {ae433d}Организация | {ffffff}Time: "..os.date("%H:%M:%S"), table.concat(players1, "\n"), "x", _, 5) -- Показываем информацию.
+			sampShowDialog(716, "{47f4f0}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players1, "\n"), "x", _, 5) -- Показываем информацию.
 		end
 		gosmb = false
 		krimemb = false
 		gotovo = false
 		statusc = false
-		gcount = nil
 	end)
 end
 
@@ -646,7 +645,7 @@ function oinvite(id)
 	wait(1500)
 	sampSendChat('/b /clist 6')
 	wait(1500)
-	sampSendChat('/b тег в /r [Сотрудник ОС]')
+	sampSendChat('/b тег в /r [Emd.HRD]')
 	wait(1500)
 	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник Отдела Стажировки.', cfg.main.tarr))
 	end
@@ -722,12 +721,12 @@ function otmenu(id)
  return
 {
   {
-   title = "{FFFFFF}Пиар отдела в рацию (ОС) {ff0000}(Для глав/замов отдела)",
+   title = "{FFFFFF}Пиар отдела в рацию (HRD) {ff0000}(Для глав/замов отдела)",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: В Отдел Стажировки производится пополнение сотрудников.', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: В Human Resources Department производится пополнение сотрудников.', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -774,6 +773,12 @@ function otmenu(id)
 	sampSendChat("/me достал блокнот с ручкой, после чего записал все результаты проверки")
 	wait(3500)
 	sampSendChat("/me поставил подпись и закрыл блокнот")
+	wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
 	if cfg.main.male == false then
 	sampSendChat("/me записала данные о проверяемой гос.организации")
@@ -799,6 +804,12 @@ function otmenu(id)
 	sampSendChat("/me достала блокнот с ручкой, после чего записала все результаты проверки")
 	wait(3500)
 	sampSendChat("/me поставила подпись и закрыла блокнот")
+	wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
 	end
    }
@@ -922,6 +933,12 @@ function fthmenu(id)
         sampSendChat("Спасибо,что прослушали мою лекцию. ")
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если у вас имеются вопросы, задавайте. ")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
     end
   },
    {
@@ -933,7 +950,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("/b /clist 19")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("ОС - отдел стажировки, занимающийся непосредственно обучением стажёров.")
+        sampSendChat("HRD - Human Resources Department, занимающийся непосредственно обучением стажёров.")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("ID - Inspection Department, занимающийся профилактикой нарушений и аварийных ситуаций.")
         wait(cfg.commands.zaderjka * 1000)
@@ -962,6 +979,12 @@ function fthmenu(id)
         sampSendChat("Спасибо, что прослушали мою лекцию.")
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если у вас имеются вопросы, задавайте. ")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
    },
    {
@@ -1014,6 +1037,12 @@ function fthmenu(id)
         sampSendChat("Садится за руль в нетрезвом состоянии. ")
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом лекция окончена. Спасибо за внимание.")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
    },
    {
@@ -1052,6 +1081,12 @@ function fthmenu(id)
         sampSendChat("Так же за подобные нарушения вас могут заключить под стражу. ")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
    },
       {
@@ -1092,6 +1127,12 @@ function fthmenu(id)
         sampSendChat("Ослаблять бдительность и внимание в процессе управления водным транспортом.")
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
    },
          {
@@ -1109,7 +1150,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Тормоз это пожалуй одна из главных частей автомобиля.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("- Самыми распространёнными причинами отказа тормозов являються...")
+        sampSendChat("- Самыми распространёнными причинами отказа тормозов являются...")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("...потеря тормозной жидкости из-за негерметичности системы.")
         wait(cfg.commands.zaderjka * 1000)
@@ -1145,9 +1186,15 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
 		sampSendChat("Это были самые основные способы остановки автомобиля.")
 		wait(cfg.commands.zaderjka * 1000)
-		sampSendChat("Главное не паниковать и вы сможете спасть свою и возможно чью-то жизнь.")
+		sampSendChat("Главное не паниковать и вы сможете спасти свою и возможно чью-то жизнь.")
 		wait(cfg.commands.zaderjka * 1000)
 		sampSendChat("На этом всё, спасибо за внимание, берегите себя и своих близких.")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
    },
         {
@@ -1176,6 +1223,12 @@ function fthmenu(id)
         sampSendChat("Ловить рыбу без наличия лицензии рыболова.")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу в радиусе 500 метров от хозяйств, разводящих рыбу.")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
    },
       {
@@ -1206,6 +1259,12 @@ function fthmenu(id)
         sampSendChat("Сближение самолетов ближе установленных правил расстояний. ")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
+		wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
    }
 }
