@@ -1,7 +1,7 @@
 {
-  "latest": "3.3",
+  "latest": "3.4",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Добавлена команда /oinv для Глав/Заместителей Отделов
-  2. Обновлен устав"
+  1. Переименован Отдел Стажировки в Human Resources Department
+  2. Исправлены некоторые ошибки/недоработки"
 }
