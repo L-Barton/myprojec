@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.5')
+script_version('3.6')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -235,11 +235,16 @@ function main()
 	    local myhp = getCharHealth(PLAYER_PED)
         local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
     if wasKeyPressed(cfg.keys.fastmenu) and not sampIsDialogActive() and not sampIsChatInputActive() then
+	if rank == 'Стажёр' or rank == 'Консультант' or rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
     submenus_show(fastmenu(id), "{47f4f0}IT {ffffff}| Быстрое меню")
+	else
+	ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
+	end
     end
           if valid and doesCharExist(ped) then
             local result, id = sampGetPlayerIdByCharHandle(ped)
             if result and wasKeyPressed(key.VK_Z) then
+			if rank == 'Стажёр' or rank == 'Консультант' or rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
                 gmegafhandle = ped
                 gmegafid = id
                 gmegaflvl = sampGetPlayerScore(id)
@@ -249,6 +254,9 @@ function main()
                 ftext(gmegaffrak)]]
 				megaftimer = os.time() + 300
                 submenus_show(pkmmenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] Уровень - "..sampGetPlayerScore(id).." ")
+				else
+			ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
+				end
             end
         end
 		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v or updwindows.v
@@ -407,14 +415,11 @@ end
 function dmch()
 	lua_thread.create(function()
 		statusc = true
-		players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
-		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
+		players3 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
 		sampSendChat('/members')
 		while not gotovo do wait(0) end
 		if gosmb then
-			sampShowDialog(716, "{47f4f0}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players2, "\n"), "x", _, 5) -- Показываем информацию.
-		elseif krimemb then
-			sampShowDialog(716, "{47f4f0}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players1, "\n"), "x", _, 5) -- Показываем информацию.
+			sampShowDialog(716, "{47f4f0}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players3, "\n"), "x", _, 5) -- Показываем информацию.
 		end
 		gosmb = false
 		krimemb = false
@@ -645,7 +650,7 @@ function oinvite(id)
 	wait(1500)
 	sampSendChat('/b /clist 6')
 	wait(1500)
-	sampSendChat('/b тег в /r [Emd of HRD]')
+	sampSendChat('/b тег в /r [Emp of HRD]')
 	wait(1500)
 	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник HRD.', cfg.main.tarr))
 	end
@@ -928,7 +933,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать! ')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу. ")
+        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам HRD либо к ст. Составу. ")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо,что прослушали мою лекцию. ")
 		wait(cfg.commands.zaderjka * 1000)
@@ -956,7 +961,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("С участием транспорта, через проведение лекций и проверок гос. структур")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("После четерех дней активной работы.")
+        sampSendChat("После 4-х дней активной работы.")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Вы получите бейджик Мл.Инструктора и будете считаться полноценным сотрудником.")
         wait(cfg.commands.zaderjka * 1000)
@@ -974,7 +979,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать!')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу.")
+        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам HRD либо к ст. Составу.")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо, что прослушали мою лекцию.")
 		wait(cfg.commands.zaderjka * 1000)
@@ -1775,7 +1780,7 @@ function oformenu(id)
 		  wait(1700)
 		  sampSendChat("/do Лицензия в руке.")
 		  wait(1700)
-		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 		  wait(1700)
 		  sampSendChat("/givelicense "..id)
 		  wait(1700)
@@ -1795,7 +1800,7 @@ function oformenu(id)
 		  wait(1700)
 		  sampSendChat("/do Лицензия в руке.")
 		  wait(1700)
-		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 		  wait(1700)
 		sampSendChat("/givelicense "..id)
 		wait(1700)
@@ -1815,7 +1820,7 @@ function oformenu(id)
 		  wait(1700)
 		  sampSendChat("/do Лицензия в руке.")
 		  wait(1700)
-		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 		  wait(1700)
 		sampSendChat("/givelicense "..id)
 		wait(1700)
@@ -1835,7 +1840,7 @@ function oformenu(id)
 		  wait(1700)
 		  sampSendChat("/do Лицензия в руке.")
 		  wait(1700)
-		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 		  wait(1700)
 		sampSendChat("/givelicense "..id)
 		wait(1700)
@@ -1855,7 +1860,7 @@ function oformenu(id)
 		  wait(1700)
 		  sampSendChat("/do Лицензия в руке.")
 		  wait(1700)
-		  sampSendChat('/me поставил печать "Autoschool San Fierro" и передал лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  sampSendChat('/me поставил печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 		  wait(1700)
 		sampSendChat("/givelicense "..id)
 		wait(1700)
@@ -1875,7 +1880,7 @@ function oformenu(id)
 		  wait(1700)
 		  sampSendChat("/do Лицензия в руке.")
 		  wait(1700)
-		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 		  wait(1700)
         sampSendChat("/givelicense "..id)
 		wait(1700)
@@ -2007,7 +2012,7 @@ function instmenu(id)
 		  wait(1700)
 		  sampSendChat("/do Стопка лицензий в руке.")
 		  wait(1700)
-		sampSendChat('/me проставил(а) печати "Autoschool San Fierro" и передал лицензии '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		sampSendChat('/me проставил(а) печати "Autoschool San Fierro" и передал(а) лицензии '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
         end
       },
 	  {
@@ -2495,7 +2500,7 @@ function sampev.onServerMessage(color, text)
 					else
 						src_bad = src_bad ..sampGetPlayerNickname(id).. ""
 			if src_bad ~= myname then
-			table.insert(players2, string.format('{'..color..'}%s[%s]{ffffff}\t%s\t%s', src_bad, id, rang, stat))
+			table.insert(players3, string.format('{'..color..'}%s[%s]{ffffff}\t%s\t%s', src_bad, id, rang, stat))
 			return false
 		end
 		end
