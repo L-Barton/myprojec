@@ -1,7 +1,6 @@
 {
-  "latest": "3.5",
+  "latest": "3.6",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Переименован Отдел Стажировки в Human Resources Department
-  2. Исправлены некоторые ошибки/недоработки"
+  1. Фикс багов"
 }
