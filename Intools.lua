@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.6')
+script_version('3.7')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -169,9 +169,9 @@ function main()
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
   if cfg == nil then
-    sampAddChatMessage("{47f4f0}IT {ffffff}| Отсутсвует файл конфига, создаем.", -1)
+    sampAddChatMessage("{139BEC}IT {ffffff}| Отсутсвует файл конфига, создаем.", -1)
     if inicfg.save(instools, 'instools/config.ini') then
-      sampAddChatMessage("{47f4f0}IT {ffffff}| Файл конфига успешно создан.", -1)
+      sampAddChatMessage("{139BEC}IT {ffffff}| Файл конфига успешно создан.", -1)
       cfg = inicfg.load(nil, 'instools/config.ini')
     end
   end
@@ -226,9 +226,9 @@ function main()
   while true do wait(0)
     if #departament > 25 then table.remove(departament, 1) end
     if cfg == nil then
-      sampAddChatMessage("{47f4f0}IT {ffffff}| Отсутсвует файл конфига, создаем.", -1)
+      sampAddChatMessage("{139BEC}IT {ffffff}| Отсутсвует файл конфига, создаем.", -1)
       if inicfg.save(instools, 'instools/config.ini') then
-        sampAddChatMessage("{47f4f0}IT {ffffff}| Файл конфига успешно создан.", -1)
+        sampAddChatMessage("{139BEC}IT {ffffff}| Файл конфига успешно создан.", -1)
         cfg = inicfg.load(nil, 'instools/config.ini')
       end
     end
@@ -236,7 +236,7 @@ function main()
         local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
     if wasKeyPressed(cfg.keys.fastmenu) and not sampIsDialogActive() and not sampIsChatInputActive() then
 	if rank == 'Стажёр' or rank == 'Консультант' or rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
-    submenus_show(fastmenu(id), "{47f4f0}IT {ffffff}| Быстрое меню")
+    submenus_show(fastmenu(id), "{139BEC}IT {ffffff}| Быстрое меню")
 	else
 	ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
 	end
@@ -253,7 +253,7 @@ function main()
                 ftext(gmegaflvl)
                 ftext(gmegaffrak)]]
 				megaftimer = os.time() + 300
-                submenus_show(pkmmenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] Уровень - "..sampGetPlayerScore(id).." ")
+                submenus_show(pkmmenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] Уровень - "..sampGetPlayerScore(id).." ")
 				else
 			ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
 				end
@@ -419,7 +419,7 @@ function dmch()
 		sampSendChat('/members')
 		while not gotovo do wait(0) end
 		if gosmb then
-			sampShowDialog(716, "{47f4f0}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players3, "\n"), "x", _, 5) -- Показываем информацию.
+			sampShowDialog(716, "{139BEC}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players3, "\n"), "x", _, 5) -- Показываем информацию.
 		end
 		gosmb = false
 		krimemb = false
@@ -429,21 +429,21 @@ function dmch()
 end
 
 function dlog()
-    sampShowDialog(97987, '{47f4f0}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
+    sampShowDialog(97987, '{139BEC}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
 end
 
 function vig(pam)
   local id, pric = string.match(pam, '(%d+)%s+(.+)')
   if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
   if id == nil then
-    sampAddChatMessage("{47f4f0}Inst Tools {ffffff}| Введите: /vig ID Причина", -1)
+    sampAddChatMessage("{139BEC}Inst Tools {ffffff}| Введите: /vig ID Причина", -1)
   end
   if id ~=nil and not sampIsPlayerConnected(id) then
-    sampAddChatMessage("{47f4f0}Inst Tools {ffffff}| Игрок с ID: "..id.." не подключен к серверу.", -1)
+    sampAddChatMessage("{139BEC}Inst Tools {ffffff}| Игрок с ID: "..id.." не подключен к серверу.", -1)
   end
   if id ~= nil and sampIsPlayerConnected(id) then
       if pric == nil then
-        sampAddChatMessage("{47f4f0}Inst Tools {ffffff}| Введите: /vig ID ПРИЧИНА", -1)
+        sampAddChatMessage("{139BEC}Inst Tools {ffffff}| Введите: /vig ID ПРИЧИНА", -1)
       end
       if pric ~= nil then
 	   if cfg.main.tarb then
@@ -485,15 +485,15 @@ end
 function getrang(rangg)
 local ranks = 
         {
-		['1'] = 'Стажер',
-		['2'] = 'Консультант',
-		['3'] = 'Экзаменатор',
-		['4'] = 'Мл.Инструктор',
-		['5'] = 'Инструктор',
-		['6'] = 'Координатор',
-		['7'] = 'Мл.Менеджер',
-		['8'] = 'Ст.Менеджер',
-		['9'] = 'Директор'
+		['1'] = 'Стажёра',
+		['2'] = 'Консультанта',
+		['3'] = 'Экзаменатора',
+		['4'] = 'Мл.Инструктора',
+		['5'] = 'Инструктора',
+		['6'] = 'Координатора',
+		['7'] = 'Мл.Менеджера',
+		['8'] = 'Ст.Менеджера',
+		['9'] = 'Директора'
 		}
 	return ranks[rangg]
 end
@@ -536,9 +536,9 @@ function giverank(pam)
 				sampSendChat(string.format('/giverank %s %s', id, rangg))
 				wait(1500)
 				if cfg.main.tarb then
-                sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до "%s".', cfg.main.tarr, plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks))
+                sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до %s%s.', cfg.main.tarr, plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks, plus == '+' and ', поздравляю' or ''))
                 else
-				sampSendChat(string.format('/r '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до "%s".', plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks))
+				sampSendChat(string.format('/r '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до %s%s.', plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks, plus == '+' and ', поздравляю' or ''))
             end
 			else 
 			ftext('Вы ввели неверный тип [+/-]')
@@ -594,7 +594,7 @@ function invite(pam)
 	  if dist <= 5 then
 	  if cfg.main.tarb then
 		if sampIsPlayerConnected(id) then
-                submenus_show(oinvite(id), "{47f4f0}IT {ffffff}| Выбор отдела")
+                submenus_show(oinvite(id), "{139BEC}IT {ffffff}| Выбор отдела")
 				else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
             end
@@ -644,7 +644,7 @@ function oinvite(id)
  return
 {
   {
-   title = "{FFFFFF}Human Resources {47f4f0}Department",
+   title = "{FFFFFF}Human Resources {139BEC}Department",
     onclick = function()
 	sampSendChat('/me достал(а) бейджик Сотрудника HRD и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 	wait(1500)
@@ -656,7 +656,7 @@ function oinvite(id)
 	end
    },
    {
-   title = "{FFFFFF}Inspection {47f4f0}Department",
+   title = "{FFFFFF}Inspection {139BEC}Department",
     onclick = function()
 	sampSendChat('/me достал(а) бейджик Сотрудника ID и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 	wait(1500)
@@ -673,33 +673,33 @@ function fastmenu(id)
  return
 {
   {
-   title = "{FFFFFF}Меню {47f4f0}лекций",
+   title = "{FFFFFF}Меню {139BEC}лекций",
     onclick = function()
-	submenus_show(fthmenu(id), "{47f4f0}IT {ffffff}| Меню лекций")
+	submenus_show(fthmenu(id), "{139BEC}IT {ffffff}| Меню лекций")
 	end
    },
     {
-   title = "{FFFFFF}Меню {47f4f0}гос.новостей {ff0000}(Для Ст.Состава)",
+   title = "{FFFFFF}Меню {139BEC}гос.новостей {ff0000}(Для Ст.Состава)",
     onclick = function()
 	if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
-	submenus_show(govmenu(id), "{47f4f0}IT {ffffff}| Меню гос.новостей")
+	submenus_show(govmenu(id), "{139BEC}IT {ffffff}| Меню гос.новостей")
 	else
 	ftext('Вы не находитесь в Ст.Составе')
 	end
 	end
    },
    {
-   title = "{FFFFFF}Меню {47f4f0}отделов",
+   title = "{FFFFFF}Меню {139BEC}отделов",
     onclick = function()
 	if cfg.main.tarb then
-	submenus_show(otmenu(id), "{47f4f0}IT {ffffff}| Меню отделов")
+	submenus_show(otmenu(id), "{139BEC}IT {ffffff}| Меню отделов")
 	else
 	ftext('Включите автотег в настройках')
 	end
 	end
    },
    {
-   title = "{FFFFFF}Доставка лицензий {47f4f0}в любую точку штата в /d{ff0000}(Для 4+ ранга)",
+   title = "{FFFFFF}Доставка лицензий {139BEC}в любую точку штата в /d{ff0000}(Для 4+ ранга)",
     onclick = function()
 	if rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
 	sampSendChat(string.format('/d OG, Осуществляется доставка лицензий в любую точку штата. Тел: %s.', tel))
@@ -709,7 +709,7 @@ function fastmenu(id)
 	end
    },
    {
-   title = "{FFFFFF}Список {47f4f0}сотрудников находящихся не в офисе",
+   title = "{FFFFFF}Список {139BEC}сотрудников находящихся не в офисе",
     onclick = function()
 	pX, pY, pZ = getCharCoordinates(playerPed)
 	if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
@@ -889,7 +889,7 @@ function fthmenu(id)
  return
 {
   {
-    title = "{FFFFFF}Лекция для {47f4f0}Стажёра",
+    title = "{FFFFFF}Лекция для {139BEC}Стажёра",
     onclick = function()
 	    sampSendChat("Приветствую. Вы приняты на Стажировку в Автошколу. ")
         wait(cfg.commands.zaderjka * 1000)
@@ -939,15 +939,17 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если у вас имеются вопросы, задавайте. ")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
     end
   },
    {
-    title = "{FFFFFF}Лекция для {47f4f0}Экзаменатора",
+    title = "{FFFFFF}Лекция для {139BEC}Экзаменатора",
     onclick = function()
 	sampSendChat("Приветствую")
         wait(cfg.commands.zaderjka * 1000)
@@ -985,15 +987,17 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если у вас имеются вопросы, задавайте. ")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
    {
-    title = "{FFFFFF}Лекция про {47f4f0}ПДД",
+    title = "{FFFFFF}Лекция про {139BEC}ПДД",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1043,15 +1047,17 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом лекция окончена. Спасибо за внимание.")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
    {
-    title = "{FFFFFF}Лекция про {47f4f0}Правильное обращение с оружием",
+    title = "{FFFFFF}Лекция про {139BEC}Правильное обращение с оружием",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1087,15 +1093,17 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
       {
-    title = "{FFFFFF}Лекция про {47f4f0}Правила управления водным транспортом",
+    title = "{FFFFFF}Лекция про {139BEC}Правила управления водным транспортом",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1133,15 +1141,17 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
          {
-    title = '{FFFFFF}Лекция {47f4f0}"Как вести себя в экстремальных ситуациях"',
+    title = '{FFFFFF}Лекция {139BEC}"Как вести себя в экстремальных ситуациях"',
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1195,15 +1205,17 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
 		sampSendChat("На этом всё, спасибо за внимание, берегите себя и своих близких.")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
         {
-    title = "{FFFFFF}Лекция про {47f4f0}Правила рыбной ловли",
+    title = "{FFFFFF}Лекция про {139BEC}Правила рыбной ловли",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1229,15 +1241,17 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу в радиусе 500 метров от хозяйств, разводящих рыбу.")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
       {
-    title = "{FFFFFF}Лекция про {47f4f0}Пилотирование",
+    title = "{FFFFFF}Лекция про {139BEC}Пилотирование",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1265,11 +1279,13 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 		wait(1200)
+		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    }
 }
@@ -1282,6 +1298,7 @@ function imgui.OnDrawFrame()
 	local tagfr = imgui.ImBuffer(u8(cfg.main.tarr), 256)
 	local tagb = imgui.ImBool(cfg.main.tarb)
 	local clistb = imgui.ImBool(cfg.main.clistb)
+	local autoscr = imgui.ImBool(cfg.main.hud)
 	local clisto = imgui.ImBool(cfg.main.clisto)
 	local stateb = imgui.ImBool(cfg.main.male)
 	local waitbuffer = imgui.ImInt(cfg.commands.zaderjka)
@@ -1323,6 +1340,11 @@ function imgui.OnDrawFrame()
     end
 	if imgui.SliderInt(u8'Задержка в лекциях (сек)', waitbuffer,  4, 10) then
      cfg.commands.zaderjka = waitbuffer.v
+    end
+	imgui.Text(u8("Автоскрин лекций"))
+	imgui.SameLine()
+	if imgui.ToggleButton(u8'Автоскрин лекций', autoscr) then
+        cfg.main.hud = not cfg.main.hud
     end
     if imgui.CustomButton(u8('Сохранить настройки'), imgui.ImVec4(0.11, 0.79, 0.07, 0.40), imgui.ImVec4(0.11, 0.79, 0.07, 1.00), imgui.ImVec4(0.11, 0.79, 0.07, 0.76), btn_size) then
 	ftext('Настройки успешно сохранены.', -1)
@@ -1403,7 +1425,7 @@ function imgui.OnDrawFrame()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(700, 330), imgui.Cond.FirstUseEver)
                 imgui.Begin(u8('Inst Tools | Обновление'), updwindows, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoResize)
-                imgui.Text(u8('Вышло обновление скрипта Inst Tools. Что бы обновиться нажмите кнопку внизу. Список изменений:'))
+                imgui.Text(u8('Вышло обновление скрипта Inst Tools до версии '..updversion..'. Что бы обновиться нажмите кнопку внизу. Список изменений:'))
                 imgui.Separator()
                 imgui.BeginChild("uuupdate", imgui.ImVec2(690, 200))
                 for line in ttt:gmatch('[^\r\n]+') do
@@ -1606,7 +1628,7 @@ function f(pam)
     end
 end
 function ftext(message)
-    sampAddChatMessage(string.format('%s %s', ctag, message), 0x3D85C6)
+    sampAddChatMessage(string.format('%s %s', ctag, message), 0x139BEC)
 end
 
 function tset()
@@ -1645,28 +1667,28 @@ function pkmmenu(id)
         title = "{ffffff}» Инструктор",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(instmenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(instmenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
 	  {
         title = "{ffffff}» Цены лицензий",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(pricemenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(pricemenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
       {
         title = "{ffffff}» Вопросы",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(questimenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
       {
         title = "{ffffff}» Оформление",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(oformenu(id), "{47f4f0}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
 	  {
@@ -2364,12 +2386,12 @@ function update()
 			    local info = decodeJson(f:read('*a'))
                 updatelink = info.updateurl
                 updlist1 = info.updlist
+				updversion = info.latest
                 ttt = updlist1
 			    if info and info.latest then
                     version = tonumber(info.latest)
                     if version > tonumber(thisScript().version) then
-                        ftext('Обнаружено обновление.')
-                        ftext('Примечание: Если у вас не появилось окошко введите /tset')
+                        ftext('Обнаружено обновление до версии '..updversion..'.')
 					    updwindows.v = true
                     else
                         ftext('Обновлений скрипта не обнаружено. Приятной игры.', -1)
