@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.7')
+script_version('3.8')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -249,11 +249,12 @@ function main()
                 gmegafid = id
                 gmegaflvl = sampGetPlayerScore(id)
                 gmegaffrak = getFraktionBySkin(id)
+			    local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
                 --[[ftext(gmegafid)
                 ftext(gmegaflvl)
                 ftext(gmegaffrak)]]
 				megaftimer = os.time() + 300
-                submenus_show(pkmmenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] Уровень - "..sampGetPlayerScore(id).." ")
+                submenus_show(pkmmenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] {ffffff}Уровень - "..sampGetPlayerScore(id).." ")
 				else
 			ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
 				end
@@ -517,7 +518,7 @@ function giverank(pam)
 				wait(1500)
 				sampSendChat('/me убрал старый бейджик в карман')
 				wait(1500)
-                sampSendChat(string.format('/me достал новый бейджик с надписью "%s"', ranks))
+                sampSendChat(string.format('/me достал новый бейджик %s', ranks))
 				wait(1500)
 				sampSendChat('/me закрепил на рубашку человеку напротив новый бейджик')
 				wait(1500)
@@ -526,7 +527,7 @@ function giverank(pam)
 				wait(1500)
 				sampSendChat('/me убрала старый бейджик в карман')
 				wait(1500)
-                sampSendChat(string.format('/me достала новый бейджик с надписью "%s"', ranks))
+                sampSendChat(string.format('/me достала новый бейджик %s', ranks))
 				wait(1500)
 				sampSendChat('/me закрепила на рубашку человеку напротив новый бейджик')
 				wait(1500)
@@ -1346,7 +1347,7 @@ function imgui.OnDrawFrame()
 	if imgui.ToggleButton(u8'Автоскрин лекций', autoscr) then
         cfg.main.hud = not cfg.main.hud
     end
-    if imgui.CustomButton(u8('Сохранить настройки'), imgui.ImVec4(0.11, 0.79, 0.07, 0.40), imgui.ImVec4(0.11, 0.79, 0.07, 1.00), imgui.ImVec4(0.11, 0.79, 0.07, 0.76), btn_size) then
+    if imgui.CustomButton(u8('Сохранить настройки'), imgui.ImVec4(0.08, 0.61, 0.92, 0.40), imgui.ImVec4(0.08, 0.61, 0.92, 1.00), imgui.ImVec4(0.08, 0.61, 0.92, 0.76), btn_size) then
 	ftext('Настройки успешно сохранены.', -1)
     inicfg.save(cfg, 'instools/config.ini') -- сохраняем все новые значения в конфиге
     end
@@ -1370,13 +1371,14 @@ function imgui.OnDrawFrame()
     local iScreenWidth, iScreenHeight = getScreenResolution()
     local btn_size1 = imgui.ImVec2(70, 0)
 	local btn_size = imgui.ImVec2(130, 0)
+	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
     imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
     imgui.Begin('Inst Tools | Main Menu', second_window, imgui.WindowFlags.NoResize)
 	local text = 'Разработчик:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.12, 0.70 , 0.38, 1.0), 'Damien_Requeste')
+	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Damien_Requeste')
     imgui.Separator()
 	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
@@ -1395,6 +1397,18 @@ function imgui.OnDrawFrame()
       helps.v = not helps.v
     end
 	imgui.Separator()
+	imgui.BeginChild("Информация", imgui.ImVec2(410, 100), true)
+	imgui.Text(u8 'Имя и Фамилия:   '..sampGetPlayerNickname(myid):gsub('_', ' ')..'')
+	imgui.Text(u8 'Должность:') imgui.SameLine() imgui.Text(u8(rank))
+	imgui.Text(u8 'Номер телефона:   '..tel..'')
+	if cfg.main.tarb then
+	imgui.Text(u8 'Тег в рацию:') imgui.SameLine() imgui.Text(u8(cfg.main.tarr))
+	end
+	if cfg.main.clistb then
+	imgui.Text(u8 'Номер бейджика:   '..cfg.main.clist..'')
+	end
+	imgui.EndChild()
+	imgui.Separator()
 	imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8("Текущая дата: %s")).x)/3.5)
 	imgui.Text(u8(string.format("Текущая дата: %s", os.date())))
     imgui.End()
@@ -1403,18 +1417,20 @@ function imgui.OnDrawFrame()
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
                 imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
-                imgui.Text(u8 '/tset - Открыть меню скрипта')
+				imgui.BeginChild("Список команд", imgui.ImVec2(495, 230), true, imgui.WindowFlags.VerticalScrollbar)
+                imgui.BulletText(u8 '/tset - Открыть меню скрипта')
                 imgui.Separator()
-                imgui.Text(u8 '/vig [id] [Причина] - Выдать выговор по рации')
-                imgui.Text(u8 '/dmb - Открыть /members в диалоге')
-                imgui.Text(u8 '/where [id] - Запросить местоположение по рации')
-                imgui.Text(u8 '/yst - Открыть устав АШ')
-				imgui.Text(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
-                imgui.Text(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
+                imgui.BulletText(u8 '/vig [id] [Причина] - Выдать выговор по рации')
+                imgui.BulletText(u8 '/dmb - Открыть /members в диалоге')
+                imgui.BulletText(u8 '/where [id] - Запросить местоположение по рации')
+                imgui.BulletText(u8 '/yst - Открыть устав АШ')
+				imgui.BulletText(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
+                imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
 				imgui.Separator()
-                imgui.Text(u8 'Клавиши: ')
-                imgui.Text(u8 'ПКМ+Z на игрока - Меню взаимодействия')
-                imgui.Text(u8 'F2 - "Быстрое меню"')
+                imgui.BulletText(u8 'Клавиши: ')
+                imgui.BulletText(u8 'ПКМ+Z на игрока - Меню взаимодействия')
+                imgui.BulletText(u8 'F2 - "Быстрое меню"')
+				imgui.EndChild()
                 imgui.End()
     end
     if updwindows.v then
@@ -1661,34 +1677,35 @@ function imgui.CentrText(text)
         end
 
 function pkmmenu(id)
+    local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
     return
     {
       {
         title = "{ffffff}» Инструктор",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(instmenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(instmenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
 	  {
         title = "{ffffff}» Цены лицензий",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(pricemenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(pricemenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
       {
         title = "{ffffff}» Вопросы",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
       {
         title = "{ffffff}» Оформление",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| "..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
 	  {
@@ -1767,9 +1784,15 @@ function questimenu(args)
         end
       },
       {
-        title = '{ffffff}Оружие',
+        title = '{ffffff}Цель ношения оружия',
         onclick = function()
         sampSendChat("Зачем вам лицензия на оружие?")
+        end
+      },
+	  {
+        title = '{ffffff}Хранение оружия',
+        onclick = function()
+        sampSendChat("Где вы будете хранить оружие?")
         end
       },
 	  {
@@ -1966,9 +1989,13 @@ function pricemenu(args)
       {
         title = '{ffffff}» Оружие{ff0000} со 2 уровня.',
         onclick = function()
+		if gmegaflvl > 2 then
         sampSendChat("Стоимость данной лицензии составляет - 50.000$.")
 		wait(1500)
 		sampSendChat("Оформляем?")
+		else
+		sampSendChat("Данную лицензию можно приобрести с 2-х лет в штате.")
+		end
         end
       },
 	  {
@@ -2442,7 +2469,7 @@ function sampev.onSendSpawn()
     if cfg.main.clistb and getDistanceBetweenCoords3d(pX, pY, pZ, 2337.3574,1666.1699,3040.9524) < 20 then
         lua_thread.create(function()
             wait(1200)
-			sampSendChat('/clist '..cfg.main.clist)
+			sampSendChat('/clist '..tonumber(cfg.main.clist))
 			wait(500)
 			local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 			local color = ("%06X"):format(bit.band(sampGetPlayerColor(myid), 0xFFFFFF))
