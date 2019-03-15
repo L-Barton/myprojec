@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.1')
+script_version('4.2')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2538,7 +2538,7 @@ function sampev.onServerMessage(color, text)
         rabden = false
     end
 	if text:find('Вы выгнали') then
-        local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: (.+)')
+        local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: .+')
 		if cfg.main.tarb then
         sampSendChat(string.format('/r [%s]: %s - Уволен(а) по причине "%s".', cfg.main.tarr, un1:gsub('_', ' '), un2))
         else
