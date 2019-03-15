@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.0')
+script_version('4.1')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2539,21 +2539,22 @@ function sampev.onServerMessage(color, text)
     end
 	if text:find('Вы выгнали') then
         local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: (.+)')
-		wait(5000)
 		if cfg.main.tarb then
         sampSendChat(string.format('/r [%s]: %s - Уволен(а) по причине "%s".', cfg.main.tarr, un1:gsub('_', ' '), un2))
         else
 		sampSendChat(string.format('/r %s - Уволен(а) по причине "%s".', un1:gsub('_', ' '), un2))
 		end
     end
-	if text:find('Вы предложили') then
+	if text:find('Вы предложили (.+) вступить в Driving School.') then
         local inv1 = text:match('Вы предложили (.+) вступить в Driving School.')
+		lua_thread.create(function()
 		wait(5000)
 		if cfg.main.tarb then
         sampSendChat(string.format('/r [%s]: Новый сотрудник Автошколы - %s. Добро пожаловать.', cfg.main.tarr, inv1:gsub('_', ' ')))
         else
 		sampSendChat(string.format('/r Новый сотрудник Автошколы - %s. Добро пожаловать.', inv1:gsub('_', ' ')))
 		end
+		end)
     end
 	if color == -8224086 then
         local colors = ("{%06X}"):format(bit.rshift(color, 8))
