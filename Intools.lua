@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.9')
+script_version('4.0')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -69,7 +69,7 @@ function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрип
     colors[clr.BorderShadow] = ImVec4(0.92, 0.91, 0.88, 0.00)
 	--colors[clr.TitleBgCollapsed] = ImVec4(0.00, 0.00, 0.00, 0.51)
 	colors[clr.TitleBgCollapsed] = ImVec4(0.24, 0.23, 0.29, 1.00)
-    colors[clr.TitleBgActive] = ImVec4(0.07, 0.07, 0.09, 1.00)
+    colors[clr.TitleBgActive] = ImVec4(0.07, 0.61, 0.92, 0.83)
 	colors[clr.MenuBarBg] = ImVec4(0.10, 0.09, 0.12, 0.50) 	
     colors[clr.ScrollbarBg] = ImVec4(0.10, 0.09, 0.12, 1.00)
     colors[clr.ScrollbarGrab] = ImVec4(0.80, 0.80, 0.83, 0.31)
@@ -105,7 +105,7 @@ function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрип
     colors[clr.FrameBg] = ImVec4(0.13, 0.12, 0.15, 1.00)
     colors[clr.FrameBgHovered] = ImVec4(0.24, 0.23, 0.29, 1.00)
     colors[clr.FrameBgActive] = ImVec4(0.56, 0.56, 0.58, 1.00)
-	colors[clr.TitleBg] = ImVec4(0.10, 0.09, 0.12, 0.50)
+	colors[clr.TitleBg] = ImVec4(0.07, 0.61, 0.92, 0.83)
 
 end
 apply_custom_style()
@@ -213,6 +213,7 @@ function main()
   sampRegisterChatCommand('r', r)
   sampRegisterChatCommand('f', f)
   sampRegisterChatCommand('dlog', dlog)
+  sampRegisterChatCommand('dcol', cmd_color)
   sampRegisterChatCommand('dmb', dmb)
   sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
@@ -579,12 +580,6 @@ function invite(pam)
                 sampSendChat('/me достал(а) бейджик и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 				wait(1500)
 				sampSendChat(string.format('/invite %s', id))
-				wait(5000)
-				if cfg.main.tarb then
-                sampSendChat(string.format('/r [%s]: Новый сотрудник Автошколы - '..sampGetPlayerNickname(id):gsub('_', ' ')..'. Добро пожаловать.', cfg.main.tarr))
-                else
-				sampSendChat('/r Новый сотрудник Автошколы - '..sampGetPlayerNickname(id):gsub('_', ' ')..'. Добро пожаловать.')
-            end
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
 		end
@@ -634,15 +629,9 @@ function invite(pam)
 	  if rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
         if id and pri4ina then
 		if sampIsPlayerConnected(id) then
-                sampSendChat('/me забрал(а) бейджик у '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+                sampSendChat('/me забрал(а) форму и бейджик у '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 				wait(2000)
 				sampSendChat(string.format('/uninvite %s %s', id, pri4ina))
-				wait(2000)
-				if cfg.main.tarb then
-                sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - Уволен(а) по причине "%s".', cfg.main.tarr, pri4ina))
-                else
-				sampSendChat(string.format('/r '..sampGetPlayerNickname(id):gsub('_', ' ')..' - Уволен(а) по причине "%s".', pri4ina))
-            end
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
 		end
@@ -2482,6 +2471,12 @@ function goupdate()
 end)
 end
 
+function cmd_color() -- функция получения цвета строки, хз зачем она мне, но когда то юзал
+	local text, prefix, color, pcolor = sampGetChatString(99)
+	sampAddChatMessage(string.format("Цвет последней строки чата - {934054}[%d] (скопирован в буфер обмена)",color),-1)
+	setClipboardText(color)
+end
+
 function sampev.onSendSpawn()
     pX, pY, pZ = getCharCoordinates(playerPed)
     if cfg.main.clistb and getDistanceBetweenCoords3d(pX, pY, pZ, 2337.3574,1666.1699,3040.9524) < 20 then
@@ -2541,6 +2536,24 @@ function sampev.onServerMessage(color, text)
     end
     if text:find('Рабочий день окончен') and color ~= -1 then
         rabden = false
+    end
+	if text:find('Вы выгнали') then
+        local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: (.+)')
+		wait(5000)
+		if cfg.main.tarb then
+        sampSendChat(string.format('/r [%s]: %s - Уволен(а) по причине "%s".', cfg.main.tarr, un1:gsub('_', ' '), un2))
+        else
+		sampSendChat(string.format('/r %s - Уволен(а) по причине "%s".', un1:gsub('_', ' '), un2))
+		end
+    end
+	if text:find('Вы предложили') then
+        local inv1 = text:match('Вы предложили (.+) вступить в Driving School.')
+		wait(5000)
+		if cfg.main.tarb then
+        sampSendChat(string.format('/r [%s]: Новый сотрудник Автошколы - %s. Добро пожаловать.', cfg.main.tarr, inv1:gsub('_', ' ')))
+        else
+		sampSendChat(string.format('/r Новый сотрудник Автошколы - %s. Добро пожаловать.', inv1:gsub('_', ' ')))
+		end
     end
 	if color == -8224086 then
         local colors = ("{%06X}"):format(bit.rshift(color, 8))
