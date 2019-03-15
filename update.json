@@ -1,7 +1,6 @@
 {
-  "latest": "4.1",
+  "latest": "4.2",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Фикс багов
-  2. Немного обновлен интерфейс"
+  1. Фикс багов"
 }
