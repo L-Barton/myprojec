@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.2')
+script_version('4.3')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2537,13 +2537,16 @@ function sampev.onServerMessage(color, text)
     if text:find('Рабочий день окончен') and color ~= -1 then
         rabden = false
     end
-	if text:find('Вы выгнали') then
-        local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: .+')
+	if text:find('Вы выгнали (.+) из организации. Причина: (.+)') then
+        local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: (.+)')
+		lua_thread.create(function()
+		wait(3000)
 		if cfg.main.tarb then
         sampSendChat(string.format('/r [%s]: %s - Уволен(а) по причине "%s".', cfg.main.tarr, un1:gsub('_', ' '), un2))
         else
 		sampSendChat(string.format('/r %s - Уволен(а) по причине "%s".', un1:gsub('_', ' '), un2))
 		end
+		end)
     end
 	if text:find('Вы предложили (.+) вступить в Driving School.') then
         local inv1 = text:match('Вы предложили (.+) вступить в Driving School.')
