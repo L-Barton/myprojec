@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.4')
+script_version('4.5')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -1727,7 +1727,7 @@ function pkmmenu(id)
         onclick = function()
         pID = tonumber(args)
 	    pX, pY, pZ = getCharCoordinates(playerPed)
-	    if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 then
+	    if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(pricemenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
@@ -1738,7 +1738,7 @@ function pkmmenu(id)
         title = "{ffffff}» Вопросы",
         onclick = function()
         pID = tonumber(args)
-		if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 then
+		if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
@@ -1749,7 +1749,7 @@ function pkmmenu(id)
         title = "{ffffff}» Оформление",
         onclick = function()
         pID = tonumber(args)
-		if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 then
+		if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
@@ -1872,7 +1872,9 @@ function oformenu(id)
 		  sampCloseCurrentDialogWithButton(1)
 		  wait(1700)
 		  sampSendChat("Удачи на дорогах.")
+		  if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
 		  dostavka = false
+		  end
 		end
       },
       {
@@ -1893,7 +1895,9 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(2)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
-		dostavka = false
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
         end
       },
       {
@@ -1914,7 +1918,9 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(1)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
-		dostavka = false
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
         end
       },
       {
@@ -1935,7 +1941,9 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(4)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
-		dostavka = false
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
         end
       },
       {
@@ -1956,7 +1964,9 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(3)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
-		dostavka = false
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
         end
       },
       {
@@ -1977,7 +1987,9 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(5)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
-		dostavka = false
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
         end
       },
 	  {
@@ -1992,7 +2004,9 @@ function oformenu(id)
 		  sampSendChat("/do Стопка лицензий в руке.")
 		  wait(1700)
 		sampSendChat('/me проставил(а) печати "Autoschool San Fierro" и передал(а) лицензии '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
-		dostavka = false
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
         end
       }
     }
