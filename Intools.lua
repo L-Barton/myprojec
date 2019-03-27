@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.3')
+script_version('4.4')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -33,6 +33,7 @@ players2 = {'{ffffff}Дата принятия\t{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
 frak = nil
 rang = nil
 ttt = nil
+dostavka = false
 rabden = false
 tload = false
 tLastKeys = {}
@@ -206,6 +207,7 @@ function main()
   print(telephone)
   ystf()
   update()
+  sampCreate3dTextEx(641, '{ffffff}Место для продажи лицензий', 4294927974, 2346.1362,1666.7819,3040.9387, 3, true, -1, -1)
   local spawned = sampIsLocalPlayerSpawned()
   for k, v in pairs(tBindList) do
 		rkeys.registerHotKey(v.v, true, onHotKey)
@@ -332,6 +334,7 @@ local fpt = [[
 • 2.16 Сотрудник Автошколы, находящийся в должности Мл.Менеджера и выше, обязан докладывать по рации о каждом увольнении/повышении/понижении. 
 • 2.17 Каждый сотрудник после входа (выхода) в комнату отдыха должен закрывать за собой двери.
 • 2.18 Сотрудник Автошколы, продавший лицензию на бизнес без заявления владельца получает выговор I степени;
+• 2.19 Сотрудник Автошколы, занимающий должность Мл.Инструктора и выше, должен выезжать на вызовы по заказу лицензий.
 
 
 [3] Рабочий день в Автошколе:
@@ -722,6 +725,17 @@ function fastmenu(id)
 	ftext('Вы должны находиться в офисе')
 	end
 	end
+   },
+   {
+   title = "{FFFFFF}Доложить в рацию о доставке лицензии {ff0000}(обязательно при доставке)",
+    onclick = function()
+    if cfg.main.tarb then
+        sampSendChat(string.format('/r [%s]: Выехал на доставку лицензии.', cfg.main.tarr))
+        else
+        sampSendChat(string.format('/r Выехал на доставку лицензии.'))
+        end
+		dostavka = true
+	end
    }
 }
 end
@@ -876,14 +890,28 @@ function govmenu(id)
    title = "{FFFFFF}Занять гос. волну",
     onclick = function()
 	sampSetChatInputEnabled(true)
-	sampSetChatInputText("/d OG, Занимаю гос.волну на")
+	sampSetChatInputText("/d OG, Занимаю гос.волну на X. Возражения на п.")
 	end
    },
    {
    title = "{FFFFFF}Напомнить о займе гос. волны",
     onclick = function()
 	sampSetChatInputEnabled(true)
-	sampSetChatInputText("/d OG, Напоминаю что волна гос.новостей за Автошколой на")
+	sampSetChatInputText("/d OG, Напоминаю что волна гос.новостей на X за Inst.")
+	end
+   },
+   {
+   title = "{FFFFFF}Пиар акции cash back {139BEC}",
+    onclick = function()
+	sampSendChat("/d OG, Для сотрудников гос. структур Cash Back на лицензии составляет 100 процентов.")
+	wait(10000)
+	sampSendChat("/d OG, Подробнее с условиями акции можно ознакомиться на оф. портале.")
+	end
+   },
+   {
+   title = "{FFFFFF}Пиар акции cash back {139BEC}[часть 2] (если 2-ая строчка не сработала)",
+    onclick = function()
+	sampSendChat("/d OG, Подробнее с условиями акции можно ознакомиться на оф. портале.")
 	end
    }
 }
@@ -959,7 +987,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Поскольку вы приняты по заявке на должность Экзаменатора, вам необходимо определиться с отделом.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("/b /clist 19")
+        sampSendChat("/b /clist 4")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("HRD - Human Resources Department, занимающийся непосредственно обучением стажёров.")
         wait(cfg.commands.zaderjka * 1000)
@@ -1698,22 +1726,35 @@ function pkmmenu(id)
         title = "{ffffff}» Цены лицензий",
         onclick = function()
         pID = tonumber(args)
+	    pX, pY, pZ = getCharCoordinates(playerPed)
+	    if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 then
         submenus_show(pricemenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+		else
+	    ftext('Вы должны находиться за стойкой')
+		end
         end
       },
       {
         title = "{ffffff}» Вопросы",
         onclick = function()
         pID = tonumber(args)
+		if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 then
         submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+		else
+	    ftext('Вы должны находиться за стойкой')
+		end
         end
       },
       {
         title = "{ffffff}» Оформление",
         onclick = function()
         pID = tonumber(args)
+		if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 then
         submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+		else
+	    ftext('Вы должны находиться за стойкой')
         end
+		end
       },
 	  {
         title = "{ffffff}» Ударить шокером",
@@ -1801,15 +1842,7 @@ function questimenu(args)
         onclick = function()
         sampSendChat("Где вы будете хранить оружие?")
         end
-      },
-	  {
-        title = '{ffffff}Покажите документ на бизнес',
-        onclick = function()
-        sampSendChat("Пожалуйста предоставте документ на наличие бизнеса.")
-		wait(1500)
-		sampSendChat("/b /me показал документ на бизнес")
-        end
-      },
+      }
     }
 end
 
@@ -1839,6 +1872,7 @@ function oformenu(id)
 		  sampCloseCurrentDialogWithButton(1)
 		  wait(1700)
 		  sampSendChat("Удачи на дорогах.")
+		  dostavka = false
 		end
       },
       {
@@ -1859,6 +1893,7 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(2)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
+		dostavka = false
         end
       },
       {
@@ -1879,6 +1914,7 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(1)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
+		dostavka = false
         end
       },
       {
@@ -1899,6 +1935,7 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(4)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
+		dostavka = false
         end
       },
       {
@@ -1919,6 +1956,7 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(3)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
+		dostavka = false
         end
       },
       {
@@ -1939,6 +1977,22 @@ function oformenu(id)
 		sampSetCurrentDialogListItem(5)
 		wait(1700)
 		sampCloseCurrentDialogWithButton(1)
+		dostavka = false
+        end
+      },
+	  {
+        title = '{ffffff}» Оформление комплекта',
+        onclick = function()
+        sampSendChat("/do Кейс с документами в руках инструктора.")
+		wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал(а) стопку чистых бланков и начал их заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Стопка лицензий в руке.")
+		  wait(1700)
+		sampSendChat('/me проставил(а) печати "Autoschool San Fierro" и передал(а) лицензии '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		dostavka = false
         end
       }
     }
@@ -2055,20 +2109,6 @@ function instmenu(id)
         sampSendChat("Ваш паспорт, пожалуйста.")
 		wait(1500)
 		sampSendChat("/b /showpass "..myid.."")
-        end
-      },
-      {
-        title = '{ffffff}» Оформление комплекта',
-        onclick = function()
-        sampSendChat("/do Кейс с документами в руках инструктора.")
-		wait(1700)
-		  sampSendChat("/me приоткрыл(а) кейс, после чего достал(а) стопку чистых бланков и начал их заполнять")
-		  wait(1700)
-		  sampSendChat("/me записал(а) паспортные данные покупателя")
-		  wait(1700)
-		  sampSendChat("/do Стопка лицензий в руке.")
-		  wait(1700)
-		sampSendChat('/me проставил(а) печати "Autoschool San Fierro" и передал(а) лицензии '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
         end
       },
 	  {
@@ -2477,6 +2517,46 @@ function cmd_color() -- функция получения цвета строки, хз зачем она мне, но ког
 	setClipboardText(color)
 end
 
+function getcolor(id)
+local colors = 
+        {
+		[1] = 'Зелёный',
+		[2] = 'Светло-зелёный',
+		[3] = 'Ярко-зелёный',
+		[4] = 'Бирюзовый',
+		[5] = 'Жёлто-зелёный',
+		[6] = 'Темно-зелёный',
+		[7] = 'Серо-зелёный',
+		[8] = 'Красный',
+		[9] = 'Ярко-красный',
+		[10] = 'Оранжевый',
+		[11] = 'Коричневый',
+		[12] = 'Тёмно-красный',
+		[13] = 'Серо-красный',
+		[14] = 'Жёлто-оранжевый',
+		[15] = 'Малиновый',
+		[16] = 'Розовый',
+		[17] = 'Синий',
+		[18] = 'Голубой',
+		[19] = 'Синяя сталь',
+		[20] = 'Сине-зелёный',
+		[21] = 'Тёмно-синий',
+		[22] = 'Фиолетовый',
+		[23] = 'Индиго',
+		[24] = 'Серо-синий',
+		[25] = 'Жёлтый',
+		[26] = 'Кукурузный',
+		[27] = 'Золотой',
+		[28] = 'Старое золото',
+		[29] = 'Оливковый',
+		[30] = 'Серый',
+		[31] = 'Серебро',
+		[32] = 'Черный',
+		[33] = 'Белый',
+		}
+	return colors[id]
+end
+
 function sampev.onSendSpawn()
     pX, pY, pZ = getCharCoordinates(playerPed)
     if cfg.main.clistb and getDistanceBetweenCoords3d(pX, pY, pZ, 2337.3574,1666.1699,3040.9524) < 20 then
@@ -2486,7 +2566,8 @@ function sampev.onSendSpawn()
 			wait(500)
 			local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 			local color = ("%06X"):format(bit.band(sampGetPlayerColor(myid), 0xFFFFFF))
-            ftext('Цвет ника сменен на: {'..color..'}' .. cfg.main.clist)
+			colors = getcolor(cfg.main.clist)
+            ftext('Цвет ника сменен на: {'..color..'}'..cfg.main.clist..' ['..colors..']')
         end)
     end
 end
@@ -2501,7 +2582,8 @@ function sampev.onServerMessage(color, text)
 				wait(500)
                 local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 			    local color = ("%06X"):format(bit.band(sampGetPlayerColor(myid), 0xFFFFFF))
-                ftext('Цвет ника сменен на: {'..color..'}' .. cfg.main.clist)
+                colors = getcolor(cfg.main.clist)
+                ftext('Цвет ника сменен на: {'..color..'}'..cfg.main.clist..' ['..colors..']')
                 rabden = true
 				wait(1000)
 				if cfg.main.clisto then
