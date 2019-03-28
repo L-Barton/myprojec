@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.5')
+script_version('4.6')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -1738,6 +1738,7 @@ function pkmmenu(id)
         title = "{ffffff}» Вопросы",
         onclick = function()
         pID = tonumber(args)
+		pX, pY, pZ = getCharCoordinates(playerPed)
 		if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
@@ -1749,6 +1750,7 @@ function pkmmenu(id)
         title = "{ffffff}» Оформление",
         onclick = function()
         pID = tonumber(args)
+		pX, pY, pZ = getCharCoordinates(playerPed)
 		if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
