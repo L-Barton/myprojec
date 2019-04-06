@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.7')
+script_version('4.8')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -459,12 +459,32 @@ function fastmenu(id)
 	end
    },
    {
-   title = "{FFFFFF}Меню {139BEC}отделов",
+   title = "{FFFFFF}Меню {139BEC}для {ff0000}[Главы/Заместителей] {139BEC}отделов",
     onclick = function()
 	if cfg.main.tarb then
 	submenus_show(otmenu(id), "{139BEC}IT {ffffff}| Меню отделов")
 	else
 	ftext('Включите автотег в настройках')
+	end
+	end
+   },
+   {
+   title = "{FFFFFF}Меню {139BEC}гос.новостей {ff0000}(Для Ст.Состава)",
+    onclick = function()
+	if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+	submenus_show(govmenu(id), "{139BEC}IT {ffffff}| Меню гос.новостей")
+	else
+	ftext('Вы не находитесь в Ст.Составе')
+	end
+	end
+   },
+   {
+   title = "{FFFFFF}Доставка лицензий {139BEC}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
+    onclick = function()
+	if rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+	sampSendChat(string.format('/d OG, Осуществляется доставка лицензий в любую точку штата. Тел: %s.', tel))
+	else
+	ftext('Ваш ранг недостаточно высок')
 	end
 	end
    },
@@ -477,6 +497,84 @@ function fastmenu(id)
 	else
 	ftext('Вы должны находиться в офисе')
 	end
+	end
+   }
+}
+end
+
+function govmenu(id)
+ return
+{
+  {
+   title = "{FFFFFF}Собеседование",
+    onclick = function()
+	sampSendChat("/d OG, занял волну государственных новостей.")
+    wait(5000)
+    sampSendChat("/gov [Instructors]: Уважаемые жители штата, пожалyйста, прослyшайте объявление.")
+    wait(5000)
+    sampSendChat('/gov [Instructors]: В данный момент в офисе Автошколы проходит собеседование на должность "Стажер".')
+    wait(5000)
+    sampSendChat("/gov [Instructors]: Требования к соискателям: Шесть лет проживания в штате, стрессоустойчивость, опрятный вид.")
+    wait(5000)
+    sampSendChat("/d OG, освободил волну государственных новостей.")
+	end
+   },
+    {
+   title = "{FFFFFF}Заявка на экзаменатора",
+    onclick = function()
+	sampSendChat("/d OG, занял волну государственных новостей.")
+        wait(5000)
+        sampSendChat("/gov [Instructors]: Уважаемые жители штата, пожалyйста, прослyшайте объявление.")
+        wait(5000)
+        sampSendChat('/gov [Instructors]: В данный момент открыты заявления на должность "Экзаменатор".')
+        wait(5000)
+        sampSendChat("/gov [Instructors]: Со всеми критериями, Вы можете ознакомиться на оф.портале штата. ")
+        wait(5000)
+        sampSendChat("/d OG, освободил волну государственных новостей.")
+	end
+   },
+   {
+   title = "{FFFFFF}Пиар филиала мэрии",
+    onclick = function()
+	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+	local myname = sampGetPlayerNickname(myid)
+	sampSendChat("/d OG, занял волну государственных новостей.")
+        wait(5000)
+        sampSendChat("/gov [Instructors]: Уважаемые жители штата, пожалyйста, прослyшайте объявление.")
+        wait(5000)
+        sampSendChat('/gov [Instructors]: Автошкола расширяется и предоставляет услуги по выдаче лицензий в нашем филиале.')
+        wait(5000)
+        sampSendChat('/gov [Instructors]: Филиал находится на первом этаже Мэрии. С уважением, '..rank..' Автошколы - '..myname:gsub('_', ' ')..'.')
+        wait(5000)
+        sampSendChat("/d OG, освободил волну государственных новостей.")
+	end
+   },
+   {
+   title = "{FFFFFF}Занять гос. волну",
+    onclick = function()
+	sampSetChatInputEnabled(true)
+	sampSetChatInputText("/d OG, Занимаю гос.волну на X. Возражения на п.")
+	end
+   },
+   {
+   title = "{FFFFFF}Напомнить о займе гос. волны",
+    onclick = function()
+	sampSetChatInputEnabled(true)
+	sampSetChatInputText("/d OG, Напоминаю что волна гос.новостей на X за Inst.")
+	end
+   },
+   {
+   title = "{FFFFFF}Пиар акции cash back {139BEC}",
+    onclick = function()
+	sampSendChat("/d OG, Для сотрудников гос. структур Cash Back на лицензии составляет 100 процентов.")
+	wait(10000)
+	sampSendChat("/d OG, Подробнее с условиями акции можно ознакомиться на оф. портале.")
+	end
+   },
+   {
+   title = "{FFFFFF}Пиар акции cash back {139BEC}[часть 2] (если 2-ая строчка не сработала)",
+    onclick = function()
+	sampSendChat("/d OG, Подробнее с условиями акции можно ознакомиться на оф. портале.")
 	end
    }
 }
