@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('4.9')
+script_version('5.0')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -584,12 +584,12 @@ function otmenu(id)
  return
 {
   {
-   title = "{FFFFFF}Пиар отдела в рацию (HRD) {ff0000}(Для глав/замов отдела)",
+   title = "{FFFFFF}Пиар отдела в рацию (ОС) {ff0000}(Для глав/замов отдела)",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: В Human Resources Department производится пополнение сотрудников.', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: В Отдел Стажировки производится пополнение сотрудников.', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -597,12 +597,12 @@ function otmenu(id)
 	end
    },
     {
-   title = "{FFFFFF}Пиар отдела в рацию (ID) {ff0000}(Для глав/замов отдела)",
+   title = "{FFFFFF}Пиар отдела в рацию (ОЛ) {ff0000}(Для глав/замов отдела)",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: В Inspection Department производится пополнение сотрудников.', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: В Отдел Лицензирования производится пополнение сотрудников.', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -662,7 +662,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat('/b Биндеры использовать только в случае лекции.')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Human Resources Departament либо к ст. Составу. ")
+        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу. ")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо,что прослушали мою лекцию. ")
 		wait(cfg.commands.zaderjka * 1000)
@@ -686,9 +686,9 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("/b /clist 4")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("HRD - Human Resources Department, занимающийся непосредственно обучением стажёров.")
+        sampSendChat("ОС - Отдел Стажировки, занимающийся непосредственно обучением стажёров.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("ID - Inspection Department, занимающийся профилактикой нарушений и аварийных ситуаций.")
+        sampSendChat("ОЛ - Отдел Лицензирования, занимающийся профилактикой нарушений и аварийных ситуаций.")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("С участием транспорта, через проведение лекций и проверок гос. структур")
         wait(cfg.commands.zaderjka * 1000)
@@ -712,7 +712,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat('/b Биндеры использовать только в случае лекции.')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Human Resources Departament либо к ст. Составу. ")
+        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу. ")
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо, что прослушали мою лекцию.")
 		wait(cfg.commands.zaderjka * 1000)
