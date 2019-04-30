@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('5.0')
+script_version('5.1')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -220,6 +220,11 @@ function main()
   sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
   sampRegisterChatCommand('tset', tset)
+  sampRegisterChatCommand('vig', vig)
+  sampRegisterChatCommand('giverank', giverank)
+  sampRegisterChatCommand('invite', invite)
+  sampRegisterChatCommand('oinv', oinv)
+  sampRegisterChatCommand('uninvite', uninvite)
   sampRegisterChatCommand('yst', function() ystwindow.v = not ystwindow.v end)
   while true do wait(0)
     if #departament > 25 then table.remove(departament, 1) end
@@ -239,6 +244,25 @@ function main()
 	ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
 	end
     end
+          if valid and doesCharExist(ped) then
+            local result, id = sampGetPlayerIdByCharHandle(ped)
+            if result and wasKeyPressed(key.VK_Z) then
+			if frac == 'Driving School' then
+                gmegafhandle = ped
+                gmegafid = id
+                gmegaflvl = sampGetPlayerScore(id)
+                gmegaffrak = getFraktionBySkin(id)
+			    local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+                --[[ftext(gmegafid)
+                ftext(gmegaflvl)
+                ftext(gmegaffrak)]]
+				megaftimer = os.time() + 300
+                submenus_show(pkmmenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] {ffffff}Уровень - "..sampGetPlayerScore(id).." ")
+				else
+			ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
+				end
+            end
+        end
 		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v or updwindows.v
   end
   function rkeys.onHotKey(id, keys)
@@ -427,6 +451,34 @@ function dlog()
     sampShowDialog(97987, '{139BEC}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
 end
 
+function vig(pam)
+  local id, pric = string.match(pam, '(%d+)%s+(.+)')
+  if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+  if id == nil then
+    sampAddChatMessage("{139BEC}Inst Tools {ffffff}| Введите: /vig ID Причина", -1)
+  end
+  if id ~=nil and not sampIsPlayerConnected(id) then
+    sampAddChatMessage("{139BEC}Inst Tools {ffffff}| Игрок с ID: "..id.." не подключен к серверу.", -1)
+  end
+  if id ~= nil and sampIsPlayerConnected(id) then
+      if pric == nil then
+        sampAddChatMessage("{139BEC}Inst Tools {ffffff}| Введите: /vig ID ПРИЧИНА", -1)
+      end
+      if pric ~= nil then
+	   if cfg.main.tarb then
+        name = sampGetPlayerNickname(id)
+        rpname = name:gsub('_', ' ')
+        sampSendChat(string.format("/r [%s]: %s - Получает выговор по причине: %s.", cfg.main.tarr, rpname, pric))
+		else 
+		name = sampGetPlayerNickname(id)
+        rpname = name:gsub('_', ' ')
+		sampSendChat(string.format("/r %s - Получает выговор по причине: %s.", rpname, pric))
+      end
+  end
+end
+end
+end
+
 function where(params) -- запрос местоположения
    if rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
 	if params:match("^%d+") then
@@ -448,7 +500,182 @@ function where(params) -- запрос местоположения
 		ftext('{FFFFFF}Данная команда доступна с 6 ранга.', 0x046D63)
 	end
 end
+
+function getrang(rangg)
+local ranks = 
+        {
+		['1'] = 'Стажёра',
+		['2'] = 'Консультанта',
+		['3'] = 'Экзаменатора',
+		['4'] = 'Мл.Инструктора',
+		['5'] = 'Инструктора',
+		['6'] = 'Координатора',
+		['7'] = 'Мл.Менеджера',
+		['8'] = 'Ст.Менеджера',
+		['9'] = 'Директора'
+		}
+	return ranks[rangg]
+end
+
+function giverank(pam)
+    lua_thread.create(function()
+    local id, rangg, plus = pam:match('(%d+) (%d+)%s+(.+)')
+	if sampIsPlayerConnected(id) then
+	  if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+        if id and rangg then
+		if plus == '-' or plus == '+' then
+		ranks = getrang(rangg)
+		        local _, handle = sampGetCharHandleBySampPlayerId(id)
+				if doesCharExist(handle) then
+				local x, y, z = getCharCoordinates(handle)
+				local mx, my, mz = getCharCoordinates(PLAYER_PED)
+				local dist = getDistanceBetweenCoords3d(mx, my, mz, x, y, z)	
+				if dist <= 5 then
+				if cfg.main.male == true then
+				sampSendChat('/me снял старый бейджик с человека напротив стоящего')
+				wait(1500)
+				sampSendChat('/me убрал старый бейджик в карман')
+				wait(1500)
+                sampSendChat(string.format('/me достал новый бейджик %s', ranks))
+				wait(1500)
+				sampSendChat('/me закрепил на рубашку человеку напротив новый бейджик')
+				wait(1500)
+				else
+				sampSendChat('/me сняла старый бейджик с человека напротив стоящего')
+				wait(1500)
+				sampSendChat('/me убрала старый бейджик в карман')
+				wait(1500)
+                sampSendChat(string.format('/me достала новый бейджик %s', ranks))
+				wait(1500)
+				sampSendChat('/me закрепила на рубашку человеку напротив новый бейджик')
+				wait(1500)
+				end
+				end
+				end
+				sampSendChat(string.format('/giverank %s %s', id, rangg))
+				wait(1500)
+				if cfg.main.tarb then
+                sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до %s%s.', cfg.main.tarr, plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks, plus == '+' and ', поздравляю' or ''))
+                else
+				sampSendChat(string.format('/r '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до %s%s.', plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks, plus == '+' and ', поздравляю' or ''))
+            end
+			else 
+			ftext('Вы ввели неверный тип [+/-]')
+		end
+		else 
+			ftext('Введите: /giverank [id] [ранг] [+/-]')
+		end
+		else 
+			ftext('Данная команда доступна с 7 ранга')
+	  end
+	  else 
+			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
+	  end
+   end)
+ end
+
+function invite(pam)
+    lua_thread.create(function()
+        local id = pam:match('(%d+)')
+	  if rank == 'Директор' or  rank == 'Управляющий' then
+        if id then
+		if sampIsPlayerConnected(id) then
+                sampSendChat('/me достал(а) бейджик и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+				wait(1500)
+				sampSendChat(string.format('/invite %s', id))
+			else 
+			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
+		end
+		else 
+			ftext('Введите: /invite [id]')
+		end
+		else 
+			ftext('Данная команда доступна с 9 ранга')
+	  end
+   end)
+ end
  
+ function oinv(pam)
+    lua_thread.create(function()
+        local id = pam:match('(%d+)')
+		local _, handle = sampGetCharHandleBySampPlayerId(id)
+	if id then
+	if doesCharExist(handle) then
+		local x, y, z = getCharCoordinates(handle)
+		local mx, my, mz = getCharCoordinates(PLAYER_PED)
+		local dist = getDistanceBetweenCoords3d(mx, my, mz, x, y, z)	
+	  if dist <= 5 then
+	  if cfg.main.tarb then
+		if sampIsPlayerConnected(id) then
+                submenus_show(oinvite(id), "{139BEC}IT {ffffff}| Выбор отдела")
+				else 
+			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
+            end
+		else 
+			ftext('Включите автотег в настройках')
+		end
+		else 
+			ftext('Рядом с вами нет данного человека')
+	  end
+	  else 
+			ftext('Рядом с вами нет данного человека')
+	end
+	  else 
+			ftext('Введите: /oinv [id]')
+	end
+	  end)
+   end
+ 
+ function uninvite(pam)
+    lua_thread.create(function()
+        local id, pri4ina = pam:match('(%d+)%s+(.+)')
+	  if rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+        if id and pri4ina then
+		if sampIsPlayerConnected(id) then
+                sampSendChat('/me забрал(а) форму и бейджик у '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+				wait(2000)
+				sampSendChat(string.format('/uninvite %s %s', id, pri4ina))
+			else 
+			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
+		end
+		else 
+			ftext('Введите: /uninvite [id] [причина]')
+		end
+		else 
+			ftext('Данная команда доступна с 8 ранга')
+	  end
+   end)
+ end
+ 
+function oinvite(id)
+ return
+{
+  {
+   title = "{FFFFFF}Отдел {139BEC}Стажировки",
+    onclick = function()
+	sampSendChat('/me достал(а) бейджик Сотрудника ОС и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	wait(1500)
+	sampSendChat('/b /clist 6')
+	wait(1500)
+	sampSendChat('/b тег в /r [Сотрудник ОС]')
+	wait(1500)
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник ОС.', cfg.main.tarr))
+	end
+   },
+   {
+   title = "{FFFFFF}Отдел {139BEC}Лицензирования",
+    onclick = function()
+	sampSendChat('/me достал(а) бейджик Сотрудника ОЛ и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	wait(1500)
+	sampSendChat('/b /clist 21')
+	wait(1500)
+	sampSendChat('/b тег в /r [Сотрудник ОЛ]')
+	wait(1500)
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник ОЛ.', cfg.main.tarr))
+	end
+   },
+ }
+end
 function fastmenu(id)
  return
 {
@@ -458,17 +685,7 @@ function fastmenu(id)
 	submenus_show(fthmenu(id), "{139BEC}IT {ffffff}| Меню лекций")
 	end
    },
-   {
-   title = "{FFFFFF}Меню {139BEC}для {ff0000}[Главы/Заместителей] {139BEC}отделов",
-    onclick = function()
-	if cfg.main.tarb then
-	submenus_show(otmenu(id), "{139BEC}IT {ffffff}| Меню отделов")
-	else
-	ftext('Включите автотег в настройках')
-	end
-	end
-   },
-   {
+    {
    title = "{FFFFFF}Меню {139BEC}гос.новостей {ff0000}(Для Ст.Состава)",
     onclick = function()
 	if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
@@ -479,7 +696,17 @@ function fastmenu(id)
 	end
    },
    {
-   title = "{FFFFFF}Доставка лицензий {139BEC}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
+   title = "{FFFFFF}Меню {139BEC}отделов",
+    onclick = function()
+	if cfg.main.tarb then
+	submenus_show(otmenu(id), "{139BEC}IT {ffffff}| Меню отделов")
+	else
+	ftext('Включите автотег в настройках')
+	end
+	end
+   },
+   {
+   title = "{FFFFFF}Доставка лицензий {139BEC}в любую точку штата в /d{ff0000}(Для 4+ ранга)",
     onclick = function()
 	if rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
 	sampSendChat(string.format('/d OG, Осуществляется доставка лицензий в любую точку штата. Тел: %s.', tel))
@@ -496,6 +723,116 @@ function fastmenu(id)
 	dmch()
 	else
 	ftext('Вы должны находиться в офисе')
+	end
+	end
+   },
+   {
+   title = "{FFFFFF}Доложить в рацию о доставке лицензии {ff0000}(обязательно при доставке)",
+    onclick = function()
+    if cfg.main.tarb then
+        sampSendChat(string.format('/r [%s]: Выехал на доставку лицензии.', cfg.main.tarr))
+        else
+        sampSendChat(string.format('/r Выехал на доставку лицензии.'))
+        end
+		dostavka = true
+	end
+   }
+}
+end
+
+function otmenu(id)
+ return
+{
+  {
+   title = "{FFFFFF}Пиар отдела в рацию (ОС) {ff0000}(Для глав/замов отдела)",
+    onclick = function()
+	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: В Отдел Стажировки производится пополнение сотрудников.', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: Для подробной информации пишите на п.'..myid..'.', cfg.main.tarr))
+	end
+   },
+    {
+   title = "{FFFFFF}Пиар отдела в рацию (ID) {ff0000}(Для глав/замов отдела)",
+    onclick = function()
+	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: В Отдел Лицензирования производится пополнение сотрудников.', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: Для подробной информации пишите на п.'..myid..'.', cfg.main.tarr))
+	end
+   },
+   {
+   title = "{FFFFFF}Тех.осмотр авто гос.организаций",
+    onclick = function()
+	if cfg.main.male == true then
+	sampSendChat("/me записал данные о проверяемой гос.организации")
+    wait(3500)
+    sampSendChat("/me начал осматривать внешнее состояние автомобиля")
+    wait(3500)
+    sampSendChat("/me открыл капот")
+    wait(3500)
+    sampSendChat("/do Капот открыт.")
+	wait(3500)
+	sampSendChat("/me достал с чемодана для инструментов фонарик и начал осматривать двигатель")
+	wait(3500)
+	sampSendChat("/try двигатель в норме")
+	wait(3500)
+	sampSendChat("/me начал проверять давление в шинах.")
+	wait(3500)
+	sampSendChat("/try давление в норме")
+	wait(3500)
+	sampSendChat("/me проверяет автомобиль на наличие повреждений")
+	wait(3500)
+	sampSendChat("/try повреждения не обнаружены")
+	wait(3500)
+	sampSendChat("/me достал блокнот с ручкой, после чего записал все результаты проверки")
+	wait(3500)
+	sampSendChat("/me поставил подпись и закрыл блокнот")
+	wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+	end
+	if cfg.main.male == false then
+	sampSendChat("/me записала данные о проверяемой гос.организации")
+    wait(3500)
+    sampSendChat("/me начала осматривать внешнее состояние автомобиля")
+    wait(3500)
+    sampSendChat("/me открыла капот")
+    wait(3500)
+    sampSendChat("/do Капот открыт.")
+	wait(3500)
+	sampSendChat("/me достала с чемодана для инструментов фонарик и начала осматривать двигатель")
+	wait(3500)
+	sampSendChat("/try двигатель в норме")
+	wait(3500)
+	sampSendChat("/me начала проверять давление в шинах.")
+	wait(3500)
+	sampSendChat("/try давление в норме")
+	wait(3500)
+	sampSendChat("/me проверяет автомобиль на наличие повреждений")
+	wait(3500)
+	sampSendChat("/try повреждения не обнаружены")
+	wait(3500)
+	sampSendChat("/me достала блокнот с ручкой, после чего записала все результаты проверки")
+	wait(3500)
+	sampSendChat("/me поставила подпись и закрыла блокнот")
+	wait(1200)
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
 	end
 	end
    }
@@ -580,38 +917,6 @@ function govmenu(id)
 }
 end
 
-function otmenu(id)
- return
-{
-  {
-   title = "{FFFFFF}Пиар отдела в рацию (ОС) {ff0000}(Для глав/замов отдела)",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: В Отдел Стажировки производится пополнение сотрудников.', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: Для подробной информации пишите на п.'..myid..'.', cfg.main.tarr))
-	end
-   },
-    {
-   title = "{FFFFFF}Пиар отдела в рацию (ОЛ) {ff0000}(Для глав/замов отдела)",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: В Отдел Лицензирования производится пополнение сотрудников.', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: Для подробной информации пишите на п.'..myid..'.', cfg.main.tarr))
-	end
-   }
-}
-end
-
 function fthmenu(id)
  return
 {
@@ -658,11 +963,9 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("За столами спать запрещено. Спать разрешено только в комнате отдыха. ")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('/b Все отыгровки выдачи лицензии прописывать от руки!')
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('/b Биндеры использовать только в случае лекции.')
+        sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать! ')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу. ")
+        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам ОС либо к ст. Составу. ")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо,что прослушали мою лекцию. ")
 		wait(cfg.commands.zaderjka * 1000)
@@ -708,12 +1011,10 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Стажерами считаются сотрудники, находящиеся на должности Стажёр и Экзаменатор (по заявке).")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('/b Все отыгровки выдачи лицензии прописывать от руки!')
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('/b Биндеры использовать только в случае лекции.')
+        sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать!')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам Отдела Стажировки либо к ст. Составу. ")
-		wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам ОС либо к ст. Составу.")
+        wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо, что прослушали мою лекцию.")
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если у вас имеются вопросы, задавайте. ")
@@ -1150,6 +1451,7 @@ function imgui.OnDrawFrame()
 				imgui.BeginChild("Список команд", imgui.ImVec2(495, 230), true, imgui.WindowFlags.VerticalScrollbar)
                 imgui.BulletText(u8 '/tset - Открыть меню скрипта')
                 imgui.Separator()
+                imgui.BulletText(u8 '/vig [id] [Причина] - Выдать выговор по рации')
                 imgui.BulletText(u8 '/dmb - Открыть /members в диалоге')
                 imgui.BulletText(u8 '/where [id] - Запросить местоположение по рации')
                 imgui.BulletText(u8 '/yst - Открыть устав АШ')
@@ -1157,6 +1459,7 @@ function imgui.OnDrawFrame()
                 imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
 				imgui.Separator()
                 imgui.BulletText(u8 'Клавиши: ')
+                imgui.BulletText(u8 'ПКМ+Z на игрока - Меню взаимодействия')
                 imgui.BulletText(u8 'F2 - "Быстрое меню"')
 				imgui.EndChild()
                 imgui.End()
@@ -1407,6 +1710,431 @@ function imgui.CentrText(text)
             imgui.PopStyleColor(3)
             return result
         end
+
+function pkmmenu(id)
+    local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+    return
+    {
+      {
+        title = "{ffffff}» Инструктор",
+        onclick = function()
+        pID = tonumber(args)
+        submenus_show(instmenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        end
+      },
+	  {
+        title = "{ffffff}» Цены лицензий",
+        onclick = function()
+        pID = tonumber(args)
+	    pX, pY, pZ = getCharCoordinates(playerPed)
+	    if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
+        submenus_show(pricemenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+		else
+	    ftext('Вы должны находиться за стойкой')
+		end
+        end
+      },
+      {
+        title = "{ffffff}» Вопросы",
+        onclick = function()
+        pID = tonumber(args)
+		pX, pY, pZ = getCharCoordinates(playerPed)
+		if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
+        submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+		else
+	    ftext('Вы должны находиться за стойкой')
+		end
+        end
+      },
+      {
+        title = "{ffffff}» Оформление",
+        onclick = function()
+        pID = tonumber(args)
+		pX, pY, pZ = getCharCoordinates(playerPed)
+		if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
+        submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+		else
+	    ftext('Вы должны находиться за стойкой')
+        end
+		end
+      },
+	  {
+        title = "{ffffff}» Ударить шокером",
+        onclick = function()
+		if cfg.main.male == true then
+        sampSendChat("/me снял шокер с пояса")
+        wait(1500)
+        sampSendChat("/itazer")
+        wait(1500)
+        sampSendChat("/me повесил шокер на пояс")
+        end
+	    if cfg.main.male == false then
+        sampSendChat("/me сняла шокер с пояса")
+        wait(1500)
+        sampSendChat("/itazer")
+        wait(1500)
+        sampSendChat("/me повесила шокер на пояс")
+        end
+		end
+      }
+    }
+end
+
+function questimenu(args)
+    return
+    {
+      {
+        title = '{5b83c2}« Раздел вопросов по ПДД »',
+        onclick = function()
+        end
+      },
+      {
+        title = '{ffffff}» Пару вопросов',
+        onclick = function()
+          sampSendChat("Сейчас я задам вам пару вопросов по ПДД. Готовы?")
+		end
+      },
+      {
+        title = '{ffffff}» Город{ff0000} 50 км/ч',
+        onclick = function()
+        sampSendChat("Какая максимальная скорость разрешена в городе?")
+        end
+      },
+      {
+        title = '{ffffff}» Жилая местность{ff0000} 30 км/ч',
+        onclick = function()
+        sampSendChat("Какая максимальная скорость разрешена в жилой местности?")
+        end
+      },
+      {
+        title = '{ffffff}» Обгон{ff0000} с левой стороны.',
+        onclick = function()
+        sampSendChat("С какой стороны разрешен обгон?")
+        end
+      },
+      {
+        title = '{ffffff}» ДТП',
+        onclick = function()
+        sampSendChat("Вы попали в ДТП. Ваши действия?")
+		wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}Оказать первую помощь пострадавшим. Вызвать МЧС и ПД и ждать их прибытия.", -1)
+        end
+      },
+	  {
+        title = '{ffffff}» Действия при остановке',
+        onclick = function()
+        sampSendChat("За вами едет автомобиль с включённой сиреной. Ваши действия?")
+		wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}Сбавить скорость и прижаться к обочине.", -1)
+        end
+      },
+	  {
+        title = '{5b83c2}« Раздел других вопросов»',
+        onclick = function()
+        end
+      },
+      {
+        title = '{ffffff}Цель ношения оружия',
+        onclick = function()
+        sampSendChat("Зачем вам лицензия на оружие?")
+        end
+      },
+	  {
+        title = '{ffffff}Хранение оружия',
+        onclick = function()
+        sampSendChat("Где вы будете хранить оружие?")
+        end
+      }
+    }
+end
+
+function oformenu(id)
+    return
+    {
+      {
+        title = '{5b83c2}« Раздел оформления »',
+        onclick = function()
+        end
+      },
+      {
+        title = '{ffffff}» Права.',
+        onclick = function()
+          sampSendChat("/do Кейс с документами в руках инструктора.")
+		  wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал(а) чистый бланк и начал его заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Лицензия в руке.")
+		  wait(1700)
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  wait(1700)
+		  sampSendChat("/givelicense "..id)
+		  wait(1700)
+		  sampCloseCurrentDialogWithButton(1)
+		  wait(1700)
+		  sampSendChat("Удачи на дорогах.")
+		  if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		  end
+		end
+      },
+      {
+        title = '{ffffff}» Рыбалка',
+        onclick = function()
+          sampSendChat("/do Кейс с документами в руках инструктора.")
+		  wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал(а) чистый бланк и начал его заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Лицензия в руке.")
+		  wait(1700)
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  wait(1700)
+		sampSendChat("/givelicense "..id)
+		wait(1700)
+		sampSetCurrentDialogListItem(2)
+		wait(1700)
+		sampCloseCurrentDialogWithButton(1)
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
+        end
+      },
+      {
+        title = '{ffffff}» Пилот',
+        onclick = function()
+          sampSendChat("/do Кейс с документами в руках инструктора.")
+		  wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал чистый бланк и начал его заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Лицензия в руке.")
+		  wait(1700)
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  wait(1700)
+		sampSendChat("/givelicense "..id)
+		wait(1700)
+		sampSetCurrentDialogListItem(1)
+		wait(1700)
+		sampCloseCurrentDialogWithButton(1)
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
+        end
+      },
+      {
+        title = '{ffffff}» Оружие{ff0000} со 2 уровня.',
+        onclick = function()
+          sampSendChat("/do Кейс с документами в руках инструктора.")
+		  wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал(а) чистый бланк и начал его заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Лицензия в руке.")
+		  wait(1700)
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  wait(1700)
+		sampSendChat("/givelicense "..id)
+		wait(1700)
+		sampSetCurrentDialogListItem(4)
+		wait(1700)
+		sampCloseCurrentDialogWithButton(1)
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
+        end
+      },
+      {
+        title = '{ffffff}» Катер',
+        onclick = function()
+          sampSendChat("/do Кейс с документами в руках инструктора.")
+		  wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал чистый бланк и начал его заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Лицензия в руке.")
+		  wait(1700)
+		  sampSendChat('/me поставил печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  wait(1700)
+		sampSendChat("/givelicense "..id)
+		wait(1700)
+		sampSetCurrentDialogListItem(3)
+		wait(1700)
+		sampCloseCurrentDialogWithButton(1)
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
+        end
+      },
+      {
+        title = '{ffffff}» Бизнес',
+        onclick = function()
+          sampSendChat("/do Кейс с документами в руках инструктора.")
+		  wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал(а) чистый бланк и начал его заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Лицензия в руке.")
+		  wait(1700)
+		  sampSendChat('/me поставил(а) печать "Autoschool San Fierro" и передал(а) лицензию '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		  wait(1700)
+        sampSendChat("/givelicense "..id)
+		wait(1700)
+		sampSetCurrentDialogListItem(5)
+		wait(1700)
+		sampCloseCurrentDialogWithButton(1)
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
+        end
+      },
+	  {
+        title = '{ffffff}» Оформление комплекта',
+        onclick = function()
+        sampSendChat("/do Кейс с документами в руках инструктора.")
+		wait(1700)
+		  sampSendChat("/me приоткрыл(а) кейс, после чего достал(а) стопку чистых бланков и начал их заполнять")
+		  wait(1700)
+		  sampSendChat("/me записал(а) паспортные данные покупателя")
+		  wait(1700)
+		  sampSendChat("/do Стопка лицензий в руке.")
+		  wait(1700)
+		sampSendChat('/me проставил(а) печати "Autoschool San Fierro" и передал(а) лицензии '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+		if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
+		  dostavka = false
+		end
+        end
+      }
+    }
+end
+
+function pricemenu(args)
+    return
+    {
+      {
+        title = '{5b83c2}« Раздел стоимости »',
+        onclick = function()
+        end
+      },
+      {
+        title = '{ffffff}» Права.',
+        onclick = function()
+		if gmegaflvl <= 2 then
+          sampSendChat("Стоимость данной лицензии составляет - 500$.")
+		  wait(1500)
+		  sampSendChat("Оформляем?")	  
+		else if gmegaflvl <= 5 then
+		  sampSendChat("Стоимость данной лицензии составляет - 5.000$.")
+		  wait(1500)
+		  sampSendChat("Оформляем?")	  
+		else if gmegaflvl <= 15 then
+		  sampSendChat("Стоимость данной лицензии составляет - 10.000$.")
+		  wait(1500)
+		  sampSendChat("Оформляем?")	  
+		else if gmegaflvl >= 16 then
+		  sampSendChat("Стоимость данной лицензии составляет - 30.000$.")
+		  wait(1500)
+		  sampSendChat("Оформляем?")	  
+        end
+		end
+		end
+		end
+		end
+      },
+      {
+        title = '{ffffff}» Рыбалка',
+        onclick = function()
+        sampSendChat("Стоимость данной лицензии составляет - 2.000$.")
+		wait(1500)
+		sampSendChat("Оформляем?")
+        end
+      },
+      {
+        title = '{ffffff}» Пилот',
+        onclick = function()
+        sampSendChat("Стоимость данной лицензии составляет - 10.000$.")
+		wait(1500)
+		sampSendChat("Оформляем?")
+        end
+      },
+      {
+        title = '{ffffff}» Оружие{ff0000} со 2 уровня.',
+        onclick = function()
+		if gmegaflvl > 1 then
+        sampSendChat("Стоимость данной лицензии составляет - 50.000$.")
+		wait(1500)
+		sampSendChat("Оформляем?")
+		else
+		sampSendChat("Данную лицензию можно приобрести с 2-х лет в штате.")
+		end
+        end
+      },
+	  {
+        title = '{ffffff}» Бизнес{ff0000} при наличии бизнеса.',
+        onclick = function()
+        sampSendChat("Стоимость данной лицензии составляет - 100.000$.")
+		wait(1500)
+		sampSendChat("Оформляем?")
+        end
+      },
+      {
+        title = '{ffffff}» Катер',
+        onclick = function()
+        sampSendChat("Стоимость данной лицензии составляет - 5.000$.")
+		wait(1500)
+		sampSendChat("Оформляем?")
+        end
+      },
+      {
+        title = '{ffffff}» Комплект',
+        onclick = function()
+        sampSendChat("Рыболовство - 2.000$, Катер - 5.000$, Лицензия пилота - 10.000$, Лицензия на оружие - 50.000$.")
+        end
+      }
+    }
+end
+
+function instmenu(id)
+    return
+    {
+      {
+        title = '{5b83c2}« Раздел инструктора »',
+        onclick = function()
+        end
+      },
+      {
+        title = '{ffffff}» Приветствие.',
+        onclick = function()
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("Здравствуйте. Я сотрудник автошколы "..myname:gsub('_', ' ')..", чем могу помочь?")
+		wait(1500)
+		sampSendChat('/do На рубашке бейджик с надписью "'..rank..' | '..myname:gsub('_', ' ')..'".')  
+		end
+      },
+      {
+        title = '{ffffff}» Паспорт',
+        onclick = function()
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        sampSendChat("Ваш паспорт, пожалуйста.")
+		wait(1500)
+		sampSendChat("/b /showpass "..myid.."")
+        end
+      },
+	  {
+        title = '{ffffff}» Попрощаться с клиентом',
+        onclick = function()
+        sampSendChat("Спасибо за покупку, всего Вам доброго.")
+        end
+      }
+    }
+end
 
 function ystf()
     if not doesFileExist('moonloader/instools/ystav.txt') then
