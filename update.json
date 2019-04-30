@@ -1,7 +1,7 @@
 {
-  "latest": "4.9",
+  "latest": "5.1",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Обновлены лекции
-  2. Фикс багов"
+  1. Обновлены отделы
+  2. Восстановлены бинды"
 }
