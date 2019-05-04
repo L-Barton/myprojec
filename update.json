@@ -1,6 +1,7 @@
 {
-  "latest": "5.2",
+  "latest": "5.3",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Добавлен инфо-бар продажи лицензий"
+  1. Добавлен инфо-бар продажи лицензий
+  2. Добавлена функция быстрого ответа на последнее смс"
 }
