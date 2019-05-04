@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('5.2')
+script_version('5.3')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -47,6 +47,9 @@ ribolov = 0
 biznes = 0
 departament = {}
 vixodid = {}
+local config_keys = {
+    fastsms = { v = {key.VK_NUMPAD2}}
+}
 function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрипте ранее
 
 	imgui.SwitchContext()
@@ -194,6 +197,7 @@ function main()
   while not doesFileExist('moonloader\\lib\\rkeys.lua') or not doesFileExist('moonloader\\lib\\imcustom\\hotkey.lua') or not doesFileExist('moonloader\\lib\\imgui.lua') or not doesFileExist('moonloader\\lib\\MoonImGui.dll') or not doesFileExist('moonloader\\lib\\imgui_addons.lua') do wait(0) end
   if not doesDirectoryExist('moonloader/instools') then createDirectory('moonloader/instools') end
   hk = require 'lib.imcustom.hotkey'
+  imgui.HotKey = require('imgui_addons').HotKey
   rkeys = require 'rkeys'
   imgui.ToggleButton = require('imgui_addons').ToggleButton
   while not sampIsLocalPlayerSpawned() do wait(0) end
@@ -220,6 +224,7 @@ function main()
   for k, v in pairs(tBindList) do
 		rkeys.registerHotKey(v.v, true, onHotKey)
   end
+  fastsmskey = rkeys.registerHotKey(config_keys.fastsms.v, true, fastsmsk)
   sampRegisterChatCommand('r', r)
   sampRegisterChatCommand('f', f)
   sampRegisterChatCommand('dlog', dlog)
@@ -255,6 +260,16 @@ function main()
         sampAddChatMessage("{139BEC}IT {ffffff}| Файл конфига успешно создан.", -1)
         cfg = inicfg.load(nil, 'instools/config.ini')
       end
+    end
+	if not doesFileExist("moonloader/config/instools/keys.json") then
+        local fa = io.open("moonloader/config/instools/keys.json", "w")
+		fa:write(encodeJson(config_keys))
+        fa:close()
+    else
+        local fa = io.open("moonloader/config/instools/keys.json", 'r')
+        if fa then
+            config_keys = decodeJson(fa:read('*a'))
+        end
     end
 	    local myhp = getCharHealth(PLAYER_PED)
         local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
@@ -952,6 +967,15 @@ function govmenu(id)
 }
 end
 
+function fastsmsk()
+	if lastnumber ~= nil then
+		sampSetChatInputEnabled(true)
+		sampSetChatInputText("/t "..lastnumber.." ")
+	else
+		ftext("Вы ранее не получали входящих сообщений.", 0x046D63)
+	end
+end
+
 function fthmenu(id)
  return
 {
@@ -1391,6 +1415,13 @@ function imgui.OnDrawFrame()
         cfg.main.givra = not cfg.main.givra
 		ftext(cfg.main.givra and 'Инфо-бар включен' or 'Инфо-бар выключен')
     end
+	end
+	imgui.Text(u8("Быстрый ответ на последнее смс"))
+	imgui.SameLine()
+    if imgui.HotKey(u8'##Быстрый ответ смс', config_keys.fastsms, tLastKeys, 100) then
+	    rkeys.changeHotKey(fastsmskey, config_keys.fastsms.v)
+		ftext('Клавиша успешно изменена. Старое значение: '.. table.concat(rkeys.getKeysName(tLastKeys.v), " + ") .. ' | Новое значение: '.. table.concat(rkeys.getKeysName(config_keys.fastsms.v), " + "))
+		saveData(config_keys, 'moonloader/config/instools/keys.json')
 	end
 	imgui.Text(u8("Использовать автоклист"))
 	imgui.SameLine()
@@ -2074,6 +2105,15 @@ function oformenu(id)
     }
 end
 
+function saveData(table, path)
+	if doesFileExist(path) then os.remove(path) end
+    local sfa = io.open(path, "w")
+    if sfa then
+        sfa:write(encodeJson(table))
+        sfa:close()
+    end
+end
+
 function pricemenu(args)
     return
     {
@@ -2692,6 +2732,11 @@ function sampev.onServerMessage(color, text)
         end
 	  end
     end
+	if text:find('SMS:') and text:find('Отправитель:') then
+		wordsSMS, nickSMS = string.match(text, 'SMS: (.+) Отправитель: (.+)');
+		local idsms = nickSMS:match('.+%[(%d+)%]')
+		lastnumber = idsms
+	end
     if text:find('Рабочий день окончен') and color ~= -1 then
         rabden = false
     end
@@ -2716,7 +2761,7 @@ function sampev.onServerMessage(color, text)
 		gun = gun + 1
    end
    	if text:find('приобрел лицензию на бизнес') then
-        local Nicks = text:match('Игрок (.+) приобрел лицензию на бизнес. Сумма добавлена к зарплате.')
+        local Nicks = text:match('Игрок (.+) приобрел лицензию на открытие бизнеса. Сумма добавлена к зарплате.')
 		biznes = biznes + 1
    end
 	if text:find('Вы выгнали (.+) из организации. Причина: (.+)') then
