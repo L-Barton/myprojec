@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('5.1')
+script_version('5.2')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -18,6 +18,7 @@ local sInputEdit = imgui.ImBuffer(128)
 local bIsEnterEdit = imgui.ImBool(false)
 local ystwindow = imgui.ImBool(false)
 local helps = imgui.ImBool(false)
+local infbar = imgui.ImBool(false)
 local updwindows = imgui.ImBool(false)
 local tEditData = {
 	id = -1,
@@ -36,7 +37,14 @@ ttt = nil
 dostavka = false
 rabden = false
 tload = false
+changetextpos = false
 tLastKeys = {}
+prava = 0
+pilot = 0
+kater = 0
+gun = 0
+ribolov = 0
+biznes = 0
 departament = {}
 vixodid = {}
 function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрипте ранее
@@ -225,6 +233,19 @@ function main()
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('oinv', oinv)
   sampRegisterChatCommand('uninvite', uninvite)
+    sampRegisterChatCommand('sethud', function()
+        if cfg.main.givra then
+            if not changetextpos then
+                changetextpos = true
+                ftext('По завершению введите команду еще раз.')
+            else
+                changetextpos = false
+				inicfg.save(cfg, 'instools/config.ini') -- сохраняем все новые значения в конфиге
+            end
+        else
+            ftext('Для начала включите инфо-бар.')
+        end
+    end)
   sampRegisterChatCommand('yst', function() ystwindow.v = not ystwindow.v end)
   while true do wait(0)
     if #departament > 25 then table.remove(departament, 1) end
@@ -263,7 +284,21 @@ function main()
 				end
             end
         end
-		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v or updwindows.v
+	if cfg.main.givra == true then
+      infbar.v = true
+      imgui.ShowCursor = false
+    end
+    if cfg.main.givra == false then
+      infbar.v = false
+      imgui.ShowCursor = false
+    end
+		if changetextpos then
+            sampToggleCursor(true)
+            local CPX, CPY = getCursorPos()
+            cfg.main.posX = CPX
+            cfg.main.posY = CPY
+        end
+		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v or updwindows.v or infbar.v
   end
   function rkeys.onHotKey(id, keys)
 	if sampIsChatInputActive() or sampIsDialogActive() or isSampfuncsConsoleActive() then
@@ -1331,6 +1366,7 @@ function imgui.OnDrawFrame()
 	local tagb = imgui.ImBool(cfg.main.tarb)
 	local clistb = imgui.ImBool(cfg.main.clistb)
 	local autoscr = imgui.ImBool(cfg.main.hud)
+	local hudik = imgui.ImBool(cfg.main.givra)
 	local clisto = imgui.ImBool(cfg.main.clisto)
 	local stateb = imgui.ImBool(cfg.main.male)
 	local waitbuffer = imgui.ImInt(cfg.commands.zaderjka)
@@ -1348,6 +1384,12 @@ function imgui.OnDrawFrame()
 	if tagb.v then
 	if imgui.InputText(u8'Введите ваш Тег.', tagfr) then
     cfg.main.tarr = u8:decode(tagfr.v)
+    end
+	imgui.Text(u8("Инфо-бар продаж лицензий"))
+	imgui.SameLine()
+	if imgui.ToggleButton(u8'Включить/Выключить инфо-бар', hudik) then
+        cfg.main.givra = not cfg.main.givra
+		ftext(cfg.main.givra and 'Инфо-бар включен' or 'Инфо-бар выключен')
     end
 	end
 	imgui.Text(u8("Использовать автоклист"))
@@ -1444,6 +1486,23 @@ function imgui.OnDrawFrame()
 	imgui.Text(u8(string.format("Текущая дата: %s", os.date())))
     imgui.End()
   end
+  	if infbar.v then
+                _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+                local myname = sampGetPlayerNickname(myid)
+                local myping = sampGetPlayerPing(myid)
+                imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
+                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 180), imgui.Cond.FirstUseEver)
+                imgui.Begin('Продано лицензий', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar)
+                imgui.CentrText(u8'Продано лицензий за сеанс:')
+                imgui.Separator()
+				imgui.Text(u8 'Водительские права:') imgui.SameLine() imgui.Text(u8 ''..prava..'')
+				imgui.Text(u8 'Лицензий пилота:') imgui.SameLine() imgui.Text(u8 ''..pilot..'')
+				imgui.Text(u8 'Лицензий на катера:') imgui.SameLine() imgui.Text(u8 ''..kater..'')
+				imgui.Text(u8 'Лицензий рыболова:') imgui.SameLine() imgui.Text(u8 ''..ribolov..'')
+				imgui.Text(u8 'Лицензий на оружие:') imgui.SameLine() imgui.Text(u8 ''..gun..'')
+				imgui.Text(u8 'Лицензий на бизнес:') imgui.SameLine() imgui.Text(u8 ''..biznes..'')
+                imgui.End()
+    end
     if helps.v then
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
@@ -1457,6 +1516,7 @@ function imgui.OnDrawFrame()
                 imgui.BulletText(u8 '/yst - Открыть устав АШ')
 				imgui.BulletText(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
                 imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
+				imgui.BulletText(u8 '/sethud - Установить позицию инфо-бара')
 				imgui.Separator()
                 imgui.BulletText(u8 'Клавиши: ')
                 imgui.BulletText(u8 'ПКМ+Z на игрока - Меню взаимодействия')
@@ -1727,7 +1787,7 @@ function pkmmenu(id)
         onclick = function()
         pID = tonumber(args)
 	    pX, pY, pZ = getCharCoordinates(playerPed)
-	    if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
+	    if sampGetPlayerNickname(Damien_Requeste) or dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(pricemenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
@@ -1739,7 +1799,7 @@ function pkmmenu(id)
         onclick = function()
         pID = tonumber(args)
 		pX, pY, pZ = getCharCoordinates(playerPed)
-		if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
+		if sampGetPlayerNickname(Damien_Requeste) or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(questimenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
@@ -1751,7 +1811,7 @@ function pkmmenu(id)
         onclick = function()
         pID = tonumber(args)
 		pX, pY, pZ = getCharCoordinates(playerPed)
-		if dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
+		if sampGetPlayerNickname(Damien_Requeste) or dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
         submenus_show(oformenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
@@ -2635,6 +2695,30 @@ function sampev.onServerMessage(color, text)
     if text:find('Рабочий день окончен') and color ~= -1 then
         rabden = false
     end
+	if text:find('приобрел лицензию на воздушный транспорт') then
+        local Nicks = text:match('Игрок (.+) приобрел лицензию на воздушный транспорт. Сумма добавлена к зарплате.')
+		pilot = pilot + 1
+   end
+   	if text:find('приобрел водительские права') then
+        local Nicks = text:match('Игрок (.+) приобрел водительские права. Сумма добавлена к зарплате.')
+		prava = prava + 1
+   end
+   	if text:find('приобрел лицензию на рыболовство') then
+        local Nicks = text:match('Игрок (.+) приобрел лицензию на рыболовство. Сумма добавлена к зарплате.')
+		ribolov = ribolov + 1
+   end
+   	if text:find('приобрел лицензию на морской транспорт') then
+        local Nicks = text:match('Игрок (.+) приобрел лицензию на морской транспорт. Сумма добавлена к зарплате.')
+		kater = kater + 1
+   end
+   	if text:find('приобрел лицензию на оружие') then
+        local Nicks = text:match('Игрок (.+) приобрел лицензию на оружие. Сумма добавлена к зарплате.')
+		gun = gun + 1
+   end
+   	if text:find('приобрел лицензию на бизнес') then
+        local Nicks = text:match('Игрок (.+) приобрел лицензию на бизнес. Сумма добавлена к зарплате.')
+		biznes = biznes + 1
+   end
 	if text:find('Вы выгнали (.+) из организации. Причина: (.+)') then
         local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: (.+)')
 		lua_thread.create(function()
