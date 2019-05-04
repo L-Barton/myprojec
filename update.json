@@ -1,7 +1,6 @@
 {
-  "latest": "5.1",
+  "latest": "5.2",
   "updateurl": "https://raw.githubusercontent.com/Damein68/lua/master/Intools.lua",
   "updlist": "
-  1. Обновлены отделы
-  2. Восстановлены бинды"
+  1. Добавлен инфо-бар продажи лицензий"
 }
