@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('5.3')
+script_version('5.4')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -48,7 +48,7 @@ biznes = 0
 departament = {}
 vixodid = {}
 local config_keys = {
-    fastsms = { v = {key.VK_NUMPAD2}}
+    fastsms = { v = {}}
 }
 function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрипте ранее
 
@@ -194,6 +194,15 @@ function main()
             print('Загружается библиотека '..v)
         end
     end
+	if not doesFileExist("moonloader/config/instools/keys.json") then
+        local fa = io.open("moonloader/config/instools/keys.json", "w")
+        fa:close()
+    else
+        local fa = io.open("moonloader/config/instools/keys.json", 'r')
+        if fa then
+            config_keys = decodeJson(fa:read('*a'))
+        end
+    end
   while not doesFileExist('moonloader\\lib\\rkeys.lua') or not doesFileExist('moonloader\\lib\\imcustom\\hotkey.lua') or not doesFileExist('moonloader\\lib\\imgui.lua') or not doesFileExist('moonloader\\lib\\MoonImGui.dll') or not doesFileExist('moonloader\\lib\\imgui_addons.lua') do wait(0) end
   if not doesDirectoryExist('moonloader/instools') then createDirectory('moonloader/instools') end
   hk = require 'lib.imcustom.hotkey'
@@ -260,16 +269,6 @@ function main()
         sampAddChatMessage("{139BEC}IT {ffffff}| Файл конфига успешно создан.", -1)
         cfg = inicfg.load(nil, 'instools/config.ini')
       end
-    end
-	if not doesFileExist("moonloader/config/instools/keys.json") then
-        local fa = io.open("moonloader/config/instools/keys.json", "w")
-		fa:write(encodeJson(config_keys))
-        fa:close()
-    else
-        local fa = io.open("moonloader/config/instools/keys.json", 'r')
-        if fa then
-            config_keys = decodeJson(fa:read('*a'))
-        end
     end
 	    local myhp = getCharHealth(PLAYER_PED)
         local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
@@ -1686,6 +1685,11 @@ function onScriptTerminate(scr)
 			f:write(encodeJson(tBindList))
 			f:close()
 		end
+		local fa = io.open("moonloader/config/instools/keys.json", "w")
+        if fa then
+            fa:write(encodeJson(config_keys))
+            fa:close()
+        end
 	end
 end
 
