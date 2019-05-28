@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('5.4')
+script_version('5.5')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -712,15 +712,15 @@ function oinvite(id)
 	end
    },
    {
-   title = "{FFFFFF}Отдел {139BEC}Лицензирования",
+   title = "{FFFFFF}Отдел {139BEC}Контроля",
     onclick = function()
-	sampSendChat('/me достал(а) бейджик Сотрудника ОЛ и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	sampSendChat('/me достал(а) бейджик Сотрудника ОК и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 	wait(1500)
 	sampSendChat('/b /clist 21')
 	wait(1500)
-	sampSendChat('/b тег в /r [Сотрудник ОЛ]')
+	sampSendChat('/b тег в /r [Сотрудник ОК]')
 	wait(1500)
-	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник ОЛ.', cfg.main.tarr))
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник ОК.', cfg.main.tarr))
 	end
    },
  }
@@ -811,7 +811,7 @@ function otmenu(id)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: В Отдел Лицензирования производится пополнение сотрудников.', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: В Отдел Контроля производится пополнение сотрудников.', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -1049,7 +1049,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("ОС - Отдел Стажировки, занимающийся непосредственно обучением стажёров.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("ОЛ - Отдел Лицензирования, занимающийся профилактикой нарушений и аварийных ситуаций.")
+        sampSendChat("ОК - Отдел Контроля, занимающийся профилактикой нарушений и аварийных ситуаций.")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("С участием транспорта, через проведение лекций и проверок гос. структур")
         wait(cfg.commands.zaderjka * 1000)
@@ -1412,7 +1412,7 @@ function imgui.OnDrawFrame()
 	imgui.SameLine()
 	if imgui.ToggleButton(u8'Включить/Выключить инфо-бар', hudik) then
         cfg.main.givra = not cfg.main.givra
-		ftext(cfg.main.givra and 'Инфо-бар включен' or 'Инфо-бар выключен')
+		ftext(cfg.main.givra and 'Инфо-бар включен, установить положение /sethud' or 'Инфо-бар выключен')
     end
 	end
 	imgui.Text(u8("Быстрый ответ на последнее смс"))
