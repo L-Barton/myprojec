@@ -1,6 +1,6 @@
 {
   "latest": "5.6",
-  "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myproject/master/Intools.lua",
+  "updateurl": "https://raw.githubusercontent.com/Misanthrope123/lua-1/master/Intools.lua",
   "updlist": "
   1. Обновлён устав АШ
   2. Добавлена функция быстрого ответа на последнее смс"
