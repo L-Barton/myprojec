@@ -1291,52 +1291,6 @@ function fthmenu(id)
 	end
    },
       {
-    title = "{FFFFFF}Лекция про {139BEC}Правильное обращение с оружием",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Сейчас я проведу лекцию на тему "Обращение с оружием".')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Гражданам запрещено носить оружие не имея на него лицензию")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Для сотрудников силовых структур делается исключение. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Оружие разрешено использовать в случае:")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1.Самообороны, при нападении на вас. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2.Для выполнения своих служебных обязанностей.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("3.По прямому приказу людей, имеющих на это полномочия. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Тем не менее, существует ряд запретов связанных с оружием: ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1.Запрещено носить оружие в открытом виде в многолюдных местах. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2.Запрещено приобретать оружие незаконно. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("3.Запрещено расстреливать жителей без весомой причины.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("4.Запрещено использвать оружие для достижения личных целей. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В случае нарушения этих правил, у вас будет изъята лицензия. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Так же за подобные нарушения вас могут заключить под стражу. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("На этом все, спасибо за внимание.")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-      {
     title = "{FFFFFF}Лекция про {139BEC}Правила управления водным транспортом",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
