@@ -2671,7 +2671,7 @@ end
 
 function update()
 	local fpath = os.getenv('TEMP') .. '\\update.json'
-	downloadUrlToFile('https://raw.githubusercontent.com/Misanthrope123/myproject/master/update.json', fpath, function(id, status, p1, p2)
+	downloadUrlToFile('https://raw.githubusercontent.com/Misanthrope123/myprojec/master/update.json', fpath, function(id, status, p1, p2)
 		if status == dlstatus.STATUS_ENDDOWNLOADDATA then
             local f = io.open(fpath, 'r')
             if f then
