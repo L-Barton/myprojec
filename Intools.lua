@@ -1524,20 +1524,10 @@ function imgui.OnDrawFrame()
 	imgui.SameLine()
 	if imgui.ToggleButton(u8'Использовать автоклист', clistb) then
         cfg.main.clistb = not cfg.main.clistb
+    end
     if clistb.v then
         if imgui.SliderInt(u8"Выберите значение клиста", clistbuffer, 0, 33) then
             cfg.main.clist = clistbuffer.v
-        end
-    imgui.Text(u8("Использовать авто логин"))
-	imgui.SameLine()
-	if imgui.ToggleButton(u8'Использовать авто логин', parolb) then
-        cfg.main.parolb = not cfg.main.parolb
-    if parolb.v the
-        if imgui.InputText(u8'Ведите ваш пароль.', parolf, imgui.InputTextFlags.Password) then
-        cfg.main.parol = u8:decode(parolf.v)
-        end
-        if imgui.Button(u8'Узнать пароль') then
-        ftext('Ваш пароль: '..cfg.main.parol)
         end
 		imgui.Text(u8("Использовать отыгровку раздевалки"))
 	    imgui.SameLine()
