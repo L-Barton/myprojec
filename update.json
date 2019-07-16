@@ -1,7 +1,6 @@
 {
-  "latest": "5.7",
-  "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua",
+  "latest": "5.8",
+  "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua ",
   "updlist": "
-  1. Обновлён устав АШ
-  2. Проверка"
+ 1. Добавлена менюшка для собеседования."
 }
