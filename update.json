@@ -1,7 +1,7 @@
 { 
 "latest": "1.1 ", 
 "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua ", 
-"updlist": " 
+"updlist":  
  1. - Добавлены расценки для экзаменов стажёров (ЛКМ + Z) 
  2. - Добавлено меню собеседование  (ПКМ + Z) 
  3. - Фикс обновлений, больше не надо нажимать несколько раз на кнопку (Обновить)" 
