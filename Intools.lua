@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.2')
+script_version('1.3')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -28,7 +28,7 @@ encoding.default = 'CP1251' -- указываем кодировку по умолчанию, она должна совп
 u8 = encoding.UTF8
 require 'lib.sampfuncs'
 seshsps = 1
-ctag = "ITools {ffffff}|"
+ctag = "{9966cc} Inst Tools {ffffff}|"
 players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 players2 = {'{ffffff}Дата принятия\t{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
 frak = nil
@@ -176,9 +176,8 @@ local libs = {'sphere.lua', 'rkeys.lua', 'imcustom/hotkey.lua', 'imgui.lua', 'Mo
 function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
-    ftext("Скрипт успешно загружен. /tset - основное меню.", -1)
-	ftext('Автором данного скрипта является: Damien_Requeste', -1)
-    ftext('Скрипт доработан: Roma_Mizantrop')
+    ftext("Inst Tools успешно загружен. Введите: /it что бы получить дополнительную информацию.", -1)
+	ftext('Авторы: Damien Requeste, Roma Mizantrop')
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
   if cfg == nil then
@@ -242,7 +241,7 @@ function main()
   sampRegisterChatCommand('dmb', dmb)
   sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
-  sampRegisterChatCommand('tset', tset)
+  sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('invite', invite)
@@ -1597,7 +1596,7 @@ function imgui.OnDrawFrame()
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Roma_Mizantrop')
+	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Damien_Requeste')
     imgui.Separator()
 	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
@@ -1616,7 +1615,7 @@ function imgui.OnDrawFrame()
       helps.v = not helps.v
     end
 	imgui.Separator()
-	imgui.BeginChild("Информация", imgui.ImVec2(410, 100), true)
+	imgui.BeginChild("Информация", imgui.ImVec2(410, 130), true)
 	imgui.Text(u8 'Имя и Фамилия:   '..sampGetPlayerNickname(myid):gsub('_', ' ')..'')
 	imgui.Text(u8 'Должность:') imgui.SameLine() imgui.Text(u8(rank))
 	imgui.Text(u8 'Номер телефона:   '..tel..'')
@@ -1628,7 +1627,7 @@ function imgui.OnDrawFrame()
 	end
 	imgui.EndChild()
 	imgui.Separator()
-	imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8("Текущая дата: %s")).x)/3.5)
+	imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8("Текущая дата: %s")).x)/1.5)
 	imgui.Text(u8(string.format("Текущая дата: %s", os.date())))
     imgui.End()
   end
@@ -1637,11 +1636,14 @@ function imgui.OnDrawFrame()
                 local myname = sampGetPlayerNickname(myid)
                 local myping = sampGetPlayerPing(myid)
                 imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
-                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 180), imgui.Cond.FirstUseEver)
-                imgui.Begin('Продано лицензий', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar)
-                imgui.CentrText(u8'Продано лицензий за сеанс:')
+                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 240), imgui.Cond.FirstUseEver)
+                imgui.Begin('Inst Tools', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar)
+                imgui.CentrText('Inst Tools')
                 imgui.Separator()
-				imgui.Text(u8 'Водительские права:') imgui.SameLine() imgui.Text(u8 ''..prava..'')
+                imgui.Text((u8"Информация: %s [%s] | Пинг: %s"):format(myname, myid, myping))
+                imgui.Text((u8 'Время: %s'):format(os.date('%H:%M:%S')))
+                imgui.CentrText(u8'Продано лицензий за сеанс:')
+                imgui.Text(u8 'Водительские права:') imgui.SameLine() imgui.Text(u8 ''..prava..'')
 				imgui.Text(u8 'Лицензий пилота:') imgui.SameLine() imgui.Text(u8 ''..pilot..'')
 				imgui.Text(u8 'Лицензий на катера:') imgui.SameLine() imgui.Text(u8 ''..kater..'')
 				imgui.Text(u8 'Лицензий рыболова:') imgui.SameLine() imgui.Text(u8 ''..ribolov..'')
@@ -1654,7 +1656,7 @@ function imgui.OnDrawFrame()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
                 imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
 				imgui.BeginChild("Список команд", imgui.ImVec2(495, 230), true, imgui.WindowFlags.VerticalScrollbar)
-                imgui.BulletText(u8 '/tset - Открыть меню скрипта')
+                imgui.BulletText(u8 '/it - Открыть меню скрипта')
                 imgui.Separator()
                 imgui.BulletText(u8 '/vig [id] [Причина] - Выдать выговор по рации')
                 imgui.BulletText(u8 '/dmb - Открыть /members в диалоге')
@@ -1889,7 +1891,7 @@ function ftext(message)
     sampAddChatMessage(string.format('%s %s', ctag, message), 0x139BEC)
 end
 
-function tset()
+function it()
   if frac == 'Driving School' then
   second_window.v = not second_window.v
   else
