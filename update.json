@@ -1,6 +1,12 @@
 { 
-"latest": "1.2 ", 
+"latest": "1.3 ", 
 "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua ", 
 "updlist": " 
-1. - Добавлена команда /nick ID" 
+UPD 16.07.2019: 
+• Добавлена команда /nick ID 
+• Убрана команда /tset, список всех команд можно посмотреть нажав на соответствующий пункт в /it 
+• Изменён инфо-бар
+
+Изменения в скором времени:
+• Скоро будет изменена кмд /dmb" 
 }
