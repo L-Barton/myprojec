@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('6.0')
+script_version('6.1')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -1940,17 +1940,10 @@ function pkmmenu(id)
         end
       },
       {
-        title = "{ffffff}» Вопросы на собеседование",
+        title = "{ffffff}» Расценки для экзамена",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(vopsobes(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
-        end
-      },
-      {
-        title = "{ffffff}» Собеседование конец",
-        onclick = function()
-        pID = tonumber(args)
-        submenus_show(sobesconec(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(rascenki(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
 	  {
@@ -2028,17 +2021,6 @@ function sobes(id)
         wait(1500)
         sampSendChat("/b /showpass "..myid..", /me показал(а) мед.карту") 
 		end
-      }
-    }
-end
-
-function vopsobes(args)
-    return
-    {
-      {
-        title = '{5b83c2}« Вопросы для собеседования »',
-        onclick = function()
-        end
       },
       {
         title = '{ffffff}» Проблемы с головой',
@@ -2051,17 +2033,6 @@ function vopsobes(args)
         onclick = function()
         sampSendChat("/b DM, MG, SK, TK, мне в смс. /sms "..myid.."")
         end
-      }
-    }
-end
-
-function sobesconec(id)
-    return
-    {
-      {
-        title = '{5b83c2}« Раздел собеседования »',
-        onclick = function()
-        end
       },
       {
         title = '{ffffff}» Принятие',
@@ -2071,6 +2042,81 @@ function sobesconec(id)
         sampSendChat("Поздравляю, вы приняты, пройдите в комнату теории, сейчас вам сотрудник прочитает лекцию")
 		end
       }
+    }
+end
+
+function rascenki(args)
+    return
+    {
+      {
+        title = '{5b83c2}« Расценки для экзамена »',
+        onclick = function()
+        end
+      },
+      {
+        title = '{ffffff}» Лицензия рыболовля',
+        onclick = function()
+        sampSendChat("Сколько стоит лицензия на рыболовлю?")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}2.000 $", -1)
+		end
+      },
+      {
+        title = '{ffffff}» Лицензия водный транспорт',
+        onclick = function()
+        sampSendChat("Сколько стоит лицензия на водный транспорт?")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}5.000 $", -1)
+		end
+      },
+      {
+        title = '{ffffff}» Лицензия воздушный транспорт',
+        onclick = function()
+        sampSendChat("Сколько стоит лицензия на воздушный транспорт?")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}5.000 $", -1)
+		end
+      },
+      {
+        title = '{ffffff}» Лицензия оружие',
+        onclick = function()
+        sampSendChat("Сколько стоит лицензия на оружие?")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}50.000 $", -1)
+		end
+      },
+      {
+        title = '{ffffff}» Лицензия на бизнес',
+        onclick = function()
+        sampSendChat("Сколько стоит лицензия на бизнес")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}100.000 $", -1)
+		end
+      },
+      {
+        title = '{ffffff}» Права от 3-х лет в штате',
+        onclick = function()
+        sampSendChat("Сколько стоят права от трех лет в штате?")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}500  $", -1)
+		end
+      },
+      {
+        title = '{ffffff}» Права от 6-и лет в штате',
+        onclick = function()
+        sampSendChat("Сколько стоят права от шести лет в штате?")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}5.000  $", -1)
+		end
+      },
+      {
+        title = '{ffffff}» Права от 16-и лет в штате',
+        onclick = function()
+        sampSendChat("Сколько стоят права от шестнадцати лет в штате?")
+        wait(1500)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}30.000  $", -1)
+		end
+      }            
     }
 end
 
