@@ -1,6 +1,6 @@
 {
-  "latest": "5.8",
+  "latest": "5.9",
   "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua ",
   "updlist": "
- 1. Добавлена менюшка для собеседования."
+ 1. Изменена кодировка скрипта"
 }
