@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('5.8')
+script_version('5.9')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2049,7 +2049,7 @@ function vopsobes(args)
       {
         title = '{ffffff}» Термины',
         onclick = function()
-        sampSendChat("/b DM, MG, SK, TK, мне в смс. /showpass "..myid.."")
+        sampSendChat("/b DM, MG, SK, TK, мне в смс. /sms "..myid.."")
         end
       }
     }
