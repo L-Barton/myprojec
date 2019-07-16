@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.1')
+script_version('1.2')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -246,6 +246,7 @@ function main()
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('invite', invite)
+  sampRegisterChatCommand('nick', nick)
   sampRegisterChatCommand('oinv', oinv)
   sampRegisterChatCommand('uninvite', uninvite)
     sampRegisterChatCommand('sethud', function()
