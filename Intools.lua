@@ -685,6 +685,23 @@ function invite(pam)
 	end
 	  end)
    end
+   
+  function nick(pam)
+    lua_thread.create(function()
+        local id = pam:match('(%d+)')
+		local _, handle = sampGetCharHandleBySampPlayerId(id)
+	if id then	
+		if sampIsPlayerConnected(id) then
+				setClipboardText(sampGetPlayerNickname(id):gsub('_', ' '))
+			    ftext('Имя скопировано.')
+				else 
+			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
+            end
+	  else 
+			ftext('Введите: /nick [id]')
+	end
+	  end)
+   end
  
  function uninvite(pam)
     lua_thread.create(function()
