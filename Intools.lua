@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.3')
+script_version('1.7')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2072,7 +2072,7 @@ function sobes(id)
 		end
       },
       {
-        title = '{ffffff}» Проблемы с головой',
+        title = '{ffffff}» Что у меня над головой?',
         onclick = function()
           sampSendChat("Что у меня над головой?")
 		end
@@ -2125,7 +2125,7 @@ function rascenki(args)
         onclick = function()
         sampSendChat("Сколько стоит лицензия на воздушный транспорт?")
         wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}5.000 $", -1)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}10.000 $", -1)
 		end
       },
       {
@@ -2139,7 +2139,7 @@ function rascenki(args)
       {
         title = '{ffffff}» Лицензия на бизнес',
         onclick = function()
-        sampSendChat("Сколько стоит лицензия на бизнес")
+        sampSendChat("Сколько стоит лицензия на бизнес?")
         wait(1500)
 		ftext("{FFFFFF}- Правильный ответ: {A52A2A}100.000 $", -1)
 		end
@@ -2157,7 +2157,7 @@ function rascenki(args)
         onclick = function()
         sampSendChat("Сколько стоят права от шести лет в штате?")
         wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}5.000  $", -1)
+		ftext("{FFFFFF}- Правильный ответ: {A52A2A}10.000  $", -1)
 		end
       },
       {
