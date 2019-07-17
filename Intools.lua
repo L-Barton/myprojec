@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.3')
+script_version('1.4')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -944,6 +944,14 @@ function govmenu(id)
     sampSendChat("/gov [Instructors]: Требования к соискателям: Шесть лет проживания в штате, стрессоустойчивость, опрятный вид.")
     wait(5000)
     sampSendChat("/d OG, освободил волну государственных новостей.")
+    wait(1200)
+	if cfg.main.hud then
+    sampSendChat("/time")
+    wait(500)
+    setVirtualKeyDown(key.VK_F8, true)
+    wait(150)
+    setVirtualKeyDown(key.VK_F8, false)
+	end
 	end
    },
   {
@@ -958,6 +966,14 @@ function govmenu(id)
         sampSendChat("/gov [Instructors]: Cо всеми подробностями вы можете ознакомиться на оф.портале. ")
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
+        wait(1200)
+		if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
   {
@@ -972,6 +988,14 @@ function govmenu(id)
         sampSendChat("/gov [Instructors]: Cо всеми подробностями вы можете ознакомиться на оф.портале.")
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
+        wait(1200)
+		if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },   
   {
@@ -986,6 +1010,14 @@ function govmenu(id)
     sampSendChat("/gov [Instructors]: Cо всеми подробностями вы можете ознакомиться на оф.портале. ")
     wait(5000)
     sampSendChat("/d OG, освободил волну государственных новостей.")
+    wait(1200)
+	if cfg.main.hud then
+    sampSendChat("/time")
+    wait(500)
+    setVirtualKeyDown(key.VK_F8, true)
+    wait(150)
+    setVirtualKeyDown(key.VK_F8, false)
+	end
 	end
    },   
     {
@@ -1000,6 +1032,14 @@ function govmenu(id)
         sampSendChat("/gov [Instructors]: Со всеми критериями, Вы можете ознакомиться на оф.портале штата. ")
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
+        wait(1200)
+		if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
    {
@@ -1016,6 +1056,14 @@ function govmenu(id)
         sampSendChat('/gov [Instructors]: Филиал находится на первом этаже Мэрии. С уважением, '..rank..' Автошколы - '..myname:gsub('_', ' ')..'.')
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
+        wait(1200)
+		if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
 	end
    },
    {
@@ -2032,6 +2080,8 @@ function sobes(id)
       {
         title = '{ffffff}» Термины',
         onclick = function()
+        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)/
         sampSendChat("/b DM, MG, SK, TK, мне в смс. /sms "..myid.."")
         end
       },
