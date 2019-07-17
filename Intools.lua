@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.13')
+script_version('1.14')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -10,11 +10,13 @@ local encoding = require 'encoding' -- загружаем библиотеку
 local wm = require 'lib.windows.message'
 local gk = require 'game.keys'
 local dlstatus = require('moonloader').download_status
+local lmem, memory = pcall(require, 'memory')
+                     assert(lmem, 'Library \'memory\' not found')
 local second_window = imgui.ImBool(false)
 local third_window = imgui.ImBool(false)
 local first_window = imgui.ImBool(false)
 local btn_size = imgui.ImBool(false)
-local bMainWindow = imgui.ImBool(false)
+local bMainWindow = imgui.ImBool(false)                              
 local sInputEdit = imgui.ImBuffer(128)
 local bIsEnterEdit = imgui.ImBool(false)
 local ystwindow = imgui.ImBool(false)
@@ -245,6 +247,12 @@ function main()
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
+  sampRegisterChatCommand('uinv', function(arg) sampSendChat('/uninvite '..arg) end)
+  sampRegisterChatCommand('inv', function(arg) sampSendChat('/invite '..arg) end)
+  sampRegisterChatCommand('cl', function(arg) sampSendChat('/clist '..arg) end)
+  sampRegisterChatCommand('gr', function(arg) sampSendChat('/giverank '..arg) end)
+  sampRegisterChatCommand('blag', cmd_blag)
+  sampRegisterChatCommand('cchat', cmd_cchat)
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
   sampRegisterChatCommand('oinv', oinv)
@@ -490,6 +498,52 @@ function dmb()
 		status = false
 		gcount = nil
 	end)
+end
+
+function cmd_blag(arg)
+  if #arg == 0 then
+    ftext('Введите: /blag [ид] [фракция] [тип]')
+    ftext('Тип: 1 - за транспортировку')
+    return
+  end
+  local args = string.split(arg, " ", 3)
+  args[3] = tonumber(args[3])
+  if args[1] == nil or args[2] == nil or args[3] == nil then
+    ftext('Введите: /blag [ид] [фракция] [тип]')
+    ftext('Тип: 1 - за транспортировку')
+    return   
+  end
+  local pid = tonumber(args[1])
+  if pid == nil then ftext('Игрок не найден!') return end
+  if not sampIsPlayerConnected(pid) then ftext('Игрок оффлайн!') return end
+  local blags = {"транспортировку"}
+  if args[3] < 1 or args[3] > #blags then ftext('Неверный тип!') return end
+  sampSendChat(("/d %s, выражаю благодарность %s за %s"):format(args[2], string.gsub(sampGetPlayerNickname(pid), "_", " "), blags[args[3]]))
+end
+
+function string.split(inputstr, sep, limit)
+  if limit == nil then limit = 0 end
+  if sep == nil then sep = "%s" end
+  local t={} ; i=1
+  for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+    if i >= limit and limit > 0 then
+      if t[i] == nil then
+        t[i] = ""..str
+      else
+        t[i] = t[i]..sep..str
+      end
+    else
+      t[i] = str
+      i = i + 1
+    end
+  end
+  return t
+end
+
+function cmd_cchat()
+  memory.fill(sampGetChatInfoPtr() + 306, 0x0, 25200)
+  memory.write(sampGetChatInfoPtr() + 306, 25562, 4, 0x0)
+  memory.write(sampGetChatInfoPtr() + 0x63DA, 1, 1)
 end
 
 function dmch()
@@ -1556,6 +1610,8 @@ function imgui.OnDrawFrame()
 	local hudik = imgui.ImBool(cfg.main.givra)
 	local clisto = imgui.ImBool(cfg.main.clisto)
 	local stateb = imgui.ImBool(cfg.main.male)
+	local parolf = imgui.ImBuffer(u8(tostring(cfg.main.parol)), 256)
+	local parolb = imgui.ImBool(cfg.main.parolb)
 	local waitbuffer = imgui.ImInt(cfg.commands.zaderjka)
 	local clistbuffer = imgui.ImInt(cfg.main.clist)
     local iScreenWidth, iScreenHeight = getScreenResolution()
@@ -1672,7 +1728,7 @@ function imgui.OnDrawFrame()
       helps.v = not helps.v
     end
 	imgui.Separator()
-	imgui.BeginChild("Информация", imgui.ImVec2(410, 130), true)
+	imgui.BeginChild("Информация", imgui.ImVec2(410, 150), true)
 	imgui.Text(u8 'Имя и Фамилия:   '..sampGetPlayerNickname(myid):gsub('_', ' ')..'')
 	imgui.Text(u8 'Должность:') imgui.SameLine() imgui.Text(u8(rank))
 	imgui.Text(u8 'Номер телефона:   '..tel..'')
@@ -1710,7 +1766,7 @@ function imgui.OnDrawFrame()
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
                 imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
-				imgui.BeginChild("Список команд", imgui.ImVec2(495, 230), true, imgui.WindowFlags.VerticalScrollbar)
+				imgui.BeginChild("Список команд", imgui.ImVec2(525, 260), true, imgui.WindowFlags.VerticalScrollbar)
                 imgui.BulletText(u8 '/it - Открыть меню скрипта')
                 imgui.Separator()
                 imgui.BulletText(u8 '/vig [id] [Причина] - Выдать выговор по рации')
@@ -1720,6 +1776,12 @@ function imgui.OnDrawFrame()
 				imgui.BulletText(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
                 imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
 				imgui.BulletText(u8 '/sethud - Установить позицию инфо-бара')
+				imgui.BulletText(u8 '/uinv - Сокращение команды /uninvite')
+				imgui.BulletText(u8 '/cl - Сокращение команды /clist')
+				imgui.BulletText(u8 '/inv - Сокращение команды /invite')
+				imgui.BulletText(u8 '/gr - Сокращение команды /giverank'))
+				imgui.BulletText(u8 '/cchat - Очищает чат')
+				imgui.BulletText(u8 '/blag [ид] [фракция] [тип] - Выразить игроку благодарность в департамент')
 				imgui.Separator()
                 imgui.BulletText(u8 'Клавиши: ')
                 imgui.BulletText(u8 'ПКМ+Z на игрока - Меню взаимодействия')
