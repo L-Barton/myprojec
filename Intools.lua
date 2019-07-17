@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.8')
+script_version('1.9')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -1264,7 +1264,7 @@ function fthmenu(id)
 	end
    },
       {
-    title = "{FFFFFF}Лекция про {139BEC}ПРАВИЛА ЭТИКЕТА",
+    title = "{FFFFFF}Лекция про {139BEC}Правила этикета",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         wait(cfg.commands.zaderjka * 1000)
@@ -2940,18 +2940,26 @@ function update()
                 ttt = updlist1
 			    if info and info.latest then
                     version = tonumber(info.latest)
-                    if version > tonumber(thisScript().version) then
-                        ftext('Обнаружено обновление до версии '..updversion..'.')
-					    updwindows.v = true
+if tonumber(thisScript().version) < tonumber(info.latest) then
+                        ftext('Обнаружено обновление {9966cc}Inst Tools{ffffff}. Для обновления нажмите кнопку ОБНОВИТЬ.')
+                        ftext('Примечание: Если у вас не появилось окошко введите {9966cc}/it')
+                        updwindows.v = true
+                        canupdate = true
                     else
-                        ftext('Обновлений скрипта не обнаружено. Приятной игры.', -1)
+                        print('Обновлений скрипта не обнаружено. Приятной игры.')
                         update = false
 				    end
-			    end
-		    end
-	    end
+                end
+            else
+                print("Проверка обновления прошка неуспешно. Запускаю старую версию.")
+            end
+        elseif status == 64 then
+            print("Проверка обновления прошка неуспешно. Запускаю старую версию.")
+            update = false
+        end
     end)
 end
+
 
 function smsjob()
   if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
@@ -2980,11 +2988,12 @@ function goupdate()
     ftext('Началось скачивание обновления. Скрипт перезагрузится через пару секунд.', -1)
     wait(300)
     downloadUrlToFile(updatelink, thisScript().path, function(id3, status1, p13, p23)
-    if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-        showCursor(false)
-	    thisScript():reload()
-    end
-end)
+        if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+            thisScript():reload()
+        elseif status1 == 64 then
+            ftext("Скачивание обновления прошло не успешно. Запускаю старую версию")
+        end
+    end)
 end
 
 function cmd_color() -- функция получения цвета строки, хз зачем она мне, но когда то юзал
