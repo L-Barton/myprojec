@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.7')
+script_version('1.8')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -783,7 +783,7 @@ function fastmenu(id)
 	end
    },
    {
-   title = "{FFFFFF}Доставка лицензий {139BEC}в любую точку штата в /d{ff0000}(Для 4+ ранга)",
+   title = "{FFFFFF}Доставка лицензий {139BEC}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
     onclick = function()
 	if rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
 	sampSendChat(string.format('/d OG, Осуществляется доставка лицензий в любую точку штата. Тел: %s.', tel))
@@ -1981,20 +1981,6 @@ function pkmmenu(id)
         submenus_show(instmenu(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
-      {
-        title = "{ffffff}» Собеседование",
-        onclick = function()
-        pID = tonumber(args)
-        submenus_show(sobes(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
-        end
-      },
-      {
-        title = "{ffffff}» Расценки для экзамена",
-        onclick = function()
-        pID = tonumber(args)
-        submenus_show(rascenki(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
-        end
-      },
 	  {
         title = "{ffffff}» Цены лицензий",
         onclick = function()
@@ -2030,6 +2016,27 @@ function pkmmenu(id)
 	    ftext('Вы должны находиться за стойкой')
         end
 		end
+      },
+      {
+        title = "{ffffff}» Собеседование",
+        onclick = function()
+        pID = tonumber(args)
+        submenus_show(sobes(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        end
+      },
+      {
+      title = "{ffffff}» Отработка выговоров",
+      onclick = function()
+      pID = tonumber(args)
+      submenus_show(otrvig(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+      end
+      },
+      {
+        title = "{ffffff}» Расценки для экзамена",
+        onclick = function()
+        pID = tonumber(args)
+        submenus_show(rascenki(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        end
       },
 	  {
         title = "{ffffff}» Ударить шокером",
@@ -2083,6 +2090,60 @@ function sobes(id)
         local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("/b DM, MG, SK, TK, мне в смс. /sms "..myid.."")
+        end
+      },
+      {
+        title = '{ffffff}» Принятие',
+        onclick = function()
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("Поздравляю, вы приняты, пройдите в комнату теории, сейчас вам сотрудник прочитает лекцию")
+		end
+      }
+    }
+end
+
+function otrvig(id)
+    return
+    {
+      {
+        title = '{5b83c2}« Отработка выговоров »',
+        onclick = function()
+        end
+      },
+      {
+        title = '{ffffff}» Взять ведро и губку в шкафе',
+        onclick = function()
+        sampSendChat("/me открыл(а) шкафчик и взял(а) губку")
+        wait(5000)
+        sampSendChat("/me взял(а) пустое ведро")
+		end
+      },
+      {
+        title = '{ffffff}» Наполнить ведро водой',
+        onclick = function()
+        sampSendChat("/me наполняет ведро водой")
+        wait(5000)
+        sampSendChat("/do Ведро наполнено водой.")          
+		end
+      },
+      {
+        title = '{ffffff}» Мойка машины',
+        onclick = function()
+        sampSendChat("/me поставил(а_ ведро с водой у машины.")
+        wait(5000)
+        sampSendChat("/me начал(а) мыть стекла машины")
+        wait(5000)
+        sampSendChat("/me моет зеркала машины")
+        wait(5000)
+        sampSendChat("/me закончил(а) мыть машину")
+        wait(5000)
+        sampSendChat("/me моет зеркала машины")
+        wait(5000)
+        sampSendChat("/me моет зеркала машины")
+        wait(5000)
+        sampSendChat("/me моет зеркала машины")
+        wait(5000)                                        
         end
       },
       {
