@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.11')
+script_version('1.12')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -13,6 +13,7 @@ local dlstatus = require('moonloader').download_status
 local second_window = imgui.ImBool(false)
 local third_window = imgui.ImBool(false)
 local first_window = imgui.ImBool(false)
+local btn_size = imgui.ImBool(false)
 local bMainWindow = imgui.ImBool(false)
 local sInputEdit = imgui.ImBuffer(128)
 local bIsEnterEdit = imgui.ImBool(false)
@@ -1560,7 +1561,7 @@ function imgui.OnDrawFrame()
     local iScreenWidth, iScreenHeight = getScreenResolution()
 	local btn_size = imgui.ImVec2(-0.1, 0)
     imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
-    imgui.Begin(u8'Настройки##1', first_window, imgui.WindowFlags.NoResize)
+    imgui.Begin(u8'Настройки##1', first_window, btn_size, imgui.WindowFlags.NoResize)
 	imgui.PushItemWidth(200)
 	imgui.AlignTextToFramePadding(); imgui.Text(u8("Использовать автотег"))
 	imgui.SameLine()
@@ -1639,12 +1640,12 @@ function imgui.OnDrawFrame()
 	local btn_size = imgui.ImVec2(130, 0)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
     imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
-    imgui.Begin('Inst Tools | Main Menu', second_window, imgui.WindowFlags.NoResize)
-	local text = 'Разработчик:'
+    imgui.Begin('Inst Tools | Main Menu | Version: '..thisScript().version, second_window, mainw,  imgui.WindowFlags.NoResize)
+	local text = 'Авторы:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Damien_Requeste')
+	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Damien Requeste, Roma Mizantrop')
     imgui.Separator()
 	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
@@ -1653,10 +1654,18 @@ function imgui.OnDrawFrame()
     if imgui.Button(u8'Настройки скрипта', imgui.ImVec2(120, 30)) then
       first_window.v = not first_window.v
     end
+    imgui.SameLine()
+    if imgui.Button(u8 'Сообщить о ошибке / баге', imgui.ImVec2(170, 30)) then os.execute('explorer "https://vk.com/ortemelyan"')
+    btn_size = not btn_size
+    end
 	imgui.SameLine()
     if imgui.Button(u8'Перезагрузить скрипт', imgui.ImVec2(150, 30)) then
       showCursor(false)
       thisScript():reload()
+    end
+    if imgui.Button(u8 'Отключить скрипт', imgui.ImVec2(120, 30), btn_size) then
+      showCursor(false)
+      thisScript():unload()
     end
 	imgui.SameLine()
     if imgui.Button(u8'Помощь', imgui.ImVec2(55, 30)) then
@@ -2025,13 +2034,6 @@ function pkmmenu(id)
         end
       },
       {
-      title = "{ffffff}» Отработка выговоров",
-      onclick = function()
-      pID = tonumber(args)
-      submenus_show(otrvig(id), "{139BEC}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
-      end
-      },
-      {
         title = "{ffffff}» Расценки для экзамена",
         onclick = function()
         pID = tonumber(args)
@@ -2090,60 +2092,6 @@ function sobes(id)
         local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
         sampSendChat("/b DM, MG, SK, TK, мне в смс. /sms "..myid.."")
-        end
-      },
-      {
-        title = '{ffffff}» Принятие',
-        onclick = function()
-		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Поздравляю, вы приняты, пройдите в комнату теории, сейчас вам сотрудник прочитает лекцию")
-		end
-      }
-    }
-end
-
-function otrvig(id)
-    return
-    {
-      {
-        title = '{5b83c2}« Отработка выговоров »',
-        onclick = function()
-        end
-      },
-      {
-        title = '{ffffff}» Взять ведро и губку в шкафе',
-        onclick = function()
-        sampSendChat("/me открыл(а) шкафчик и взял(а) губку")
-        wait(5000)
-        sampSendChat("/me взял(а) пустое ведро")
-		end
-      },
-      {
-        title = '{ffffff}» Наполнить ведро водой',
-        onclick = function()
-        sampSendChat("/me наполняет ведро водой")
-        wait(5000)
-        sampSendChat("/do Ведро наполнено водой.")          
-		end
-      },
-      {
-        title = '{ffffff}» Мойка машины',
-        onclick = function()
-        sampSendChat("/me поставил(а_ ведро с водой у машины.")
-        wait(5000)
-        sampSendChat("/me начал(а) мыть стекла машины")
-        wait(5000)
-        sampSendChat("/me моет зеркала машины")
-        wait(5000)
-        sampSendChat("/me закончил(а) мыть машину")
-        wait(5000)
-        sampSendChat("/me моет зеркала машины")
-        wait(5000)
-        sampSendChat("/me моет зеркала машины")
-        wait(5000)
-        sampSendChat("/me моет зеркала машины")
-        wait(5000)                                        
         end
       },
       {
