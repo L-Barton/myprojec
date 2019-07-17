@@ -394,7 +394,7 @@ local fpt = [[
 ? 3.5 Время прибытия на работу, независимо от места проживания ? 15 минут.
 ? 3.6 Каждый сотрудник, опаздывающий на работу по любым причинам, вправе отсрочить свое прибытие, уведомив об этом руководство Автошколы.(не более чем на 10 минут)
 ? 3.7 По желанию сотрудник может остаться на ночную смену после конца рабочего дня.
-? 3.8 Запрещено находиться на автомобильной ярмарке в рабочее время.
+? 3.8 Запрещено находиться на автомобильной ярмарке в рабочее а.
 ? 3.9 Разрешено в течение рабочего дня посещать МП от администраторов, а также системные МП (гонки / Base Jump / Paint Ball), но при этом сообщать в рацию, что вы отправляетесь на мероприятие;?
 ? 3.10 Разрешено покидать офис для доставки лицензий, проведения лекций гос. организациям, а также чтобы покушать.?
 
@@ -1636,12 +1636,11 @@ function imgui.OnDrawFrame()
                 local myname = sampGetPlayerNickname(myid)
                 local myping = sampGetPlayerPing(myid)
                 imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
-                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 240), imgui.Cond.FirstUseEver)
-                imgui.Begin('Inst Tools', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar)
-                imgui.CentrText('Inst Tools')
+                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 220), imgui.Cond.FirstUseEver)
+                imgui.Begin('Inst Tools', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar) 
+                imgui.CentrText('Inst Tools') 
                 imgui.Separator()
                 imgui.Text((u8"Информация: %s [%s] | Пинг: %s"):format(myname, myid, myping))
-                imgui.Text((u8 'Время: %s'):format(os.date('%H:%M:%S')))
                 imgui.CentrText(u8'Продано лицензий за сеанс:')
                 imgui.Text(u8 'Водительские права:') imgui.SameLine() imgui.Text(u8 ''..prava..'')
 				imgui.Text(u8 'Лицензий пилота:') imgui.SameLine() imgui.Text(u8 ''..pilot..'')
