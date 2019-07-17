@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.9')
+script_version('1.10')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2942,7 +2942,6 @@ function update()
                     version = tonumber(info.latest)
 if tonumber(thisScript().version) < tonumber(info.latest) then
                         ftext('Обнаружено обновление {9966cc}Inst Tools{ffffff}. Для обновления нажмите кнопку ОБНОВИТЬ.')
-                        ftext('Примечание: Если у вас не появилось окошко введите {9966cc}/it')
                         updwindows.v = true
                         canupdate = true
                     else
