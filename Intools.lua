@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.14')
+script_version('1.15')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2137,33 +2137,91 @@ function sobes(id)
         onclick = function()
 		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Здравствуйте. Я сотрудник автошколы "..myname:gsub('_', ' ')..", покажите комплект ваших документов, а именно мед карту и паспорт.")
+        sampSendChat("Приветствую, покажите пожалуйста свой паспорт, и мед.карту")
         wait(1500)
-        sampSendChat("/b /showpass "..myid..", /me показал(а) мед.карту") 
+        sampSendChat("/b /showpass "..myid..", /me предел(а) мед.карту человеку на против") 
 		end
       },
       {
-        title = '{ffffff}» Что у меня над головой?',
+        title = '{ffffff}» Просмотр паспорта и мед.карты',
         onclick = function()
-          sampSendChat("Что у меня над головой?")
+        sampSendChat("/me взял(а) паспорт в руки и мед.карту, после начал(а) вниматель осматривать")
+        wait(4000)
+        sampSendChat("/do Паспорт и мед.карта в руке.")
 		end
       },
       {
-        title = '{ffffff}» Термины',
+        title = '{ffffff}» Информация о себе',
         onclick = function()
         local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
-        sampSendChat("/b DM, MG, SK, TK, мне в смс. /sms "..myid.."")
+        sampSendChat("Хорошо, расскажите о себе пожалуйста.")
         end
       },
       {
-        title = '{ffffff}» Принятие',
+        title = '{ffffff}» Прошлое место работы',
         onclick = function()
 		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Поздравляю, вы приняты, пройдите в комнату теории, сейчас вам сотрудник прочитает лекцию")
+        sampSendChat("Хорошо, раньше где-нибудь работали? Если да, скажите где, если не сложно.")
 		end
-      }
+      },
+      {
+        title = '{ffffff}» Опыт в сфере Автошколы',
+        onclick = function()
+        sampSendChat("Хорошо, имели раньше опыт в такой сфере как автошкола?")
+		end
+      },
+      {
+        title = '{ffffff}» Почему АШ?',
+        onclick = function()
+        sampSendChat("Хорошо, почему вы решили выбрать именно автошколу? Почему именно мы?")
+		end
+      },
+      {
+        title = '{ffffff}» РП термины (Дядя Боря и тд)',
+        onclick = function()
+        sampSendChat("Что по-вашему означает таково понятие как 'РП и МГ'?")
+		end
+      },
+      {
+        title = '{ffffff}» Что у меня над головой',
+        onclick = function()
+        sampSendChat("Что у меня над головой?")
+		end
+      },
+      {
+        title = '{ffffff}» Бланк с ответами, рп термины в sms',
+        onclick = function()
+        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("Хорошо, имели раньше опыт в такой сфере как автошкола?")
+        wait(4000)
+        sampSendChat("/me взял(а) бланк со стола с вопросами и ручку")
+        wait(4000)
+        sampSendChat("/do Бланк и ручка в руке.")
+        wait(4000)
+        sampSendChat("/me передал(а) бланк с вопросами человеку на против")
+        wait(4000)
+        sampSendChat("/do На бланке написаны различные вопросы.")
+        wait(4000)
+        sampSendChat("/b ДМ, МГ, СК, ТК в /sms "..myid.."")
+        wait(4000)
+        sampSendChat("/b /me перадал(а) бланк и ручку человеку на против")                                                       
+		end
+      },
+      {
+        title = '{ffffff}» Осмотр бланка с ответами',
+        onclick = function()
+        sampSendChat("/me взял(а) бланк и ручку с рук человека на против, и начал(а) внимательно осматривать")
+        wait(4000)
+        sampSendChat("/do На бланке не найдено ошибок")
+        wait(4000)
+        sampSendChat("Хорошо, и я думаю...")
+        wait(4000)
+        sampSendChat("Вы нам подходите! Сейчас вам выдадут форму и бейджик, а точнее я.")
+		end
+      }            
     }
 end
 
