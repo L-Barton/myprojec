@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.10')
+script_version('1.11')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2940,22 +2940,16 @@ function update()
                 ttt = updlist1
 			    if info and info.latest then
                     version = tonumber(info.latest)
-if tonumber(thisScript().version) < tonumber(info.latest) then
-                        ftext('Обнаружено обновление {9966cc}Inst Tools{ffffff}. Для обновления нажмите кнопку ОБНОВИТЬ.')
-                        updwindows.v = true
-                        canupdate = true
+                    if version > tonumber(thisScript().version) then
+                        ftext('Обнаружено обновление до версии '..updversion..'.')
+					    updwindows.v = true
                     else
-                        print('Обновлений скрипта не обнаружено. Приятной игры.')
+                        ftext('Обновлений скрипта не обнаружено. Приятной игры.', -1)
                         update = false
 				    end
-                end
-            else
-                print("Проверка обновления прошка неуспешно. Запускаю старую версию.")
-            end
-        elseif status == 64 then
-            print("Проверка обновления прошка неуспешно. Запускаю старую версию.")
-            update = false
-        end
+			    end
+		    end
+	    end
     end)
 end
 
@@ -2987,12 +2981,11 @@ function goupdate()
     ftext('Началось скачивание обновления. Скрипт перезагрузится через пару секунд.', -1)
     wait(300)
     downloadUrlToFile(updatelink, thisScript().path, function(id3, status1, p13, p23)
-        if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-            thisScript():reload()
-        elseif status1 == 64 then
-            ftext("Скачивание обновления прошло не успешно. Запускаю старую версию")
-        end
-    end)
+    if status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
+        showCursor(false)
+	    thisScript():reload()
+    end
+end)
 end
 
 function cmd_color() -- функция получения цвета строки, хз зачем она мне, но когда то юзал
