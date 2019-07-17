@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.4')
+script_version('1.5')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -2081,7 +2081,7 @@ function sobes(id)
         title = '{ffffff}» Термины',
         onclick = function()
         local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)/
+        local myname = sampGetPlayerNickname(myid)
         sampSendChat("/b DM, MG, SK, TK, мне в смс. /sms "..myid.."")
         end
       },
