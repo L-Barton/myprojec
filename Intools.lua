@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.19')
+script_version('1.20')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -246,7 +246,6 @@ function main()
   sampRegisterChatCommand('where', where)
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
-  sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('uinv', function(arg) sampSendChat('/uninvite '..arg) end)
   sampRegisterChatCommand('inv', function(arg) sampSendChat('/invite '..arg) end)
   sampRegisterChatCommand('cl', function(arg) sampSendChat('/clist '..arg) end)
@@ -254,10 +253,8 @@ function main()
   sampRegisterChatCommand('blag', cmd_blag)
   sampRegisterChatCommand('pd', cmd_pd)
   sampRegisterChatCommand('cchat', cmd_cchat)
-  sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
-  sampRegisterChatCommand('oinv', oinv)
-  sampRegisterChatCommand('uninvite', uninvite)
+  sampRegisterChatCommand('oinv', oinv))
     sampRegisterChatCommand('sethud', function()
         if cfg.main.givra then
             if not changetextpos then
@@ -697,7 +694,7 @@ function gr(pam)
 			ftext('Вы ввели неверный тип [+/-]')
 		end
 		else 
-			ftext('Введите: /giverank [id] [ранг] [+/-]')
+			ftext('Введите: /gr [id] [ранг] [+/-]')
 		end
 		else 
 			ftext('Данная команда доступна с 7 ранга')
