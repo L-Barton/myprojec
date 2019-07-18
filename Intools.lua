@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.29')
+script_version('1.30')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -173,7 +173,6 @@ local instools =
 	fastmenu = 113
   }
 }
-
 cfg = inicfg.load(nil, 'instools/config.ini')
 
 local libs = {'sphere.lua', 'rkeys.lua', 'imcustom/hotkey.lua', 'imgui.lua', 'MoonImGui.dll', 'imgui_addons.lua'}
