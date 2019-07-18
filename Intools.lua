@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.25')
+script_version('1.26')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -173,6 +173,7 @@ local instools =
 	fastmenu = 113
   }
 }
+
 cfg = inicfg.load(nil, 'instools/config.ini')
 
 local libs = {'sphere.lua', 'rkeys.lua', 'imcustom/hotkey.lua', 'imgui.lua', 'MoonImGui.dll', 'imgui_addons.lua'}
@@ -238,6 +239,7 @@ function main()
   end
   fastsmskey = rkeys.registerHotKey(config_keys.fastsms.v, true, fastsmsk)
   sampRegisterChatCommand('r', r)
+  sampRegisterChatCommand('r', cmd_r)
   sampRegisterChatCommand('f', f)
   sampRegisterChatCommand('dlog', dlog)
   sampRegisterChatCommand('dcol', cmd_color)
@@ -252,7 +254,8 @@ function main()
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
   sampRegisterChatCommand('oinv', oinv)
-  sampRegisterChatCommand('uninvite', uninvite)
+  sampRegisterChatCommand('uninvite', uninvite) 
+  sampRegisterChatCommand('find', cmd_find)
     sampRegisterChatCommand('sethud', function()
         if cfg.main.givra then
             if not changetextpos then
@@ -737,22 +740,62 @@ function invite(pam)
 	  end)
    end
    
-  function nick(pam)
-    lua_thread.create(function()
-        local id = pam:match('(%d+)')
-		local _, handle = sampGetCharHandleBySampPlayerId(id)
-	if id then	
-		if sampIsPlayerConnected(id) then
-				setClipboardText(sampGetPlayerNickname(id):gsub('_', ' '))
-			    ftext('Имя скопировано.')
-				else 
-			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
-            end
-	  else 
-			ftext('Введите: /nick [id]')
-	end
-	  end)
-   end
+function nick(args)
+  if #args == 0 then ftext("Введите: /nick [id] [0 - RP nick, 1 - NonRP nick]") return end
+  args = string.split(args, " ")
+  if #args == 1 then
+    cmd_nick(args[1].." 0")
+  elseif #args == 2 then
+    local getID = tonumber(args[1])
+    if getID == nil then ftext("Неверный ID игрока!") return end
+    if not sampIsPlayerConnected(getID) then ftext("Игрок оффлайн!") return end 
+    getID = sampGetPlayerNickname(getID)
+    if tonumber(args[2]) == 1 then
+      ftext("Ник \""..getID.."\" успешно скопирован в буфер обмена.")
+    else
+      getID = string.gsub(getID, "_", " ")
+      ftext("РП Ник \""..getID.."\" успешно скопирован в буфер обмена.")
+    end
+    setClipboardText(getID)
+  else
+    ftext("Введите: /nick [id] [0 - RP nick, 1 - NonRP nick]")
+    return
+  end 
+end
+   
+   function cmd_find(args)
+  -- https://blast.hk/wiki/lua:processlineofsight
+  if #args == 0 then
+    if playerMarker ~= nil then
+      removeBlip(playerMarker)
+      removeBlip(playerRadar)
+      playerMarker = nil
+      playerRadar = nil
+      playerMarkerId = nil
+      ftext('Маркер успешно убран')
+      return
+    end
+    ftext('Введите: /find [id]')
+    return
+  end
+  local id = tonumber(args)
+  if id == nil then ftext('Игрок оффлайн!') return end
+  if not sampIsPlayerConnected(id) then ftext('Игрок оффлайн!') return end
+  local result, ped = sampGetCharHandleBySampPlayerId(id)
+  if not result then ftext('Игрок должен быть в зоне прорисовки') return end   
+  if playerMarker ~= nil then
+    removeBlip(playerMarker)
+    removeBlip(playerRadar)
+    playerMarkerId = nil
+  end
+  playerMarkerId = id
+  playerMarker = addBlipForChar(ped)
+  --changeBlipColour(playerMarker, 0xFF0000FF)
+  local px, py, pz = getCharCoordinates(ped)
+  playerRadar = addSpriteBlipForContactPoint(px, py, pz, 14)
+  ftext(('Маркер установлен на игрока %s[%d]'):format(sampGetPlayerNickname(id), id))
+  ftext('Чтобы убрать маркер, введите команду /find ещё раз')
+end
  
  function uninvite(pam)
     lua_thread.create(function()
@@ -1773,7 +1816,9 @@ function imgui.OnDrawFrame()
                 imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
 				imgui.BulletText(u8 '/sethud - Установить позицию инфо-бара')
 				imgui.BulletText(u8 '/cchat - Очищает чат')
-				imgui.BulletText(u8 '/blag [ид] [фракция] [тип] - Выразить игроку благодарность в департамент')
+				imgui.BulletText(u8 '/blag [id] [фракция] [тип] - Выразить игроку благодарность в департамент')
+				imgui.BulletText(u8 '/nick [id] [0-1] - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
+				imgui.BulletText(u8 '/find [id]] - Установить на указанного игрока маркер')
 				imgui.Separator()
                 imgui.BulletText(u8 'Клавиши: ')
                 imgui.BulletText(u8 'ПКМ+Z на игрока - Меню взаимодействия')
