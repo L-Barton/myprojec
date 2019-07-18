@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.21')
+script_version('1.22')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -1791,10 +1791,6 @@ function imgui.OnDrawFrame()
 				imgui.BulletText(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
                 imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
 				imgui.BulletText(u8 '/sethud - Установить позицию инфо-бара')
-				imgui.BulletText(u8 '/uinv - Сокращение команды /uninvite')
-				imgui.BulletText(u8 '/cl - Сокращение команды /clist')
-				imgui.BulletText(u8 '/inv - Сокращение команды /invite')
-				imgui.BulletText(u8 '/gr - Сокращение команды /giverank')
 				imgui.BulletText(u8 '/cchat - Очищает чат')
 				imgui.BulletText(u8 '/blag [ид] [фракция] [тип] - Выразить игроку благодарность в департамент')
 				imgui.BulletText(u8 '/pd [фракция] [тип] - Вызвать ПД в офис АШ')
