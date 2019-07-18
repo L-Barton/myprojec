@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.26')
+script_version('1.27')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -239,7 +239,6 @@ function main()
   end
   fastsmskey = rkeys.registerHotKey(config_keys.fastsms.v, true, fastsmsk)
   sampRegisterChatCommand('r', r)
-  sampRegisterChatCommand('r', cmd_r)
   sampRegisterChatCommand('f', f)
   sampRegisterChatCommand('dlog', dlog)
   sampRegisterChatCommand('dcol', cmd_color)
