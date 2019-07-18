@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.22')
+script_version('1.23')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -248,7 +248,6 @@ function main()
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('blag', cmd_blag)
-  sampRegisterChatCommand('pd', cmd_pd)
   sampRegisterChatCommand('cchat', cmd_cchat)
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
@@ -516,24 +515,6 @@ function cmd_blag(arg)
   local blags = {"транспортировку"}
   if args[3] < 1 or args[3] > #blags then ftext('Неверный тип!') return end
   sampSendChat(("/d %s, выражаю благодарность %s за %s"):format(args[2], string.gsub(sampGetPlayerNickname(pid), "_", " "), blags[args[3]]))
-end
-
-function cmd_pd(arg)
-  if #arg == 0 then
-    ftext('Введите: /pd [фракция] [тип]')
-    ftext('Тип: 1 - неадекватный человек')
-    return
-  end
-  local args = string.split(arg, " ", 3)
-  args[3] = tonumber(args[3])
-  if args[1] == nil or args[2] == nil or args[3] == nil then
-    ftext('Введите: /pd [фракция] [тип]')
-    ftext('Тип: 1 - неадекватный человек')
-    return   
-  end
-  local pd = {"неадекватный человек"}
-  if args[3] < 1 or args[3] > #pd then ftext('Неверный тип!') return end
-  sampSendChat(("/d %s, будьте добры наряд в здание АШ, тут %s"):format(args[2], string.gsub(sampGetPlayerNickname(pid), "_", " "), nea[args[3]]))
 end
 
 function string.split(inputstr, sep, limit)
