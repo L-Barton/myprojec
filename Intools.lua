@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.20')
+script_version('1.21')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -246,15 +246,14 @@ function main()
   sampRegisterChatCommand('where', where)
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
-  sampRegisterChatCommand('uinv', function(arg) sampSendChat('/uninvite '..arg) end)
-  sampRegisterChatCommand('inv', function(arg) sampSendChat('/invite '..arg) end)
-  sampRegisterChatCommand('cl', function(arg) sampSendChat('/clist '..arg) end)
-  sampRegisterChatCommand('gr', function(arg) sampSendChat('/giverank '..arg) end)
+  sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('blag', cmd_blag)
   sampRegisterChatCommand('pd', cmd_pd)
   sampRegisterChatCommand('cchat', cmd_cchat)
+  sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
-  sampRegisterChatCommand('oinv', oinv))
+  sampRegisterChatCommand('oinv', oinv)
+  sampRegisterChatCommand('uninvite', uninvite)
     sampRegisterChatCommand('sethud', function()
         if cfg.main.givra then
             if not changetextpos then
@@ -648,7 +647,7 @@ local ranks =
 	return ranks[rangg]
 end
 
-function gr(pam)
+function giverank(pam)
     lua_thread.create(function()
     local id, rangg, plus = pam:match('(%d+) (%d+)%s+(.+)')
 	if sampIsPlayerConnected(id) then
@@ -705,7 +704,7 @@ function gr(pam)
    end)
  end
 
-function inv(pam)
+function invite(pam)
     lua_thread.create(function()
         local id = pam:match('(%d+)')
 	  if rank == 'Директор' or  rank == 'Управляющий' then
@@ -713,12 +712,12 @@ function inv(pam)
 		if sampIsPlayerConnected(id) then
                 sampSendChat('/me достал(а) бейджик и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 				wait(1500)
-				sampSendChat(string.format('/inv %s', id))
+				sampSendChat(string.format('/invite %s', id))
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
 		end
 		else 
-			ftext('Введите: /inv[id]')
+			ftext('Введите: /invite [id]')
 		end
 		else 
 			ftext('Данная команда доступна с 9 ранга')
@@ -774,7 +773,7 @@ function inv(pam)
 	  end)
    end
  
- function uinv(pam)
+ function uninvite(pam)
     lua_thread.create(function()
         local id, pri4ina = pam:match('(%d+)%s+(.+)')
 	  if rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
@@ -782,12 +781,12 @@ function inv(pam)
 		if sampIsPlayerConnected(id) then
                 sampSendChat('/me забрал(а) форму и бейджик у '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 				wait(2000)
-				sampSendChat(string.format('/uinv %s %s', id, pri4ina))
+				sampSendChat(string.format('/uninvite %s %s', id, pri4ina))
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
 		end
 		else 
-			ftext('Введите: /uinv [id] [причина]')
+			ftext('Введите: /uninvite [id] [причина]')
 		end
 		else 
 			ftext('Данная команда доступна с 8 ранга')
