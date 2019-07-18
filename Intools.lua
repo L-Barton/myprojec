@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.23')
+script_version('1.24')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -1774,7 +1774,6 @@ function imgui.OnDrawFrame()
 				imgui.BulletText(u8 '/sethud - Установить позицию инфо-бара')
 				imgui.BulletText(u8 '/cchat - Очищает чат')
 				imgui.BulletText(u8 '/blag [ид] [фракция] [тип] - Выразить игроку благодарность в департамент')
-				imgui.BulletText(u8 '/pd [фракция] [тип] - Вызвать ПД в офис АШ')
 				imgui.Separator()
                 imgui.BulletText(u8 'Клавиши: ')
                 imgui.BulletText(u8 'ПКМ+Z на игрока - Меню взаимодействия')
