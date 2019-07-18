@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.16')
+script_version('1.17')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -632,7 +632,7 @@ local ranks =
 	return ranks[rangg]
 end
 
-function giverank(pam)
+function gr(pam)
     lua_thread.create(function()
     local id, rangg, plus = pam:match('(%d+) (%d+)%s+(.+)')
 	if sampIsPlayerConnected(id) then
@@ -667,7 +667,7 @@ function giverank(pam)
 				end
 				end
 				end
-				sampSendChat(string.format('/giverank %s %s', id, rangg))
+				sampSendChat(string.format('/gr %s %s', id, rangg))
 				wait(1500)
 				if cfg.main.tarb then
                 sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до %s%s.', cfg.main.tarr, plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks, plus == '+' and ', поздравляю' or ''))
@@ -689,7 +689,7 @@ function giverank(pam)
    end)
  end
 
-function invite(pam)
+function inv(pam)
     lua_thread.create(function()
         local id = pam:match('(%d+)')
 	  if rank == 'Директор' or  rank == 'Управляющий' then
@@ -758,7 +758,7 @@ function invite(pam)
 	  end)
    end
  
- function uninvite(pam)
+ function uinv(pam)
     lua_thread.create(function()
         local id, pri4ina = pam:match('(%d+)%s+(.+)')
 	  if rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
@@ -766,12 +766,12 @@ function invite(pam)
 		if sampIsPlayerConnected(id) then
                 sampSendChat('/me забрал(а) форму и бейджик у '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 				wait(2000)
-				sampSendChat(string.format('/uninvite %s %s', id, pri4ina))
+				sampSendChat(string.format('/uinv %s %s', id, pri4ina))
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
 		end
 		else 
-			ftext('Введите: /uninvite [id] [причина]')
+			ftext('Введите: /uinv [id] [причина]')
 		end
 		else 
 			ftext('Данная команда доступна с 8 ранга')
