@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.31')
+script_version('1.32')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -1648,8 +1648,6 @@ function imgui.OnDrawFrame()
 	local hudik = imgui.ImBool(cfg.main.givra)
 	local clisto = imgui.ImBool(cfg.main.clisto)
 	local stateb = imgui.ImBool(cfg.main.male)
-	local parolf = imgui.ImBuffer(u8(tostring(cfg.main.parol)), 256)
-	local parolb = imgui.ImBool(cfg.main.parolb)
 	local waitbuffer = imgui.ImInt(cfg.commands.zaderjka)
 	local clistbuffer = imgui.ImInt(cfg.main.clist)
     local iScreenWidth, iScreenHeight = getScreenResolution()
