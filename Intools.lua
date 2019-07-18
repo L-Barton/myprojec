@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.18')
+script_version('1.19')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -716,12 +716,12 @@ function inv(pam)
 		if sampIsPlayerConnected(id) then
                 sampSendChat('/me достал(а) бейджик и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 				wait(1500)
-				sampSendChat(string.format('/invite %s', id))
+				sampSendChat(string.format('/inv %s', id))
 			else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
 		end
 		else 
-			ftext('Введите: /invite [id]')
+			ftext('Введите: /inv[id]')
 		end
 		else 
 			ftext('Данная команда доступна с 9 ранга')
