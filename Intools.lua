@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.30')
+script_version('1.31')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -248,12 +248,13 @@ function main()
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('blag', cmd_blag)
+  sampRegisterChatCommand('pd', cmd_pd)
   sampRegisterChatCommand('cchat', cmd_cchat)
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
   sampRegisterChatCommand('oinv', oinv)
-  sampRegisterChatCommand('uninvite', uninvite) 
   sampRegisterChatCommand('find', cmd_find)
+  sampRegisterChatCommand('uninvite', uninvite)
     sampRegisterChatCommand('sethud', function()
         if cfg.main.givra then
             if not changetextpos then
@@ -664,7 +665,7 @@ function giverank(pam)
 				end
 				end
 				end
-				sampSendChat(string.format('/gr %s %s', id, rangg))
+				sampSendChat(string.format('/giverank %s %s', id, rangg))
 				wait(1500)
 				if cfg.main.tarb then
                 sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - %s в должности до %s%s.', cfg.main.tarr, plus == '+' and 'Повышен(а)' or 'Понижен(а)', ranks, plus == '+' and ', поздравляю' or ''))
@@ -760,7 +761,7 @@ function nick(args)
     return
   end 
 end
-   
+
    function cmd_find(args)
   -- https://blast.hk/wiki/lua:processlineofsight
   if #args == 0 then
@@ -1813,8 +1814,12 @@ function imgui.OnDrawFrame()
 				imgui.BulletText(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
                 imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
 				imgui.BulletText(u8 '/sethud - Установить позицию инфо-бара')
+				imgui.BulletText(u8 '/uinv - Сокращение команды /uninvite')
+				imgui.BulletText(u8 '/cl - Сокращение команды /clist')
+				imgui.BulletText(u8 '/inv - Сокращение команды /invite')
+				imgui.BulletText(u8 '/gr - Сокращение команды /giverank')
 				imgui.BulletText(u8 '/cchat - Очищает чат')
-				imgui.BulletText(u8 '/blag [id] [фракция] [тип] - Выразить игроку благодарность в департамент')
+				imgui.BulletText(u8 '/blag [ид] [фракция] [тип] - Выразить игроку благодарность в департамент')
 				imgui.BulletText(u8 '/nick [id] [0-1] - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
 				imgui.BulletText(u8 '/find [id]] - Установить на указанного игрока маркер')
 				imgui.Separator()
