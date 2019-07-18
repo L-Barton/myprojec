@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.24')
+script_version('1.25')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -674,7 +674,7 @@ function giverank(pam)
 			ftext('Вы ввели неверный тип [+/-]')
 		end
 		else 
-			ftext('Введите: /gr [id] [ранг] [+/-]')
+			ftext('Введите: /giverank [id] [ранг] [+/-]')
 		end
 		else 
 			ftext('Данная команда доступна с 7 ранга')
