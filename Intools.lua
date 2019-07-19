@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.33')
+script_version('1.34')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -153,6 +153,7 @@ local instools =
     wanted == false,
     clear == false,
     hud = false,
+    gov = false,
     tar = 'Стажер',
 	tarr = 'тэг',
 	tarb = false,
@@ -1038,7 +1039,7 @@ function govmenu(id)
     wait(5000)
     sampSendChat("/d OG, освободил волну государственных новостей.")
     wait(1200)
-	if cfg.main.hud then
+	if cfg.main.gov then
     sampSendChat("/time")
     wait(500)
     setVirtualKeyDown(key.VK_F8, true)
@@ -1060,7 +1061,7 @@ function govmenu(id)
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
         wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1082,7 +1083,7 @@ function govmenu(id)
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
         wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1104,7 +1105,7 @@ function govmenu(id)
     wait(5000)
     sampSendChat("/d OG, освободил волну государственных новостей.")
     wait(1200)
-	if cfg.main.hud then
+	if cfg.main.gov then
     sampSendChat("/time")
     wait(500)
     setVirtualKeyDown(key.VK_F8, true)
@@ -1126,7 +1127,7 @@ function govmenu(id)
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
         wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1150,7 +1151,7 @@ function govmenu(id)
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
         wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1239,7 +1240,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если у вас имеются вопросы, задавайте. ")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1287,7 +1288,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Если у вас имеются вопросы, задавайте. ")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1347,7 +1348,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом лекция окончена. Спасибо за внимание.")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1393,7 +1394,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("?Спасибо за внимание. ")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1439,7 +1440,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1487,7 +1488,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1551,7 +1552,7 @@ function fthmenu(id)
 		wait(cfg.commands.zaderjka * 1000)
 		sampSendChat("На этом всё, спасибо за внимание, берегите себя и своих близких.")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1587,7 +1588,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Ловить рыбу в радиусе 500 метров от хозяйств, разводящих рыбу.")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1625,7 +1626,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("На этом все, спасибо за внимание.")
 		wait(1200)
-		if cfg.main.hud then
+		if cfg.main.gov then
         sampSendChat("/time")
         wait(500)
         setVirtualKeyDown(key.VK_F8, true)
@@ -1645,6 +1646,7 @@ function imgui.OnDrawFrame()
 	local tagb = imgui.ImBool(cfg.main.tarb)
 	local clistb = imgui.ImBool(cfg.main.clistb)
 	local autoscr = imgui.ImBool(cfg.main.hud)
+	local autoscrean = imgui.ImBool(cfg.main.gov)
 	local hudik = imgui.ImBool(cfg.main.givra)
 	local clisto = imgui.ImBool(cfg.main.clisto)
 	local stateb = imgui.ImBool(cfg.main.male)
@@ -1705,6 +1707,11 @@ function imgui.OnDrawFrame()
 	imgui.SameLine()
 	if imgui.ToggleButton(u8'Автоскрин лекций', autoscr) then
         cfg.main.hud = not cfg.main.hud
+    end
+    imgui.Text(u8("Автоскрин государственных новостей"))
+	imgui.SameLine()
+	if imgui.ToggleButton(u8'Автоскрин государственных новостей', autoscrean) then
+        cfg.main.gov = not cfg.main.gov
     end
     if imgui.CustomButton(u8('Сохранить настройки'), imgui.ImVec4(0.08, 0.61, 0.92, 0.40), imgui.ImVec4(0.08, 0.61, 0.92, 1.00), imgui.ImVec4(0.08, 0.61, 0.92, 0.76), btn_size) then
 	ftext('Настройки успешно сохранены.', -1)
