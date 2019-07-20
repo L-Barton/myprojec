@@ -1,6 +1,6 @@
 { 
-"latest":"1.34 ", 
+"latest":"1.35 ", 
 "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua ", 
 "updlist": " 
-- Для /gov добавлен автоскрин. Включить можно в настройках скрипта - /it" 
+- Исправлена ошибка краша скрипта" 
 }
