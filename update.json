@@ -1,6 +1,6 @@
 { 
-"latest":"1.35 ", 
+"latest":"1.36 ", 
 "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua ", 
 "updlist": " 
-- Исправлена ошибка краша скрипта" 
+- В настройках скрипта теперь автоскрин лекций совместимо с автоскрином государственных новостей." 
 }
