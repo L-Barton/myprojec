@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.37')
+script_version('2.0')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -939,19 +939,6 @@ function otmenu(id)
     sampSendChat(string.format('/r [%s]: Для подробной информации пишите на п.'..myid..'.', cfg.main.tarr))
 	end
    },
-    {
-   title = "{FFFFFF}Устав (OK) {ff0000}(Для глав/замов отдела)",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: За нарушения пунктов устава, Вы будете получать выговор.', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: Чтобы избежать этого, не нарушайте и к Вам не будет притензий.', cfg.main.tarr))
-    wait(5000)
-    sampSendChat(string.format('/r [%s]: Спасибо за понимание.', cfg.main.tarr))
-	end
-   },
    {
    title = "{FFFFFF}Тех.осмотр авто гос.организаций",
     onclick = function()
@@ -1738,6 +1725,11 @@ function imgui.OnDrawFrame()
     imgui.Text(u8(text))
 	imgui.SameLine()
 	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Damien Requeste, Roma Mizantrop')
+	local text = 'Тестировщик:'
+    imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
+    imgui.Text(u8(text))
+	imgui.SameLine()
+	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Miguel Long')
     imgui.Separator()
 	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
