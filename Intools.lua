@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.0')
+script_version('2.1')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -962,7 +962,7 @@ return
      end 
  },
  {
-     title = 'Помыть машину{ff0000}(подойдите к машине)',
+     title = 'Помыть машину{ff0000} (Подойдите к машине)',
      onclick = function()
      sampSendChat('/do Ведро с водой в руках')
      wait(cfg.commands.zaderjka * 1000)
