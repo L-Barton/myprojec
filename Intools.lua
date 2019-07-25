@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.1')
+script_version('2.0')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -908,7 +908,7 @@ function fastmenu(id)
 	end
    },
    {
-    title = '{FFFFFF}Role-Play задния',
+    title = '{FFFFFF}Role-Play задания',
      onclick = function()
      submenus_show(rpwka(id), "{FFFFFF}Role-Play задания")
    end
