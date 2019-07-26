@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.2')
+script_version('2.3')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -247,11 +247,14 @@ function main()
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
+  sampRegisterChatCommand('iweather', cmd_iweather)
+  sampRegisterChatCommand('itime', cmd_itime)
   sampRegisterChatCommand('blag', cmd_blag)
   sampRegisterChatCommand('pd', cmd_pd)
   sampRegisterChatCommand('cchat', cmd_cchat)
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
+  sampRegisterChatCommand('reconnect', cmd_reconnect)
   sampRegisterChatCommand('oinv', oinv)
   sampRegisterChatCommand('find', cmd_find)
   sampRegisterChatCommand('uninvite', uninvite)
@@ -519,6 +522,50 @@ function cmd_blag(arg)
   sampSendChat(("/d %s, выражаю благодарность %s за %s. Цените!"):format(args[2], string.gsub(sampGetPlayerNickname(pid), "_", " "), blags[args[3]]))
 end
 
+function cmd_iweather(arg)
+  if #arg == 0 then
+    ftext('Правильный ввод: /iweather [0-45].')
+    return
+  end    
+  local weather = tonumber(arg)
+  if weather ~= nil and weather >= 0 and weather <= 45 then
+    forceWeatherNow(weather)
+    ftext('Новое значение погоды: '..weather)
+  else
+    ftext('Roma Mizantrop: Ты не можешь поставить данную погоду. Диапозон [0-45].')
+  end
+end
+
+function cmd_itime(arg)
+  if #arg == 0 then
+    ftext('Правильный ввод: /itime [время 0-23]')
+    return
+  end
+  local hour = tonumber(arg)
+  if hour ~= nil and hour >= 0 and hour <= 23 then
+    time = hour
+    patch_samp_time_set(true)
+    if time then
+      setTimeOfDay(time, 0)
+      ftext('Новое значение времени: '..time)
+    end
+  else
+ftext('Roma Mizantrop: Ты не можешь поставить данное время. Диапозон [0-23].')
+    patch_samp_time_set(false)
+    time = nil
+  end
+end
+
+function patch_samp_time_set(enable)
+  if enable and default == nil then
+    default = readMemory(sampGetBase() + 0x9C0A0, 4, true)
+    writeMemory(sampGetBase() + 0x9C0A0, 4, 0x000008C2, true)
+  elseif enable == false and default ~= nil then
+    writeMemory(sampGetBase() + 0x9C0A0, 4, default, true)
+    default = nil
+  end
+end
+
 function string.split(inputstr, sep, limit)
   if limit == nil then limit = 0 end
   if sep == nil then sep = "%s" end
@@ -760,6 +807,25 @@ function nick(args)
     ftext("Введите: /nick [id] [0 - RP nick, 1 - NonRP nick]")
     return
   end 
+end
+
+function cmd_reconnect(args)
+  if #args == 0 then
+    ftext('Введите: /reconnect [секунды]')
+    return
+  end
+  args = tonumber(args)
+  if args == nil or args < 1 then
+    ftext('Roma Mizantrop: Я не понял, что ты сейчас прописал?!')
+    return
+  end   
+	lua_thread.create(function()
+		sampSetGamestate(5)
+		sampDisconnectWithReason()
+		wait(args * 1000) 
+    sampSetGamestate(1)
+    return
+	end)
 end
 
    function cmd_find(args)
@@ -1798,13 +1864,13 @@ function imgui.OnDrawFrame()
     local btn_size1 = imgui.ImVec2(70, 0)
 	local btn_size = imgui.ImVec2(130, 0)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-    imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
+    imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 5))
     imgui.Begin('Inst Tools | Main Menu | Version: '..thisScript().version, second_window, mainw,  imgui.WindowFlags.NoResize)
 	local text = 'Авторы:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.90, 0.16 , 0.30, 1.0), 'Damien Requeste, Roma Mizantrop')
+	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Damien Requeste, Roma Mizantrop')
     imgui.Separator()
 	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
@@ -1814,7 +1880,7 @@ function imgui.OnDrawFrame()
       first_window.v = not first_window.v
     end
     imgui.SameLine()
-    if imgui.Button(u8 'Сообщить о ошибке / баге', imgui.ImVec2(170, 30)) then os.execute('explorer "https://vk.com/ortemelyan"')
+    if imgui.Button(u8 'Сообщить об ошибке/баге', imgui.ImVec2(170, 30)) then os.execute('explorer "https://vk.com/ortemelyan"')
     btn_size = not btn_size
     end
 	imgui.SameLine()
@@ -1869,24 +1935,27 @@ function imgui.OnDrawFrame()
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 3))
                 imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
-				imgui.BeginChild("Список команд", imgui.ImVec2(525, 260), true, imgui.WindowFlags.VerticalScrollbar)
-                imgui.BulletText(u8 '/it - Открыть меню скрипта')
+				imgui.BeginChild("Список команд", imgui.ImVec2(525, 430), true, imgui.WindowFlags.VerticalScrollbar)
+                imgui.TextColoredRGB('{FF0000}/it{CCCCCC} - Открыть меню скрипта')
                 imgui.Separator()
-                imgui.BulletText(u8 '/vig [id] [Причина] - Выдать выговор по рации')
-                imgui.BulletText(u8 '/dmb - Открыть /members в диалоге')
-                imgui.BulletText(u8 '/where [id] - Запросить местоположение по рации')
-                imgui.BulletText(u8 '/yst - Открыть устав АШ')
-				imgui.BulletText(u8 '/smsjob - Вызвать на работу весь мл.состав по смс')
-                imgui.BulletText(u8 '/dlog - Открыть лог 25 последних сообщений в департамент')
-				imgui.BulletText(u8 '/sethud - Установить позицию инфо-бара')
-				imgui.BulletText(u8 '/cchat - Очищает чат')
-				imgui.BulletText(u8 '/blag [ид] [фракция] [тип] - Выразить игроку благодарность в департамент')
-				imgui.BulletText(u8 '/nick [id] [0-1] - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
-				imgui.BulletText(u8 '/find [id]] - Установить на указанного игрока маркер')
+                imgui.TextColoredRGB('{FF0000}/vig [id] [Причина]{CCCCCC} - Выдать выговор по рации')
+                imgui.TextColoredRGB('{FF0000}/dmb{CCCCCC} - Открыть /members в диалоге')
+                imgui.TextColoredRGB('{FF0000}/where [id]{CCCCCC} - Запросить местоположение по рации')
+                imgui.TextColoredRGB('{FF0000}/yst{CCCCCC} - Открыть устав АШ')
+                imgui.TextColoredRGB('{FF0000}/reconnect [секунды]{CCCCCC} - Переподключение к серверу')
+				imgui.TextColoredRGB('{FF0000}/smsjob{CCCCCC} - Вызвать на работу весь мл.состав по смс')
+                imgui.TextColoredRGB('{FF0000}/dlog{CCCCCC} - Открыть лог 25 последних сообщений в департамент')
+                imgui.TextColoredRGB('{FF0000}/itime [время 0 - 23]{CCCCCC} - Изменяет время на указанное')
+                imgui.TextColoredRGB("{FF0000}/iweather [погода 0 - 45]{CCCCCC} - Изменяет погоду на указанную")
+				imgui.TextColoredRGB('{FF0000}/sethud{CCCCCC} - Установить позицию инфо-бара')
+				imgui.TextColoredRGB('{FF0000}/cchat{CCCCCC} - Очищает чат')
+				imgui.TextColoredRGB('{FF0000}/blag [ид] [фракция] [тип]{CCCCCC} - Выразить игроку благодарность в департамент')
+				imgui.TextColoredRGB('{FF0000}/nick [id] [0-1]{CCCCCC} - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
+				imgui.TextColoredRGB('{FF0000}/find [id]{CCCCCC} - Установить на указанного игрока маркер')
 				imgui.Separator()
-                imgui.BulletText(u8 'Клавиши: ')
-                imgui.BulletText(u8 'ПКМ+Z на игрока - Меню взаимодействия')
-                imgui.BulletText(u8 'F2 - "Быстрое меню"')
+                imgui.TextColoredRGB('Клавиши: ')
+                imgui.TextColoredRGB('{FF0000}ПКМ+Z на игрока{CCCCCC} - Меню взаимодействия')
+                imgui.TextColoredRGB('{FF0000}F2{CCCCCC} - "Быстрое меню"')
 				imgui.EndChild()
                 imgui.End()
     end
@@ -2131,7 +2200,7 @@ function imgui.CentrText(text)
             imgui.SetCursorPosX( width / 2 - calc.x / 2 )
             imgui.Text(text)
         end
-        function imgui.CustomButton(name, color, colorHovered, colorActive, size)
+            function imgui.CustomButton(name, color, colorHovered, colorActive, size)
             local clr = imgui.Col
             imgui.PushStyleColor(clr.Button, color)
             imgui.PushStyleColor(clr.ButtonHovered, colorHovered)
@@ -2141,6 +2210,117 @@ function imgui.CentrText(text)
             imgui.PopStyleColor(3)
             return result
         end
+        
+function imgui.TextColoredRGB(text)
+  local style = imgui.GetStyle()
+  local colors = style.Colors
+  local ImVec4 = imgui.ImVec4
+
+  local explode_argb = function(argb)
+    local a = bit.band(bit.rshift(argb, 24), 0xFF)
+    local r = bit.band(bit.rshift(argb, 16), 0xFF)
+    local g = bit.band(bit.rshift(argb, 8), 0xFF)
+    local b = bit.band(argb, 0xFF)
+    return a, r, g, b
+  end
+
+  local getcolor = function(color)
+      if color:sub(1, 6):upper() == 'SSSSSS' then
+          local r, g, b = colors[1].x, colors[1].y, colors[1].z
+          local a = tonumber(color:sub(7, 8), 16) or colors[1].w * 255
+          return ImVec4(r, g, b, a / 255)
+      end
+      local color = type(color) == 'string' and tonumber(color, 16) or color
+      if type(color) ~= 'number' then return end
+      local r, g, b, a = explode_argb(color)
+      return imgui.ImColor(r, g, b, a):GetVec4()
+  end
+
+  local render_text = function(text_)
+      for w in text_:gmatch('[^\r\n]+') do
+          local text, colors_, m = {}, {}, 1
+          w = w:gsub('{(......)}', '{%1FF}')
+          while w:find('{........}') do
+              local n, k = w:find('{........}')
+              local color = getcolor(w:sub(n + 1, k - 1))
+              if color then
+                  text[#text], text[#text + 1] = w:sub(m, n - 1), w:sub(k + 1, #w)
+                  colors_[#colors_ + 1] = color
+                  m = n
+              end
+              w = w:sub(1, n - 1) .. w:sub(k + 1, #w)
+          end
+          if text[0] then
+              for i = 0, #text do
+                  imgui.TextColored(colors_[i] or colors[1], u8(text[i]))
+                  imgui.SameLine(nil, 0)
+              end
+              imgui.NewLine()
+          else imgui.Text(u8(w)) end
+      end
+  end
+  render_text(text)
+end
+
+function apply_custom_style()
+  imgui.SwitchContext()
+  local style = imgui.GetStyle()
+  local colors = style.Colors
+  local clr = imgui.Col
+  local ImVec4 = imgui.ImVec4
+  local ImVec2 = imgui.ImVec2
+
+  style.WindowPadding = imgui.ImVec2(10, 10)
+  style.FramePadding = imgui.ImVec2(4, 4)
+  style.WindowRounding = 0
+  style.ChildWindowRounding = 0
+  style.ItemSpacing = imgui.ImVec2(8.0, 5.0)
+  style.ItemInnerSpacing = imgui.ImVec2(8, 6)
+  style.ScrollbarSize = 13.0
+  style.ScrollbarRounding = 0
+  style.IndentSpacing = 25.0
+
+  colors[clr.Text] = ImVec4(1.00, 1.00, 1.00, 1.00)
+  colors[clr.TextDisabled] = ImVec4(0.60, 0.60, 0.60, 1.00)
+  colors[clr.WindowBg] = ImVec4(0.11, 0.10, 0.11, 1.00)
+  colors[clr.ChildWindowBg] = ImVec4(0.00, 0.00, 0.00, 0.00)
+  colors[clr.PopupBg] = ImVec4(0.11, 0.10, 0.11, 1.00)
+  colors[clr.Border] = ImVec4(0.86, 0.86, 0.86, 1.00)
+  colors[clr.BorderShadow] = ImVec4(0.00, 0.00, 0.00, 0.00)
+  colors[clr.FrameBg] = ImVec4(0.21, 0.20, 0.21, 0.60)
+  colors[clr.FrameBgHovered] = ImVec4(0.68, 0.25, 0.25, 0.75)
+  colors[clr.FrameBgActive] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.TitleBg] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.TitleBgCollapsed] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.TitleBgActive] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.MenuBarBg] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.ScrollbarBg] = ImVec4(0.56, 0.56, 0.58, 0.00)
+  colors[clr.ScrollbarGrab] = ImVec4(0.56, 0.56, 0.58, 0.44)
+  colors[clr.ScrollbarGrabHovered] = ImVec4(0.56, 0.56, 0.58, 0.74)
+  colors[clr.ScrollbarGrabActive] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.ComboBg] = ImVec4(0.15, 0.14, 0.15, 1.00)
+  colors[clr.CheckMark] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.SliderGrab] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.SliderGrabActive] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.Button] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.ButtonHovered] = ImVec4(0.68, 0.25, 0.25, 0.75)
+  colors[clr.ButtonActive] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.Header] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.HeaderHovered] = ImVec4(0.68, 0.25, 0.25, 0.75)
+  colors[clr.HeaderActive] = ImVec4(0.68, 0.25, 0.25, 1.00)
+  colors[clr.ResizeGrip] = ImVec4(1.00, 1.00, 1.00, 0.30)
+  colors[clr.ResizeGripHovered] = ImVec4(1.00, 1.00, 1.00, 0.60)
+  colors[clr.ResizeGripActive] = ImVec4(1.00, 1.00, 1.00, 0.90)
+  colors[clr.CloseButton] = ImVec4(0.56, 0.56, 0.58, 0.75)
+  colors[clr.CloseButtonHovered] = ImVec4(0.56, 0.56, 0.58, 1.00)
+  colors[clr.CloseButtonActive] = ImVec4(0.56, 0.56, 0.58, 1.00)
+  colors[clr.PlotLines] = ImVec4(0.00, 0.00, 0.00, 0.00)
+  colors[clr.PlotLinesHovered] = ImVec4(0.00, 0.00, 0.00, 0.00)
+  colors[clr.PlotHistogram] = ImVec4(0.00, 0.00, 0.00, 0.00)
+  colors[clr.PlotHistogramHovered] = ImVec4(0.00, 0.00, 0.00, 0.00)
+  colors[clr.TextSelectedBg] = ImVec4(0.00, 0.00, 0.00, 0.00)
+  colors[clr.ModalWindowDarkening] = ImVec4(0.00, 0.00, 0.00, 0.00)
+end
 
 function pkmmenu(id)
     local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
