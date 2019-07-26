@@ -3287,7 +3287,7 @@ function update()
                 ttt = updlist1
 			    if info and info.latest then
                     version = tonumber(info.latest)
-                    if version > tonumber(thisScript().version) then
+                    if version > tonumber(thisScript().version.version) then
                         ftext('Обнаружено обновление до версии '..updversion..'.')
 					    updwindows.v = true
                     else
