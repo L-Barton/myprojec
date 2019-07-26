@@ -868,6 +868,12 @@ function fastmenu(id)
 	end
    },
    {
+    title = '{FFFFFF}Меню {9966cc}Role Play заданий',
+     onclick = function()
+     submenus_show(rpwka(id), "{FFFFFF}Меню {9966cc}role play заданий")
+   end
+   },
+   {
    title = "{FFFFFF}Меню {9966cc}собеседования",
     onclick = function()
 	submenus_show(sobes(id), "{9966cc}IT {ffffff}| Меню собеседования")
@@ -878,7 +884,13 @@ function fastmenu(id)
     onclick = function()
 	submenus_show(rascenki(id), "{9966cc}IT {ffffff}| Меню расценок для экзамена")
 	end
-   },   
+   },
+   {
+    title = '{FFFFFF}Меню {9966cc}role play осмотра СТО ',
+     onclick = function()
+     submenus_show(cto(id), "{9966cc}IT {ffffff}| Меню Role Play осмотра СТО")
+   end
+  },   
    {
    title = "{FFFFFF}Доставка лицензий {9966cc}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
     onclick = function()
@@ -911,13 +923,81 @@ function fastmenu(id)
 		dostavka = true
 	end
    },
-   {
-    title = '{FFFFFF}Role-Play задания',
-     onclick = function()
-     submenus_show(rpwka(id), "{FFFFFF}Role-Play задания")
-   end
-  }
 }
+end
+
+function cto(id)
+    return
+    {
+      {
+        title = '{ffffff}» Начало осмотра',
+        onclick = function()
+        sampSendChat("/do Блокнот и авторучка в кейсе Инструктора.")
+        wait(2000)
+        sampSendChat("/me достал блокнот и авторучку из кейса, предварительно открыв его.")
+        wait(2000)
+        sapmSendChat("/do Перед Инструктором находятся всё что необходимо для ремонта Автотранспорта.")
+        wait(4000)
+        sapmSendChat("/me начал осматривать приспособления для ремонта автотранспорта.")
+        wait(4000)
+        sapmSendChat("/me подошел к автоматическому подъёмнику автомобиля.")
+        wait(4000)
+        sapmSendChat("/do Инструктор визуально начал осматривать состояние подъёмника.")
+        wait(4000) 
+        sapmSendChat("/try Подъёмник в исправном состоянии?")                  
+		end
+      },
+      {
+        title = '{ffffff}» Изменения в блокнот о состоянии подъёмника | {ff0000}Если удачно',
+        onclick = function()
+        sampSendChat("/me внёс изменения в блокнот с пометкой 'Исправно'.")
+		end
+      },
+      {
+        title = '{ffffff}» Изменения в блокнот о состояниии подъёмника | {ff0000}Если неудачно',
+        onclick = function()
+        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("/me внёс изменения в блокнот с пометкой 'Не исправно'.")
+        wait(4000)
+        sampSendChat("/do Ходя по СТО, Инструктор выявляет некоторые недочеты.")
+        wait(4000)
+        sampSendChat("/do Перед Инструктором стоит полка, а на ней ящики с инструментами.")
+        wait(4000)
+        sampSendChat("/try В ящиках находятся новые инструменты?")
+        end
+      },
+      {
+        title = '{ffffff}» Изменения в блокнот о новых инструментах | {ff0000}Если удачно',
+        onclick = function()
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("/me внёс изменения в блокнот с пометкой 'Без изменений'.")
+		end
+      },
+      {
+        title = '{ffffff}» Изменения в блокнот о новых инструментах | {ff0000}Если неудачно',
+        onclick = function()
+        sampSendChat("/me внёс изменения в блокнот с пометкой 'Требует замены'.")
+        wait(4000)
+        sampSendChat("/me посмотрел в блокнот.")
+        wait(4000)
+        sampSendChat("/do Инструктор оценивает ситуацию данной СТО исходя из записей сделанных ранее.")                         
+		end
+      },
+      {
+        title = '{ffffff}» Успешное прохождение проверки',
+        onclick = function()
+        sampSendChat("/me внёс в блокнот заключение о успешном прохождении проверки и поставил печать 'AutoSchool SF'.")
+		end
+      },
+      {
+        title = '{ffffff}» Неуспешное прохождение проверки',
+        onclick = function()
+        sampSendChat("/me внёс в блокнот заключение о неудачном прохождении проверки и поставил печать 'AutoSchool SF'.")
+		end
+      }            
+    }
 end
 
 function sobes(id)
