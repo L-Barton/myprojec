@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('1.5')
+script_version('1.0')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -961,12 +961,18 @@ function cto(id)
         sampSendChat("/me внёс изменения в блокнот с пометкой 'Не исправно'.")
         wait(4000)
         sampSendChat("/do Ходя по СТО, Инструктор выявляет некоторые недочеты.")
-        wait(4000)
+        end
+      },
+      {
+        title = '{ffffff}» Ящик с новыми инструментами',
+        onclick = function()
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
         sampSendChat("/do Перед Инструктором стоит полка, а на ней ящики с инструментами.")
         wait(4000)
         sampSendChat("/try В ящиках находятся новые инструменты?")
-        end
-      },
+		end
+      },      
       {
         title = '{ffffff}» Изменения в блокнот о новых инструментах | {ff0000}Если удачно',
         onclick = function()
