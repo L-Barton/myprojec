@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.2.1')
+script_version('2.3')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -3287,7 +3287,7 @@ function update()
                 ttt = updlist1
 			    if info and info.latest then
                     version = tonumber(info.latest)
-                    if version > tonumber(thisScript().version.version) then
+                    if version > tonumber(thisScript().version) then
                         ftext('Обнаружено обновление до версии '..updversion..'.')
 					    updwindows.v = true
                     else
