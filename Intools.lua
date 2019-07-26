@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.3')
+script_version('2.4')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
@@ -247,14 +247,11 @@ function main()
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
-  sampRegisterChatCommand('iweather', cmd_iweather)
-  sampRegisterChatCommand('itime', cmd_itime)
   sampRegisterChatCommand('blag', cmd_blag)
   sampRegisterChatCommand('pd', cmd_pd)
   sampRegisterChatCommand('cchat', cmd_cchat)
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
-  sampRegisterChatCommand('reconnect', cmd_reconnect)
   sampRegisterChatCommand('oinv', oinv)
   sampRegisterChatCommand('find', cmd_find)
   sampRegisterChatCommand('uninvite', uninvite)
@@ -522,50 +519,6 @@ function cmd_blag(arg)
   sampSendChat(("/d %s, выражаю благодарность %s за %s. Цените!"):format(args[2], string.gsub(sampGetPlayerNickname(pid), "_", " "), blags[args[3]]))
 end
 
-function cmd_iweather(arg)
-  if #arg == 0 then
-    ftext('Правильный ввод: /iweather [0-45].')
-    return
-  end    
-  local weather = tonumber(arg)
-  if weather ~= nil and weather >= 0 and weather <= 45 then
-    forceWeatherNow(weather)
-    ftext('Новое значение погоды: '..weather)
-  else
-    ftext('Roma Mizantrop: Ты не можешь поставить данную погоду. Диапозон [0-45].')
-  end
-end
-
-function cmd_itime(arg)
-  if #arg == 0 then
-    ftext('Правильный ввод: /itime [время 0-23]')
-    return
-  end
-  local hour = tonumber(arg)
-  if hour ~= nil and hour >= 0 and hour <= 23 then
-    time = hour
-    patch_samp_time_set(true)
-    if time then
-      setTimeOfDay(time, 0)
-      ftext('Новое значение времени: '..time)
-    end
-  else
-ftext('Roma Mizantrop: Ты не можешь поставить данное время. Диапозон [0-23].')
-    patch_samp_time_set(false)
-    time = nil
-  end
-end
-
-function patch_samp_time_set(enable)
-  if enable and default == nil then
-    default = readMemory(sampGetBase() + 0x9C0A0, 4, true)
-    writeMemory(sampGetBase() + 0x9C0A0, 4, 0x000008C2, true)
-  elseif enable == false and default ~= nil then
-    writeMemory(sampGetBase() + 0x9C0A0, 4, default, true)
-    default = nil
-  end
-end
-
 function string.split(inputstr, sep, limit)
   if limit == nil then limit = 0 end
   if sep == nil then sep = "%s" end
@@ -807,25 +760,6 @@ function nick(args)
     ftext("Введите: /nick [id] [0 - RP nick, 1 - NonRP nick]")
     return
   end 
-end
-
-function cmd_reconnect(args)
-  if #args == 0 then
-    ftext('Введите: /reconnect [секунды]')
-    return
-  end
-  args = tonumber(args)
-  if args == nil or args < 1 then
-    ftext('Roma Mizantrop: Я не понял, что ты сейчас прописал?!')
-    return
-  end   
-	lua_thread.create(function()
-		sampSetGamestate(5)
-		sampDisconnectWithReason()
-		wait(args * 1000) 
-    sampSetGamestate(1)
-    return
-	end)
 end
 
    function cmd_find(args)
