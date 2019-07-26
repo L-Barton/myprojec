@@ -1,8 +1,6 @@
 { 
-"latest": "2.3 ", 
+"latest": "2.4 ", 
 "updateurl": "https://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua ", 
 "updlist": " 
-- Добавлена команда для изменения погоды - /iweather [0-45]. 
-- Добавлена команда для изменения времени - /itime [0-23].
-- Добавлена команда для переподключения к серверу - /reconnect [секунды]." 
+- Исправлены основные ошибки, из-за который самп крашился." 
 }
