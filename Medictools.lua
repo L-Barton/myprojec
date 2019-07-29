@@ -1,5 +1,5 @@
 script_name('Medic Tools')
-script_version('1.0')
+script_version('1.1')
 script_author('Roma_Mizantrop')
 local sf = require 'sampfuncs'
 local key = require "vkeys"
