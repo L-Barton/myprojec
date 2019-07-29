@@ -181,7 +181,7 @@ local libs = {'sphere.lua', 'rkeys.lua', 'imcustom/hotkey.lua', 'imgui.lua', 'Mo
 function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
-    ftext("Medic Tools успешно загружен. Введите: /tset для получения дальнейшей информации", -1)
+    ftext("Medic Tools успешно загружен. Введите: /mt для получения дальнейшей информации", -1)
   end
   if not doesDirectoryExist('moonloader/config/medictools/') then createDirectory('moonloader/config/medictools/') end
   if cfg == nil then
@@ -244,7 +244,7 @@ function main()
   sampRegisterChatCommand('dmb', dmb)
   sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
-  sampRegisterChatCommand('tset', tset)
+  sampRegisterChatCommand('mt', mt)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('blag', blag)
@@ -281,7 +281,7 @@ function main()
 	    local myhp = getCharHealth(PLAYER_PED)
         local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
     if wasKeyPressed(cfg.keys.fastmenu) and not sampIsDialogActive() and not sampIsChatInputActive() then
-	if frac == 'Driving School' then
+	if frac == 'Ministry of Health' then
     submenus_show(fastmenu(id), "{008B8B}Medic Tools {ffffff}| Быстрое меню")
 	else
 	ftext('Возможно вы не состоите в MOH {ff0000}[ctrl+R]')
@@ -290,7 +290,7 @@ function main()
           if valid and doesCharExist(ped) then
             local result, id = sampGetPlayerIdByCharHandle(ped)
             if result and wasKeyPressed(key.VK_Z) then
-			if frac == 'Driving School' then
+			if frac == 'Ministry of Health' then
                 gmegafhandle = ped
                 gmegafid = id
                 gmegaflvl = sampGetPlayerScore(id)
@@ -302,7 +302,7 @@ function main()
 				megaftimer = os.time() + 300
                 submenus_show(pkmmenu(id), "{008B8B}Medic Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] {ffffff}Уровень - "..sampGetPlayerScore(id).." ")
 				else
-			ftext('Возможно вы не состоите в АШ {ff0000}[ctrl+R]')
+			ftext('Возможно вы не состоите в MOH {ff0000}[ctrl+R]')
 				end
             end
         end
@@ -468,6 +468,57 @@ function dmb()
 		gcount = nil
 	end)
 end
+
+function vig(pam)
+  local id, pric = string.match(pam, '(%d+)%s+(.+)')
+if rank == 'Психолог' or rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
+  if id == nil then
+    sampAddChatMessage("{008B8B}Medic Tools {ffffff}| Введите: /vig [id] [причина]", -1)
+  end
+  if id ~=nil and not sampIsPlayerConnected(id) then
+    sampAddChatMessage("{008B8B}Medic Tools {ffffff}| Игрок с ID: "..id.." не подключен к серверу.", -1)
+  end
+  if id ~= nil and sampIsPlayerConnected(id) then
+      if pric == nil then
+        sampAddChatMessage("{008B8B}Medic Tools {ffffff}| /vig [id] [причина]", -1)
+      end
+      if pric ~= nil then
+	   if cfg.main.tarb then
+        name = sampGetPlayerNickname(id)
+        rpname = name:gsub('_', ' ')
+        sampSendChat(string.format("/r [%s]: %s - Получает выговор по причине: %s.", cfg.main.tarr, rpname, pric))
+		else 
+		name = sampGetPlayerNickname(id)
+        rpname = name:gsub('_', ' ')
+		sampSendChat(string.format("/r %s - Получает выговор по причине: %s.", rpname, pric))
+      end
+  end
+end
+end
+end
+
+function where(params) -- запрос местоположения
+   if rank == 'Психолог' or rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
+	if params:match("^%d+") then
+		params = tonumber(params:match("^(%d+)"))
+		if sampIsPlayerConnected(params) then
+			local name = string.gsub(sampGetPlayerNickname(params), "_", " ")
+			 if cfg.main.tarb then
+			    sampSendChat(string.format("/r [%s]: %s, доложите свое местоположение. На ответ 20 секунд.", cfg.main.tarr, name))
+			else
+			sampSendChat(string.format("/r %s, доложите свое местоположение. На ответ 20 секунд.", name))
+			end
+			else
+			ftext('{FFFFFF} Игрок с данным ID не подключен к серверу или указан ваш ID.', 0x046D63)
+		end
+		else
+		ftext('{FFFFFF} Используйте: /where [ID].', 0x046D63)
+		end
+		else
+		ftext('{FFFFFF}Данная команда доступна с 7 ранга.', 0x046D63)
+	end
+end
+
         
 function blag(pam)
     local id, frack, pric = pam:match('(%d+) (%a+) (.+)')
@@ -530,7 +581,7 @@ local ranks =
         {
 		['1'] = 'Интерн',
 		['2'] = 'Санитар',
-		['3'] = 'Медбрат',
+		['3'] = 'Мед.брат',
 		['4'] = 'Спасатель',
 		['5'] = 'Нарколог',
 		['6'] = 'Доктор',
@@ -545,7 +596,7 @@ function giverank(pam)
     lua_thread.create(function()
     local id, rangg, plus = pam:match('(%d+) (%d+)%s+(.+)')
 	if sampIsPlayerConnected(id) then
-	  if rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
+	  if rank == 'Психолог' or rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
         if id and rangg then
 		if plus == '-' or plus == '+' then
 		ranks = getrang(rangg)
@@ -633,10 +684,10 @@ function fastmenu(id)
     {
    title = "{FFFFFF}Меню {008B8B}гос.новостей {ff0000}(Для Ст.Состава)",
     onclick = function()
-	if rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
+	if rank == 'Психолог' or rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
 	submenus_show(govmenu(id), "{008B8B}Medic Tools {ffffff}| Меню гос.новостей")
 	else
-	ftext('Вы не находитесь в Ст.Составе')
+	ftext('Вам нельзя открывать')
 	end
 	end
    },
@@ -669,15 +720,15 @@ function govmenu(id)
 	end
    },
   {
-   title = "{FFFFFF}Заработок Малоимущим",
+   title = "{FFFFFF}Проходит собеседование",
     onclick = function()
 	sampSendChat("/d OG, занял волну государственных новостей.")
         wait(5000)
-        sampSendChat("/gov [Instructors] Уважаемые жители и гости штата, пожалуйста, минуточку внимания. ")
+        sampSendChat("/gov [Medic]: Уважаемые жители и гости нашего штата минуточку внимания.")
         wait(5000)
-        sampSendChat('/gov [Instructors]: В данный момент на оф.портале Автошколы открыта тема "Заработок Малоимущим".')
+        sampSendChat('/gov [Medic]: В данный момент проходит собеседование в интернатуру г.Los-Santos.')
         wait(5000)
-        sampSendChat("/gov [Instructors]: Cо всеми подробностями вы можете ознакомиться на оф.портале. ")
+        sampSendChat("/gov [Medic]: Высокая ЗП, бесплатные отели. Критерии: 3-х летняя прописка в штате, наличие мед. диплома.")
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
         wait(1200)
@@ -695,11 +746,11 @@ function govmenu(id)
     onclick = function()
 	sampSendChat("/d OG, занял волну государственных новостей.")
         wait(5000)
-        sampSendChat("/gov [Instructors] Уважаемые жители и гости штата, пожалуйста, минуточку внимания. ")
+        sampSendChat("/gov [Medic]: Уважаемые жители и гости нашего штата, собеседование подошло к концу.")
         wait(5000)
-        sampSendChat('/gov [Instructors]: При прохождении стажировки в автошколе, вы можете получить 100.000.')
+        sampSendChat('/gov [Medic]: Спешу вам сообщить, что на оф. сайте "Ministry of Health" открыты заявления для работы по контракту.')
         wait(5000)
-        sampSendChat("/gov [Instructors]: Cо всеми подробностями вы можете ознакомиться на оф.портале.")
+        sampSendChat("/gov [Medic]: Заявление вы можете оставить на следующие должности: 'Нарколог и Мед Брат'.")
         wait(5000)
         sampSendChat("/d OG, освободил волну государственных новостей.")
         wait(1200)
@@ -712,74 +763,6 @@ function govmenu(id)
 		end
 	end
    },   
-  {
-   title = "{FFFFFF}Вип карта клиента",
-    onclick = function()
-	sampSendChat("/d OG, занял волну государственных новостей.")
-    wait(5000)
-    sampSendChat("/gov [Instructors] Уважаемые жители и гости штата, пожалуйста, минуточку внимания. ")
-    wait(5000)
-    sampSendChat('/gov [Instructors]: В данный момент на оф.портале Автошколы открыта тема "Вип карта клиента"')
-    wait(5000)
-    sampSendChat("/gov [Instructors]: Cо всеми подробностями вы можете ознакомиться на оф.портале. ")
-    wait(5000)
-    sampSendChat("/d OG, освободил волну государственных новостей.")
-    wait(1200)
-	if cfg.main.hud then
-    sampSendChat("/time")
-    wait(500)
-    setVirtualKeyDown(key.VK_F8, true)
-    wait(150)
-    setVirtualKeyDown(key.VK_F8, false)
-	end
-	end
-   },   
-    {
-   title = "{FFFFFF}Заявка на экзаменатора",
-    onclick = function()
-	sampSendChat("/d OG, занял волну государственных новостей.")
-        wait(5000)
-        sampSendChat("/gov [Instructors]: Уважаемые жители штата, пожалyйста, прослyшайте объявление.")
-        wait(5000)
-        sampSendChat('/gov [Instructors]: В данный момент открыты заявления на должность "Экзаменатор".')
-        wait(5000)
-        sampSendChat("/gov [Instructors]: Со всеми критериями, Вы можете ознакомиться на оф.портале штата. ")
-        wait(5000)
-        sampSendChat("/d OG, освободил волну государственных новостей.")
-        wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-   {
-   title = "{FFFFFF}Пиар филиала мэрии",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-	local myname = sampGetPlayerNickname(myid)
-	sampSendChat("/d OG, занял волну государственных новостей.")
-        wait(5000)
-        sampSendChat("/gov [Instructors]: Уважаемые жители штата, пожалyйста, прослyшайте объявление.")
-        wait(5000)
-        sampSendChat('/gov [Instructors]: Автошкола расширяется и предоставляет услуги по выдаче лицензий в нашем филиале.')
-        wait(5000)
-        sampSendChat('/gov [Instructors]: Филиал находится на первом этаже Мэрии. С уважением, '..rank..' Автошколы - '..myname:gsub('_', ' ')..'.')
-        wait(5000)
-        sampSendChat("/d OG, освободил волну государственных новостей.")
-        wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
    {
    title = "{FFFFFF}Занять гос. волну",
     onclick = function()
@@ -791,7 +774,7 @@ function govmenu(id)
    title = "{FFFFFF}Напомнить о займе гос. волны",
     onclick = function()
 	sampSetChatInputEnabled(true)
-	sampSetChatInputText("/d OG, Напоминаю что волна гос.новостей на X за Inst.")
+	sampSetChatInputText("/d OG, Напоминаю что волна гос.новостей на X за MOH.")
 	end
    },
 }
@@ -810,56 +793,68 @@ function fthmenu(id)
  return
 {
   {
-    title = "{FFFFFF}Лекция для {008B8B}Стажёра",
+    title = "{FFFFFF}Вступительная лекция",
     onclick = function()
-	    sampSendChat("Приветствую. Вы приняты на Стажировку в Автошколу. ")
+        sampSendChat("Приветствую, новоприбывшие коллеги. Добро пожаловать в Министерство здравоохранения.")
+        wait(cfg.commands.zaderjka * 1000) 
+        sampSendChat("Вашим руководством являются: старший состав, заведующий вашим отделением и его заместители.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("/me передал(а) бейджик Стажера Автошколы ")
+        sampSendChat("Рацию департамента разрешено использовать исключительно с должности мед. брата.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("/b /clist 23 ")
+        sampSendChat("/b /d разрешен 3 рангам и выше.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Стажировка длится до того момента, пока вы не будете повышены до Консультанта. ")
+        sampSendChat("Ваша основная обязанность в министерстве - оказание мед. помощи гражданам Штата..")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Запрещено просить повышения или назначения на управляющую должность в любой форме. Как придет срок Вас вызовут. ")
+        sampSendChat(".. вне зависимости от расы пострадавшего, его религии, соц. положения и так далее.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Обязанности стажёров: ")
+        sampSendChat("Также, пока вы находитесь в нашем отделении, вы обязаны стоять на посту..")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Смотреть как работают коллеги и учиться у них. ")
+        sampSendChat(".. либо патрулировать города, это по желанию, а также своевременно докладывать в рацию.") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В рабочее время находиться в офисе. ")
+        sampSendChat("Доклады делаются раз в пять минут. Ни больше, ни меньше.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Изучать устав и правила автошколы. ")
+        sampSendChat("/b Форма докладов:")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Для повышения в должности, Вам нужно будет сдать экзамен.")
+        sampSendChat("/b При заступлении: /r [Интернатура]: Заступил на пост: Вокзал.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Всего у вас будет один экзамен - для повышения до консультанта. ")
+        sampSendChat("/b Обычный: /r [Интернатура]: Пост: Мэрия | Вылечено: 0.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Экзамен состоит из двух частей: Устав и расценки на лицензии. ")
+        sampSendChat("/b При наличии напарника: /r [Интернатура]: Пост: Мэрия | Вылечено: 0 | Напарник: И. Иван.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Экзамен состоится не раньше чем через 3 часа после принятия.")
+        sampSendChat("/b При уходе с поста: /r [Интернатура]: Покинул пост: Мэрия | Причина: Сон.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("/b Устав и расценки на лицензии можно найти на форуме. ")
+        sampSendChat("/b При начале патруля: /r [Интернатура]: Начал патруль города LS.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Дабы отбросить частые вопросы:")
+        sampSendChat("/b Обычный: /r [Интернатура]: Веду патруль города LS | Вылечено: 0.") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Стажер может выдавать только права. ")
+        sampSendChat("/b При завершении патруля: /r [Интернатура]: Завершил патруль города LS.") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Стажерами считаются сотрудники, находящиеся на должности Стажёр и Экзаменатор (по заявке). ")
+        sampSendChat("На работу вы должны прибыть ровно через пятнадцать минут.")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Офис разрешено покидать только с разрешения ст. Состава. ")
+        sampSendChat("Исключений для этого правила нет и оно действует для всех.") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Вертолет можно брать тоже только с разрешения ст. Состава. ")
+        sampSendChat("Всем тем, кто будет хамить коллегам и руководству светит путевка в ЧС министерства..") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("За столами спать запрещено. Спать разрешено только в комнате отдыха. ")
+        sampSendChat(".. со всеми почестями и прилагающимся. И это еще в лучшем случае.") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать! ')
+        sampSendChat("В худшем - я организую для него пикник..") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам ОС либо к ст. Составу. ")
+        sampSendChat(".. в лесу с червями, а органы бесстрашного найдут в баночках для анализов.") 
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Спасибо,что прослушали мою лекцию. ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если у вас имеются вопросы, задавайте. ")
-		wait(1200)
+        sampSendChat("Также, хотелось бы сказать следующее:") 
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Разумеется, найдутся те, кто класть хотел на сие правила.") 
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Если они продержатся здесь больше недели - это будет чудом и я поверю в Бога.") 
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Для всех остальных, любящих трудится, скажу то, что вас ждет светлое будущее.") 
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Ну и последнее: для того, чтобы получить повышение, вам нужно сдать клятву Гиппократа.") 
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("Сдать ее вы сможете завтра, когда подойдет срок.") 
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("На этой ноте я заканчиваю свой инструктаж. Вопросы сможете задать, когда я раздам бейджи.")
+        wait(1200)
 		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
@@ -869,383 +864,71 @@ function fthmenu(id)
 		end
     end
   },
-   {
-    title = "{FFFFFF}Лекция для {008B8B}Экзаменатора",
+  {
+    title = "{FFFFFF}Первая помощь при кровотечении",
     onclick = function()
-	sampSendChat("Приветствую")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Поскольку вы приняты по заявке на должность Экзаменатора, вам необходимо определиться с отделом.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("/b /clist 10")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("ОС - Отдел Стажировки, занимающийся непосредственно обучением стажёров.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("ОК - Отдел Контроля, занимающийся профилактикой нарушений и аварийных ситуаций.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("С участием транспорта, через проведение лекций и проверок гос. структур")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("После 4-х дней активной работы.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Вы получите бейджик Мл.Инструктора и будете считаться полноценным сотрудником.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Запрещено просить повышения или назначения на управляющую должность в любой форме.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Как придет срок Вашего повышения - обратитесь к ст. Составу")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Офис разрешено покидать только с разрешения ст. Состава.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Вертолет можно брать тоже только с разрешения ст. Состава.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("За столами спать запрещено. Спать разрешено только в комнате отдыха.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Стажерами считаются сотрудники, находящиеся на должности Стажёр и Экзаменатор (по заявке).")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать!')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам ОС либо к ст. Составу.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Спасибо, что прослушали мою лекцию.")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если у вас имеются вопросы, задавайте. ")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-   {
-    title = "{FFFFFF}Лекция про {008B8B}ПДД",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Сейчас я проведу лекцию на тему "ПДД". ')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Каждый водитель должен быть пристегнут ремнем безопасности... ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("... и только после этого начинать движение. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Водитель обязан пропускать пешеходов в специальных местах для перехода. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В случае, если кончается бензин или поломка двигателя необходимо сдвинуть автомобиль...")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("...или доехать до обочины и дождаться механика. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В Штате установлен скоростной режим: ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В пределах города разрешается движение транспортных средств со скоростью не более 50 км/ч.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В жилых зонах и на дворовых территориях скорость движения не более 30 км/ч.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("За пределами городов и на автомагистралях ограничений по скорости нет. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если произошло ДТП, водитель обязан вызвать полицию и ждать приезда сотрудников. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Обгон ТС разрешен только с левой стороны, при этом водитель обязан убедиться...")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("... что встречная полоса свободна для обгона. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Запрещена парковка в неположенных местах. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Разрешено парковаться: Обочина дороги, специально для этого отведенные места (стоянки). ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Водителю запрещается: ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Пересекать сплошную полосу. ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Превышать допустимую скорость на определенном участке дороги. ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Покидать место ДТП без договоренности с другим участником этого ДТП. ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Создавать помехи другим транспортным средствам. ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Садится за руль в нетрезвом состоянии. ")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("На этом лекция окончена. Спасибо за внимание.")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-      {
-    title = "{FFFFFF}Лекция про {008B8B}Правила этикета",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Здравствуйте, уважаемые коллеги. Сейчас я Вам прочту лекцию на тему: «Правила этикета в нашей организации».')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Первым делом, после того как Вы прибыли на рабочее место…")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("… Вам необходимо переодеться и по приветствовать своих коллег")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Не зависимо от ситуации, Вы должны сохранять спокойствие и…")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("…уважение к человеку, с кем ведёте диалог. На личность переходить…")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("…категорически запрещено. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ко всем сотрудникам и гражданам, в строгом порядке необходимо…")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("…обращаться на «Вы» и не в коем случае на «Ты».")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Вежливо и грамотно предлагать услуги инструктора, вошедшим в…")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("…здание, но не кричать за стойкой.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Пользоваться рацией необходимо, только в рабочих целях…")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("…разговоры не по работе будут строго наказываться.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ну и конечно же по уходу с рабочего места, необходимо вежливо…")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("…попрощаться с коллегами.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("На этом лекция подошла к своему логическому завершению…")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("…Спасибо за внимание.")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-	},
-   {
-    title = "{FFFFFF}Лекция про {008B8B}Правильное обращение с оружием",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Сейчас я проведу лекцию на тему "Обращение с оружием".')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Гражданам запрещено носить оружие не имея на него лицензию")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Для сотрудников силовых структур делается исключение. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Оружие разрешено использовать в случае:")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1.Самообороны, при нападении на вас. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2.Для выполнения своих служебных обязанностей.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("3.По прямому приказу людей, имеющих на это полномочия. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Тем не менее, существует ряд запретов связанных с оружием: ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1.Запрещено носить оружие в открытом виде в многолюдных местах. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2.Запрещено приобретать оружие незаконно. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("3.Запрещено расстреливать жителей без весомой причины.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("4.Запрещено использвать оружие для достижения личных целей. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("В случае нарушения этих правил, у вас будет изъята лицензия. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Так же за подобные нарушения вас могут заключить под стражу. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("На этом все, спасибо за внимание.")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-      {
-    title = "{FFFFFF}Лекция про {008B8B}Правила управления водным транспортом",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Сейчас я проведу лекцию на тему "Правила управления водным транспортом".')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1. Прежде, чем отправится в плавание вы должны:")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Убедиться в исправности мотора.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Проверить, нет ли водотечности в корпусе судна.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Проверить, не забыли ли вы взять с собой лицензию на право управления водным транспортом.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Позаботиться о спасательных средствах для каждого человека в лодке (катере).")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2. Запрещается:")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Передавать управление водным транспортом другому лицу без соответствующих на то документов, особенно детям.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Выходить в плавание в условия ограниченной видимости, если ваша лодка не оборудована сигнальными огнями.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Перевозить людей в нетрезвом состоянии.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Создавать помехи для плавания судов.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Перемещение с одного судна на другое во время их движения.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Перевозить взрывоопасные и огнеопасные грузы на судах, для этого не предназначенных.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Принимать перед выходом наркотические вещества, спиртные напитки, тонизирующие лекарства и препараты.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ослаблять бдительность и внимание в процессе управления водным транспортом.")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("На этом все, спасибо за внимание.")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-         {
-    title = '{FFFFFF}Лекция {008B8B}"Как вести себя в экстремальных ситуациях"',
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Сейчас я проведу лекцию на тему "Как себя вести в экстремальных ситуациях".')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Тормоза придумали трусы, а умные ещё и «нафаршировали» их электроникой.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Так говорят люди, которые зачастую погибают.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Тормоз это пожалуй одна из главных частей автомобиля.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("- Самыми распространёнными причинами отказа тормозов являются...")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("...потеря тормозной жидкости из-за негерметичности системы.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("- Но вне зависимости от причин, следствие одно - автомобиль не возможно остановить обычным способом.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("- Поэтому нужно использовать один из следующих вариантов: ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1. Торможение двигателем.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Нужно применить торможение двигателем, то есть постепенно понижать передачи одну за другой.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2.Включение первой передачи или «паркинга».")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если другого выхода нет, то можно замедлить машину перейдя на первую передачу и заглушив двигатель.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("3. Контактное торможение.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Остановка с помощью препятствий бывает двух видов: ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Первый, когда нет угрозы жизни, и есть возможность замедлить движение.")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Это можно сделать, выехав на обочину или притираясь к бордюру.")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Вторая ? самая критическая ситуация.")
-		wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Когда продолжение движения может вызвать необратимые последствия.")
-		wait(cfg.commands.zaderjka * 1000)
-		sampSendChat("Нужно тормозить в препятствие.")
-		wait(cfg.commands.zaderjka * 1000)
-		sampSendChat("Оптимально для этого подойдут кусты или сугробы, хуже ? заборы и отбойники.")
-		wait(cfg.commands.zaderjka * 1000)
-		sampSendChat("И самое последнее ? другие автомобили, фонарные столбы, остановки.")
-		wait(cfg.commands.zaderjka * 1000)
-		sampSendChat("Это были самые основные способы остановки автомобиля.")
-		wait(cfg.commands.zaderjka * 1000)
-		sampSendChat("Главное не паниковать и вы сможете спасти свою и возможно чью-то жизнь.")
-		wait(cfg.commands.zaderjka * 1000)
-		sampSendChat("На этом всё, спасибо за внимание, берегите себя и своих близких.")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-        {
-    title = "{FFFFFF}Лекция про {008B8B}Правила рыбной ловли",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Сейчас я проведу лекцию на тему "Правила рыбной ловли".')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1. Правила рыбной ловли:")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ловить рыбу разрешается только в разрешенных местах. (причал на пляже г.Лос-Сантос и за гольф клубом в г.Лас-Вентурас)")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Рыбная ловля разрешена только разрешёнными орудиями ужения. (одна удочка с одним крючком либо спиннинг)")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Рыбная ловля разрешена исключительно в черте населенного пункта.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("2. Запрещается:")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ловить рыбу с лодки.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ловить рыбу с применением взрывчатых и отравляющих веществ, с помощью электротока, с использованием колющих орудий.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ловить рыбу без наличия лицензии рыболова.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ловить рыбу в радиусе 500 метров от хозяйств, разводящих рыбу.")
-		wait(1200)
-		if cfg.main.hud then
-        sampSendChat("/time")
-        wait(500)
-        setVirtualKeyDown(key.VK_F8, true)
-        wait(150)
-        setVirtualKeyDown(key.VK_F8, false)
-		end
-	end
-   },
-      {
-    title = "{FFFFFF}Лекция про {008B8B}Пилотирование",
-    onclick = function()
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Всех приветствую. Я сотрудник Автошколы "..myname:gsub('_', ' ')..". ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat('Сейчас я проведу лекцию на тему "Пилотирование". ')
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("1. Правила пилотирования: ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("При совершении полета нужно четко выполнять все инструкции и не отклоняться от выбранного курса. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Перед началом полета надо проверить технику на которой вы будете совершать полет. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Тренировочные полеты совершаются только при опытных пилотах. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Принимать перед вылетом наркотические вещества, спиртные напитки, тонизирующие лекарства и препараты.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Ослаблять бдительность и внимание в процессе полета. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Полеты в запретных и опасных зонах, информации о которых нет на полетных картах. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Полет над населенными пунктами и скоплениями людей на открытой местности на высоте менее 300 метров.")
+       sampSendChat("Приветствую, коллеги. Сегодня я прочту Вам лекцию на тему «Первая помощь при кровотечении». ")
        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Сближение самолетов ближе установленных правил расстояний. ")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("На этом все, спасибо за внимание.")
-		wait(1200)
+       sampSendChat("Нужно четко понимать, что артериальное кровотечение представляет смертельную опасность для жизни. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Первое, что требуется – перекрыть сосуд выше поврежденного места. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Для этого прижмите артерию пальцами и срочно готовьте жгут. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Используйте в таком случае любые подходящие средства: ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("шарф, платок, ремень, оторвите длинный кусок одежды.") 
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Стягивайте жгут до тех пор, пока кровь не перестанет сочиться из раны. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("В случае венозного кровотечения действия повторяются, за исключением того, что..") 
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. жгут накладывается чуть ниже поврежденного места. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Следует помнить, что при обоих видах кровотечения жгут накладывается не более двух часов..") 
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. в жаркую погоду и не более часа в холодную. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("При капиллярном кровотечении следует обработать поврежденное место перекисью водорода.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. и наложить пластырь, либо перебинтовать рану. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Спасибо за внимание.")
+       wait(1200)
+       if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
+    end
+  },
+  {
+   title = "{FFFFFF}Первая помощь при сотрясении мозга",
+    onclick = function()
+       sampSendChat("Приветствую, коллеги. Сегодня я прочту Вам лекцию на тему «Первая помощь при сотрясении мозга».")
+       wait(cfg.commands.zaderjka * 1000) 
+       sampSendChat("Его признаками являются головокружение, головная боль, нарушение памяти, возникающие.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. после травмы черепа. Оказывая первую помощь.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. прежде всего нужно обеспечить проходимость дыхательных путей. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Для этого переверните пострадавшего на бок. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("В таком положении улучшается снабжение мозга кровью.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. а следовательно - кислородом, не западает язык. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Если человек не приходит в сознание более 30 минут..") 
+       wait(cfg.commands.zaderjka * 1000) 
+       sampSendChat(".. можно заподозрить тяжелую черепно-мозговую травму — ушиб мозга. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("В этом случае необходимо срочно вызвать врача и доставить пострадавшего в лечебное учреждение. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Спасибо за внимание.")
+       wait(1200)
 		if cfg.main.hud then
         sampSendChat("/time")
         wait(500)
@@ -1253,7 +936,117 @@ function fthmenu(id)
         wait(150)
         setVirtualKeyDown(key.VK_F8, false)
 		end
-	end
+    end
+  },
+  {
+   title = "{FFFFFF}Первая помощь при обмороках",
+    onclick = function()
+      sampSendChat("Приветствую, коллеги. Сегодня я прочту Вам лекцию на тему «Первая помощь при обмороках». ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Обмороки сопровождаются кратковременной потерей сознания, вызванной.. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat(".. недостаточным кровоснабжением мозга. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Обморок могут вызвать: резкая боль, эмоциональный стресс, ССБ и так далее. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Бессознательному состоянию обычно предшествует резкое ухудшение самочувствия: ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("нарастает слабость, появляются тошнота, головокружение, шум или звон в ушах. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Затем человек бледнеет, покрывается холодным потом и внезапно теряет сознание. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Первая помощь должна быть направлена на улучшение кровоснабжения мозга.. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat(".. и обеспечение свободного дыхания. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Если пострадавший находится в душном, плохо проветренном помещении, то.. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat(".. откройте окно, включите вентилятор или вынесите потерявшего сознание на воздух.")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Протрите его лицо и шею холодной водой, похлопайте по щекам и.. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat(".. дайте пострадавшему понюхать ватку, смоченную нашатырным спиртом. ")
+      wait(cfg.commands.zaderjka * 1000)
+      sampSendChat("Спасибо за внимание.")
+       wait(1200)
+		if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
+    end
+  },
+  {
+    title = "{FFFFFF}Первая помощь при переломах",
+    onclick = function()
+       sampSendChat("Приветствую, коллеги. Сегодня я прочту Вам лекцию на тему «Первая помощь при переломах». ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Переломы классифицируются на полный и неполный по полноте разрыва кости, со смещением.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. и без смещения по позиции обломков друг по отношению к другу.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. открытый и закрытый по наличию повреждения кожи.") 
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Симптомы перелома: ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("сильная боль в месте травмы, деформация конечности, неестественное положение конечности.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. отек, кровоизлияние. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Первая помощь при переломах всегда включает в себя: восстановление целостности кости..") 
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. остановку кровотечения, антисептическую обработку раны.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. иммобилизацию конечности. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Больного необходимо очень бережно транспортировать в медицинское учреждение для оказания.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. медицинской помощи.")
+       wait(1200)
+		if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
+    end
+  },
+  {
+    title = "{FFFFFF}Первая помощь при ДТП",
+    onclick = function()
+       sampSendChat("Приветствую, коллеги. Сегодня я прочту Вам лекцию на тему «Первая помощь при ДТП». ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Оказывая первую помощь, необходимо действовать по правилам. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Немедленно определите характер и источник травмы. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Наиболее частые травмы в случае ДТП - сочетание повреждений черепа.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. и нижних конечностей и грудной клетки. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Необходимо извлечь пострадавшего из автомобиля, осмотреть его. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Далее следует оказать первую помощь в соответствии с выявленными травмами. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Выявив их, требуется перенести пострадавшего в безопасное место.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. укрыть от холода, зноя или дождя и вызвать врача, а затем.. ")
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat(".. организовать транспортировку пострадавшего в лечебное учреждение.") 
+       wait(cfg.commands.zaderjka * 1000)
+       sampSendChat("Спасибо за внимание.")
+       wait(1200)
+		if cfg.main.hud then
+        sampSendChat("/time")
+        wait(500)
+        setVirtualKeyDown(key.VK_F8, true)
+        wait(150)
+        setVirtualKeyDown(key.VK_F8, false)
+		end
+    end
    }
 }
 end
@@ -1339,7 +1132,7 @@ function imgui.OnDrawFrame()
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(iScreenWidth/2, iScreenHeight / 2), imgui.Cond.FirstUseEver)
-                imgui.Begin(u8('Medic Tools | Устав АШ'), ystwindow)
+                imgui.Begin(u8('Medic Tools | Устав MOH'), ystwindow)
                 for line in io.lines('moonloader\\medictools\\ystav.txt') do
                     imgui.TextWrapped(u8(line))
                 end
@@ -1355,11 +1148,6 @@ function imgui.OnDrawFrame()
     imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 5))
     imgui.Begin('Medic Tools | Main Menu | Version: '..thisScript().version, second_window, mainw,  imgui.WindowFlags.NoResize)
 	local text = 'Автор:'
-    imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
-    imgui.Text(u8(text))
-	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Damien Requeste')
-	local text = 'Скрипт доработал:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
@@ -1410,15 +1198,9 @@ function imgui.OnDrawFrame()
                 _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
                 imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 180), imgui.Cond.FirstUseEver)
-                imgui.Begin('Продано лицензий', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar) 
-                imgui.CentrText(u8'Продано лицензий за сеанс:') 
+                imgui.Begin('Здесь скоро что-то будет!', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar) 
+                imgui.CentrText(u8'Здесь скоро что-то будет!') 
                 imgui.Separator()
-                imgui.Text(u8 'Продано водительских прав:') imgui.SameLine() imgui.Text(u8 ''..prava..'')
-				imgui.Text(u8 'Продано лицензий пилота:') imgui.SameLine() imgui.Text(u8 ''..pilot..'')
-				imgui.Text(u8 'Продано лицензий на катера:') imgui.SameLine() imgui.Text(u8 ''..kater..'')
-				imgui.Text(u8 'Продано лицензий рыболова:') imgui.SameLine() imgui.Text(u8 ''..ribolov..'')
-				imgui.Text(u8 'Продано лицензий на оружие:') imgui.SameLine() imgui.Text(u8 ''..gun..'')
-				imgui.Text(u8 'Продано лицензий на бизнес:') imgui.SameLine() imgui.Text(u8 ''..biznes..'')
                 imgui.End()
     end
     if helps.v then
@@ -1426,19 +1208,16 @@ function imgui.OnDrawFrame()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(3, 7))
                 imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
 				imgui.BeginChild("Список команд", imgui.ImVec2(525, 385), true, imgui.WindowFlags.VerticalScrollbar)
-                imgui.TextColoredRGB('{FF0000}/tset{CCCCCC} - Открыть меню скрипта')
+                imgui.TextColoredRGB('{FF0000}/mt{CCCCCC} - Открыть меню скрипта')
                 imgui.Separator()
                 imgui.TextColoredRGB('{FF0000}/vig [id] [Причина]{CCCCCC} - Выдать выговор по рации')
                 imgui.TextColoredRGB('{FF0000}/dmb{CCCCCC} - Открыть /members в диалоге')
-                imgui.TextColoredRGB('{FF0000}/where [id]{CCCCCC} - Запросить местоположение по рации')
-                imgui.TextColoredRGB('{FF0000}/yst{CCCCCC} - Открыть устав АШ')
+                imgui.TextColoredRGB('{FF0000}/yst{CCCCCC} - Открыть устав MOH')
 				imgui.TextColoredRGB('{FF0000}/smsjob{CCCCCC} - Вызвать на работу весь мл.состав по смс')
                 imgui.TextColoredRGB('{FF0000}/dlog{CCCCCC} - Открыть лог 25 последних сообщений в департамент')
-				imgui.TextColoredRGB('{FF0000}/sethud{CCCCCC} - Установить позицию инфо-бара')
 				imgui.TextColoredRGB('{FF0000}/cchat{CCCCCC} - Очищает чат')
 				imgui.TextColoredRGB('{FF0000}/blag [ид] [фракция] [тип]{CCCCCC} - Выразить игроку благодарность в департамент')
 				imgui.TextColoredRGB('{FF0000}/nick [id] [0-1]{CCCCCC} - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
-				imgui.TextColoredRGB('{FF0000}/find [id]{CCCCCC} - Установить на указанного игрока маркер')
 				imgui.Separator()
                 imgui.TextColoredRGB('Клавиши: ')
                 imgui.TextColoredRGB('{FF0000}ПКМ+Z на игрока{CCCCCC} - Меню взаимодействия')
@@ -1665,11 +1444,11 @@ function ftext(message)
     sampAddChatMessage(string.format('%s %s', ctag, message), 0x008B8B)
 end
 
-function tset()
-  if frac == 'Driving School' then
+function mt()
+  if frac == 'Ministry of Health' then
   second_window.v = not second_window.v
   else
-  ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
+  ftext('Возможно вы не состоите в MOH {ff0000}[ctrl+R]')
   end
 end	
 
@@ -2108,41 +1887,6 @@ function medicmenu(id)
     }
 end
 
-function instmenu(id)
-    return
-    {
-      {
-        title = '{5b83c2}« Раздел инструктора »',
-        onclick = function()
-        end
-      },
-      {
-        title = '{ffffff}» Приветствие.',
-        onclick = function()
-		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Здравствуйте. Я сотрудник автошколы "..myname:gsub('_', ' ')..", чем могу помочь?")
-		wait(1500)
-		sampSendChat('/do На рубашке бейджик с надписью "'..rank..' | '..myname:gsub('_', ' ')..'".')  
-		end
-      },
-      {
-        title = '{ffffff}» Паспорт',
-        onclick = function()
-		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        sampSendChat("Ваш паспорт, пожалуйста.")
-		wait(1500)
-		sampSendChat("/b /showpass "..myid.."")
-        end
-      },
-	  {
-        title = '{ffffff}» Попрощаться с клиентом',
-        onclick = function()
-        sampSendChat("Спасибо за покупку, всего Вам доброго.")
-        end
-      }
-    }
-end
 function ystf()
     if not doesFileExist('moonloader/medictools/ystav.txt') then
         local file = io.open("moonloader/medictools/ystav.txt", "w")
@@ -2502,7 +2246,7 @@ end
 
 
 function smsjob()
-  if rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
+  if rank == 'Психолог' or rank == 'Хирург' or rank == 'Зам.глав.Врача' or rank == 'Глав.Врач' then
     lua_thread.create(function()
         vixodid = {}
 		status = true
@@ -2510,7 +2254,7 @@ function smsjob()
         while not gotovo do wait(0) end
         wait(1200)
         for k, v in pairs(vixodid) do
-            sampSendChat('/sms '..v..' На работу')
+            sampSendChat('/sms '..v..' На работу, у вас есть 15 минут, чтобы прибыть на работу. Затем последует понижение/увольнение')
             wait(1200)
         end
         players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
@@ -2520,7 +2264,7 @@ function smsjob()
         vixodid = {}
 	end)
 	else 
-	ftext('Данная команда доступна с 3 ранга')
+	ftext('Данная команда доступна с 7 ранга')
 	end
 end
 
