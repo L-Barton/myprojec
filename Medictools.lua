@@ -281,7 +281,7 @@ function main()
 	    local myhp = getCharHealth(PLAYER_PED)
         local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
     if wasKeyPressed(cfg.keys.fastmenu) and not sampIsDialogActive() and not sampIsChatInputActive() then
-	if frac == 'Ministry of Health' then
+	if frac == 'Hospital' then
     submenus_show(fastmenu(id), "{008B8B}Medic Tools {ffffff}| Быстрое меню")
 	else
 	ftext('Возможно вы не состоите в MOH {ff0000}[ctrl+R]')
@@ -290,7 +290,7 @@ function main()
           if valid and doesCharExist(ped) then
             local result, id = sampGetPlayerIdByCharHandle(ped)
             if result and wasKeyPressed(key.VK_Z) then
-			if frac == 'Ministry of Health' then
+			if frac == 'Hospital' then
                 gmegafhandle = ped
                 gmegafid = id
                 gmegaflvl = sampGetPlayerScore(id)
@@ -742,7 +742,7 @@ function govmenu(id)
 	end
    },
   {
-   title = "{FFFFFF}Стажировка",
+   title = "{FFFFFF}Конец собеседования",
     onclick = function()
 	sampSendChat("/d OG, занял волну государственных новостей.")
         wait(5000)
@@ -1445,7 +1445,7 @@ function ftext(message)
 end
 
 function mt()
-  if frac == 'Ministry of Health' then
+  if frac == 'Hospital' then
   second_window.v = not second_window.v
   else
   ftext('Возможно вы не состоите в MOH {ff0000}[ctrl+R]')
@@ -1617,7 +1617,7 @@ function pkmmenu(id)
         title = "{ffffff}» Наркозависимость",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(nawmenu(id), "{008B8B}Medic Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(narkomenu(id), "{008B8B}Medic Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
       {
@@ -1662,7 +1662,7 @@ function gorlomenu(args)
     }
 end
 
-function nawmenu(args)
+function narkomenu(args)
     return
     {
       {
@@ -2392,30 +2392,6 @@ function sampev.onServerMessage(color, text)
     if text:find('Рабочий день окончен') and color ~= -1 then
         rabden = false
     end
-	if text:find('приобрел лицензию на воздушный транспорт') then
-        local Nicks = text:match('Игрок (.+) приобрел лицензию на воздушный транспорт. Сумма добавлена к зарплате.')
-		pilot = pilot + 1
-   end
-   	if text:find('приобрел водительские права') then
-        local Nicks = text:match('Игрок (.+) приобрел водительские права. Сумма добавлена к зарплате.')
-		prava = prava + 1
-   end
-   	if text:find('приобрел лицензию на рыболовство') then
-        local Nicks = text:match('Игрок (.+) приобрел лицензию на рыболовство. Сумма добавлена к зарплате.')
-		ribolov = ribolov + 1
-   end
-   	if text:find('приобрел лицензию на морской транспорт') then
-        local Nicks = text:match('Игрок (.+) приобрел лицензию на морской транспорт. Сумма добавлена к зарплате.')
-		kater = kater + 1
-   end
-   	if text:find('приобрел лицензию на оружие') then
-        local Nicks = text:match('Игрок (.+) приобрел лицензию на оружие. Сумма добавлена к зарплате.')
-		gun = gun + 1
-   end
-   	if text:find('приобрел лицензию на бизнес') then
-        local Nicks = text:match('Игрок (.+) приобрел лицензию на открытие бизнеса. Сумма добавлена к зарплате.')
-		biznes = biznes + 1
-   end
 	if text:find('Вы выгнали (.+) из организации. Причина: (.+)') then
         local un1, un2 = text:match('Вы выгнали (.+) из организации. Причина: (.+)')
 		lua_thread.create(function()
