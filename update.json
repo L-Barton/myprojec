@@ -1,6 +1,7 @@
 {
-  "latest": "2.7",
-  "updateurl": "http://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua",
-  "updlist": "
-  1. Выпуск обновлений приостановлен на неопределенный срок"
+"latest": "2.8",
+"updateurl": "http://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua",
+"updlist": "
+1. Добавлено меню проверок аэропортов/пирсов
+2. Обновлён устав АШ"
 }
