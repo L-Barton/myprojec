@@ -182,8 +182,7 @@ function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
     ftext("Inst Tools успешно загружен. Введите: /it для получения дальнейшей информации", -1)
-    ftext("Автор: Damien Requeste")
-    ftext("Скрипт доработал: Roma Mizantrop")
+    ftext("Автор: Damien Requeste, Roma Mizantrop")
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
   if cfg == nil then
@@ -2253,12 +2252,7 @@ function imgui.OnDrawFrame()
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Damien Requeste')
-	local text = 'Скрипт доработал:'
-    imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
-    imgui.Text(u8(text))
-	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Roma Mizantrop')
+	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Damien Requeste, Roma Mizantrop')
     imgui.Separator()
 	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
