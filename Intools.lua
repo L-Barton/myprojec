@@ -1,7 +1,7 @@
 script_name('Inst Tools')
-script_version('2.7')
+script_version('2.8')
 script_author('Damien_Requeste')
-local sf = require 'sampfuncs'
+local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
 local inicfg = require 'inicfg'
 local sampev = require 'lib.samp.events'
@@ -20,6 +20,7 @@ local bMainWindow = imgui.ImBool(false)
 local sInputEdit = imgui.ImBuffer(128)
 local bIsEnterEdit = imgui.ImBool(false)
 local ystwindow = imgui.ImBool(false)
+local memw = imgui.ImBool(false)
 local helps = imgui.ImBool(false)
 local infbar = imgui.ImBool(false)
 local updwindows = imgui.ImBool(false)
@@ -31,7 +32,7 @@ encoding.default = 'CP1251' -- указываем кодировку по умолчанию, она должна совп
 u8 = encoding.UTF8
 require 'lib.sampfuncs'
 seshsps = 1
-ctag = "{9966cc} Inst Tools {ffffff}|"
+ctag = "Inst Tools {ffffff}|"
 players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 players2 = {'{ffffff}Дата принятия\t{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
 frak = nil
@@ -49,6 +50,7 @@ gun = 0
 ribolov = 0
 biznes = 0
 departament = {}
+tMembers = {}
 vixodid = {}
 local config_keys = {
     fastsms = { v = {}}
@@ -179,14 +181,15 @@ local libs = {'sphere.lua', 'rkeys.lua', 'imcustom/hotkey.lua', 'imgui.lua', 'Mo
 function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
-    ftext("Inst Tools успешно загружен. Введите: /it что бы получить дополнительную информацию.", -1)
-	ftext('Авторы: Damien Requeste, Roma Mizantrop')
+    ftext("Inst Tools успешно загружен. Введите: /it для получения дальнейшей информации", -1)
+    ftext("Автор: Damien Requeste")
+    ftext("Скрипт доработал: Roma Mizantrop")
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
   if cfg == nil then
-    sampAddChatMessage("{9966cc}IT {ffffff}| Отсутсвует файл конфига, создаем.", -1)
+    sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Отсутсвует файл конфига, создаем.", -1)
     if inicfg.save(instools, 'instools/config.ini') then
-      sampAddChatMessage("{9966cc}IT {ffffff}| Файл конфига успешно создан.", -1)
+      sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Файл конфига успешно создан.", -1)
       cfg = inicfg.load(nil, 'instools/config.ini')
     end
   end
@@ -247,8 +250,7 @@ function main()
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
-  sampRegisterChatCommand('blag', cmd_blag)
-  sampRegisterChatCommand('pd', cmd_pd)
+  sampRegisterChatCommand('blag', blag)
   sampRegisterChatCommand('cchat', cmd_cchat)
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
@@ -272,9 +274,9 @@ function main()
   while true do wait(0)
     if #departament > 25 then table.remove(departament, 1) end
     if cfg == nil then
-      sampAddChatMessage("{9966cc}IT {ffffff}| Отсутсвует файл конфига, создаем.", -1)
+      sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Отсутсвует файл конфига, создаем.", -1)
       if inicfg.save(instools, 'instools/config.ini') then
-        sampAddChatMessage("{9966cc}IT {ffffff}| Файл конфига успешно создан.", -1)
+        sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Файл конфига успешно создан.", -1)
         cfg = inicfg.load(nil, 'instools/config.ini')
       end
     end
@@ -282,7 +284,7 @@ function main()
         local valid, ped = getCharPlayerIsTargeting(PLAYER_HANDLE)
     if wasKeyPressed(cfg.keys.fastmenu) and not sampIsDialogActive() and not sampIsChatInputActive() then
 	if frac == 'Driving School' then
-    submenus_show(fastmenu(id), "{9966cc}IT {ffffff}| Быстрое меню")
+    submenus_show(fastmenu(id), "{008B8B}Inst Tools {ffffff}| Быстрое меню")
 	else
 	ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
 	end
@@ -300,7 +302,7 @@ function main()
                 ftext(gmegaflvl)
                 ftext(gmegaffrak)]]
 				megaftimer = os.time() + 300
-                submenus_show(pkmmenu(id), "{9966cc}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] {ffffff}Уровень - "..sampGetPlayerScore(id).." ")
+                submenus_show(pkmmenu(id), "{008B8B}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] {ffffff}Уровень - "..sampGetPlayerScore(id).." ")
 				else
 			ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
 				end
@@ -320,7 +322,7 @@ function main()
             cfg.main.posX = CPX
             cfg.main.posY = CPY
         end
-		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v or updwindows.v or infbar.v
+		imgui.Process = second_window.v or third_window.v or bMainWindow.v or ystwindow.v or updwindows.v or infbar.v or memw.v
   end
   function rkeys.onHotKey(id, keys)
 	if sampIsChatInputActive() or sampIsDialogActive() or isSampfuncsConsoleActive() then
@@ -390,7 +392,7 @@ II. ОБЯЗАННОСТИ ШТАТНЫХ СОТРУДНИКОВ АВТОШКОЛЫ
 2.12 Выбрать отдел, где он продолжит свою деятельность. (Без отдела дальнейшие повышения в должности проходить не будут!)
 2.13 Закрывать за собой двери в комнату отдыха, после входа или выхода из неё.
 2.14 При наличии должности Младшего Менеджера и выше [4+ ранг], выезжать на доставку лицензии. (Исключение: Старший состав выезжает так же, если коллег ниже по должности нет в штате).
-2.15 Штатным сотрудникам Отдела Контроля снимается возможность выдавать выговоры другим сотрудникам Автошколы. (Исключение: Не распространяется на Главу и его заместителя)
+2.15 В обязанности Штатного сотрудника Отдела Контроля, которые имеют должность Младший Инструктор [4] и выше входит: пресечение нарушений Устава и выдача соответствующих наказаний. (Исключение: всем сотрудникам кроме Старшего Состава).
 2.16 В случае если за стойкой отсутствует персонал, все штатные сотрудники отделов обязаны занять её. (Наказание - выговор).
 
 
@@ -402,10 +404,6 @@ III. ОБЯЗАННОСТИ ГЛАВ ОТДЕЛОВ АВТОШКОЛЫ И ИХ ЗАМЕСТИТЕЛЕЙ
 3.2 Глава Отдела должен следить и своевременно вносить информацию по отделу в специальную таблицу созданной в Google-формах. (Каждый день: до 21-00).
 3.3 Глава Отдела вправе сам выбрать своего заместителя.
 3.4 Главы Отдела вправе выдавать выговоры сотрудникам в пределах Устава Автошколы и своих полномочий:
-3.4.1 Глава и Заместитель ОС - вправе выдавать выговоры Стажерам - Консультантам и Экзаменаторам без отдела, а также сотрудникам своего отдела.
-3.4.2 Глава и Заместитель ОК - вправе выдавать выговоры Стажерам - Консультантам и Экзаменаторам без отдела, а также сотрудникам своего отдела.
-3.4.3 Главе и Заместителю Отдела ОС запрещено выдавать выговор сотрудникам Отдела Контроля и Старшему составу.
-3.4.4 Главе и Заместителю Отдела ОК запрещено выдавать выговор сотрудникам Отдела Стажировки и Старшему составу.
 3.5 Глава Отдела каждые 7 дней должен предоставлять отчетность в специальную тему на форуме о своей работе и работе отдела в целом. (Примечание: до 21-00 в день сдачи отчета).
 3.6 Назначение на должность Главы отдела в полном объёме относится к Куратору Отделов.
 3.7 В случае если за стойкой отсутствует персонал, Глава или Заместитель любого отдела обязан послать за неё подчиненного из своего отдела или же встать самому.
@@ -447,7 +445,7 @@ V. СОТРУДНИКАМ АВТОШКОЛЫ ЗАПРЕЩАЕТСЯ
 5.15 Писать в департамент во время ЧС- Чрезвычайной ситуации.
 5.16 Играть в казино в рабочее время. (Наказание - увольнение).
 5.17 Игнорировать Старший Состав. (Наказание - выговор 2-ой степени).
-5.18 Прогуливать рабочий день. (Наказание: Стажерам - увольнение, Консультантам и выше - понижение в должности на 1 единицу).
+5.18 Прогуливать рабочий день. (Наказание: увольнение).
 5.19 Оскорблять коллег, а так же клиентов Автошколы. (Наказание: увольнение из организации).
 5.20 Спать около кнопки открытия дверей, для выхода из комнаты отдыха. (Наказание: выговор 1-ой степени).
 5.21 Бегать и прыгать в пределах здания Автошколы. (Наказание: выговор 1-ой степени).
@@ -489,8 +487,8 @@ function dmb()
 		gcount = nil
 	end)
 end
-
-function cmd_blag(arg)
+        
+function blag(arg)
   if #arg == 0 then
     ftext('Введите: /blag [ид] [фракция] [тип]')
     ftext('Тип: 1 - за транспортировку')
@@ -543,7 +541,7 @@ function dmch()
 		sampSendChat('/members')
 		while not gotovo do wait(0) end
 		if gosmb then
-			sampShowDialog(716, "{9966cc}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players3, "\n"), "x", _, 5) -- Показываем информацию.
+			sampShowDialog(716, "{008B8B}Inst Tools {ffffff}| {ae433d}Сотрудники вне офиса {ffffff}| Time: "..os.date("%H:%M:%S"), table.concat(players3, "\n"), "x", _, 5) -- Показываем информацию.
 		end
 		gosmb = false
 		krimemb = false
@@ -553,21 +551,21 @@ function dmch()
 end
 
 function dlog()
-    sampShowDialog(97987, '{9966cc}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
+    sampShowDialog(97987, '{008B8B}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
 end
 
 function vig(pam)
   local id, pric = string.match(pam, '(%d+)%s+(.+)')
 if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == "Инструктор" or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
   if id == nil then
-    sampAddChatMessage("{9966cc}Inst Tools {ffffff}| Введите: /vig [id] [причина]", -1)
+    sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Введите: /vig [id] [причина]", -1)
   end
   if id ~=nil and not sampIsPlayerConnected(id) then
-    sampAddChatMessage("{9966cc}Inst Tools {ffffff}| Игрок с ID: "..id.." не подключен к серверу.", -1)
+    sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Игрок с ID: "..id.." не подключен к серверу.", -1)
   end
   if id ~= nil and sampIsPlayerConnected(id) then
       if pric == nil then
-        sampAddChatMessage("{9966cc}Inst Tools {ffffff}| /vig [id] [причина]", -1)
+        sampAddChatMessage("{008B8B}Inst Tools {ffffff}| /vig [id] [причина]", -1)
       end
       if pric ~= nil then
 	   if cfg.main.tarb then
@@ -712,7 +710,7 @@ function invite(pam)
 	  if dist <= 5 then
 	  if cfg.main.tarb then
 		if sampIsPlayerConnected(id) then
-                submenus_show(oinvite(id), "{9966cc}IT {ffffff}| Выбор отдела")
+                submenus_show(oinvite(id), "{008B8B}Inst Tools {ffffff}| Выбор отдела")
 				else 
 			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
             end
@@ -813,7 +811,7 @@ function oinvite(id)
  return
 {
   {
-   title = "{FFFFFF}Отдел {9966cc}Стажировки",
+   title = "{FFFFFF}Отдел {008B8B}Стажировки",
     onclick = function()
 	sampSendChat('/me достал(а) бейджик Сотрудника ОС и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 	wait(1500)
@@ -825,7 +823,7 @@ function oinvite(id)
 	end
    },
    {
-   title = "{FFFFFF}Отдел {9966cc}Контроля",
+   title = "{FFFFFF}Отдел {008B8B}Контроля",
     onclick = function()
 	sampSendChat('/me достал(а) бейджик Сотрудника ОК и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
 	wait(1500)
@@ -842,57 +840,45 @@ function fastmenu(id)
  return
 {
   {
-   title = "{FFFFFF}Меню {9966cc}лекций",
+   title = "{FFFFFF}Меню {008B8B}лекций",
     onclick = function()
-	submenus_show(fthmenu(id), "{9966cc}IT {ffffff}| Меню лекций")
+	submenus_show(fthmenu(id), "{008B8B}Inst Tools {ffffff}| Меню лекций")
 	end
    },
     {
-   title = "{FFFFFF}Меню {9966cc}гос.новостей {ff0000}(Для Ст.Состава)",
+   title = "{FFFFFF}Меню {008B8B}гос.новостей {ff0000}(Для Ст.Состава)",
     onclick = function()
 	if rank == 'Инструктор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
-	submenus_show(govmenu(id), "{9966cc}IT {ffffff}| Меню гос.новостей")
+	submenus_show(govmenu(id), "{008B8B}Inst Tools {ffffff}| Меню гос.новостей")
 	else
 	ftext('Вы не находитесь в Ст.Составе')
 	end
 	end
    },
    {
-   title = "{FFFFFF}Меню {9966cc}отделов",
+   title = "{FFFFFF}Меню {008B8B}отделов",
     onclick = function()
 	if cfg.main.tarb then
-	submenus_show(otmenu(id), "{9966cc}IT {ffffff}| Меню отделов")
+	submenus_show(otmenu(id), "{008B8B}Inst Tools {ffffff}| Меню отделов")
 	else
 	ftext('Включите автотег в настройках')
 	end
 	end
    },
    {
-    title = '{FFFFFF}Меню {9966cc}role play заданий',
-     onclick = function()
-     submenus_show(rpwka(id), "{FFFFFF}Меню {9966cc}role play заданий")
-   end
-   },
-   {
-   title = "{FFFFFF}Меню {9966cc}собеседования",
+   title = "{FFFFFF}Меню {008B8B}собеседования",
     onclick = function()
-	submenus_show(sobes(id), "{9966cc}IT {ffffff}| Меню собеседования")
+	submenus_show(sobes(id), "{008B8B}Inst Tools {ffffff}| Меню собеседования")
 	end
    },
    {
-   title = "{FFFFFF}Меню {9966cc}расценок для экзамена",
+   title = "{FFFFFF}Меню {008B8B}расценок для экзамена",
     onclick = function()
-	submenus_show(rascenki(id), "{9966cc}IT {ffffff}| Меню расценок для экзамена")
+	submenus_show(rascenki(id), "{008B8B}Inst Tools {ffffff}| Меню расценок для экзамена")
 	end
-   },
+   },   
    {
-    title = '{FFFFFF}Меню {9966cc}role play осмотра СТО ',
-     onclick = function()
-     submenus_show(cto(id), "{9966cc}IT {ffffff}| Меню role play осмотра СТО")
-   end
-  },   
-   {
-   title = "{FFFFFF}Доставка лицензий {9966cc}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
+   title = "{FFFFFF}Доставка лицензий {008B8B}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
     onclick = function()
 	if rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
 	sampSendChat(string.format('/d OG, Осуществляется доставка лицензий в любую точку штата. Тел: %s.', tel))
@@ -902,7 +888,7 @@ function fastmenu(id)
 	end
    },
    {
-   title = "{FFFFFF}Список {9966cc}сотрудников находящихся не в офисе",
+   title = "{FFFFFF}Список {008B8B}сотрудников находящихся не в офисе",
     onclick = function()
 	pX, pY, pZ = getCharCoordinates(playerPed)
 	if getDistanceBetweenCoords3d(pX, pY, pZ, 2351.8020, 1660.9800, 3041.0605) < 50 then
@@ -916,15 +902,226 @@ function fastmenu(id)
    title = "{FFFFFF}Доложить в рацию о доставке лицензии {ff0000}(обязательно при доставке)",
     onclick = function()
     if cfg.main.tarb then
-        sampSendChat(string.format('/r [%s]: Выехал на доставку лицензии.', cfg.main.tarr))
+        sampSendChat(string.format('/r [%s]: Выехал(а) на доставку лицензий.', cfg.main.tarr))
         else
-        sampSendChat(string.format('/r Выехал на доставку лицензии.'))
+        sampSendChat(string.format('/r Выехал(а) на доставку лицензий.'))
         end
 		dostavka = true
 	end
    },
+   {
+    title = '{FFFFFF}Меню {008B8B}проверок аэропортов',
+     onclick = function()
+     submenus_show(lodka(id), "{008B8B}Inst Tools {ffffff}| Меню аэропортов")
+   end
+  },
+  {
+    title = '{FFFFFF}Меню {008B8B}проверок пирса',
+     onclick = function()
+     submenus_show(oryj(id), "{008B8B}Inst Tools {ffffff}| Меню проверок в PD, Army")
+   end
+  },
+   {
+    title = '{FFFFFF}Меню {008B8B}RP осмотра СТО ',
+     onclick = function()
+     submenus_show(cto(id), "{008B8B}Inst Tools {ffffff}| Меню RP осмотра СТО")
+   end
+  },
+  {
+    title = '{FFFFFF}Меню {008B8B}RP заданий',
+     onclick = function()
+     submenus_show(rpwka(id), "{008B8B}Inst Tools {ffffff}| Меню RP заданий")
+   end
+  },
 }
 end
+
+function oryj(id)
+    return
+    {
+      {
+        title = '{ffffff}» Передача ордера для подписки',
+        onclick = function()
+        sampSendChat("Здравствуйте, подпишите пожалуйста ордер")
+        wait(2000)
+        sampChat("/me передал ордер и ручку")
+        wait(5000)
+        sampSendChat("/do Ордер на проверку лодочной LS")
+        wait(4000)
+        sampSendChat("/do Ордер на проверку лодочной SF")
+        wait(4000)
+        sampSendChat("/do Ордер на проверку лодочной LV")
+        end 
+      },     
+      {
+        title = '{ffffff}» Взять подписанный ордер',
+        onclick = function()
+        sampSendChat("/me взял подписанный ордер")
+        wait(4000) 
+        sampSendChat("/do Подписанный ордер в руках.")
+        wait(4000) 
+        sampSendChat("/me положил в сумку")
+		end
+      },
+      {
+        title = '{ffffff}» Осмотр пирса ',
+        onclick = function()
+        sampSendChat("/me начал визуальный осмотр пирса")
+        wait(2000)
+        sampChat("/me осмотрел кнехты для крепление тросса")
+        wait(5000)
+        sampSendChat("/try кнехты не повреждены")
+        wait(4000)
+        sampSendChat("/me достал кпк из сумки")
+        wait(4000)
+        sampSendChat("/do КПК в руках.")
+        wait(4000)
+        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
+        wait(4000)
+        sampSendChat("/do Данные внесены")
+        wait(4000)
+        sampSendChat("/me проверил целостность пирса")
+        wait(4000)
+        sampSendChat("/try пирс в полном порядке ")
+        wait(4000)
+        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
+        wait(4000)
+        sampSendChat("/do Данные внесены")
+        wait(4000)
+        sampSendChat("/me достал уровень и положил на пирс ")
+        wait(4000)
+        sampSendChat("/try уровень не показал отклонение в норме ")
+        wait(4000)
+        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
+        wait(4000)
+        sampSendChat("/do Данные внесены")
+        end 
+      },
+      {
+        title = '{ffffff}» Оценка лодочной',
+        onclick = function()
+        sampSendChat("/me поставил оценку лодочной и нажал на кнопку выдать чек. ")
+        wait(2000)
+        sampChat("/do КПК выдал чек с оценкой 5")
+        wait(5000)
+        sampSendChat("/me взял степлер со стола и прикрепил чек к ордеру на проверку.")
+        wait(4000)
+        sampSendChat("/me внес данные в бланк на столе ")
+        end 
+      },
+      {
+        title = '{ffffff}» Результат проверки - положительный',
+        onclick = function()
+        sampSendChat("/do Результат проверки 'положительный'. ")
+        end 
+      },
+      {
+        title = '{ffffff}» Если хотя бы одна из проверок показала неисправность',
+        onclick = function()
+        sampSendChat("/do Результат проверки 'отрицательны'. ")
+        wait(4000)
+        sampSendChat("Дается 24 часа на исправление.")
+        wait(5000)
+        sampSendChat("/me установил табличку на стекло")
+        wait(4000)
+        sampSendChat("/do Надпись на табличке 'Закрыто на ремонт'.")
+        end 
+      },
+    }
+end
+
+function lodka(id)
+    return
+    {
+      {
+        title = '{ffffff}» Передача ордера для подписки',
+        onclick = function()
+        sampSendChat("Здравствуйте, подпишите пожалуйста ордер")
+        wait(2000)
+        sampChat("/me передал ордер и ручку")
+        wait(5000)
+        sampSendChat("/do Ордер на проверку аэропорта LS")
+        wait(4000)
+        sampSendChat("/do Ордер на проверку аэропорта SF")
+        wait(4000)
+        sampSendChat("/do Ордер на проверку аэропорта LV")
+        end 
+      },     
+      {
+        title = '{ffffff}» Взять подписанный ордер',
+        onclick = function()
+        sampSendChat("/me взял подписанный ордер")
+        wait(4000) 
+        sampSendChat("/do Подписанный ордер в руках.")
+        wait(4000) 
+        sampSendChat("/me положил в сумку")
+		end
+      },
+      {
+        title = '{ffffff}» Для сотрудника проверяющего ангары',
+        onclick = function()
+        sampSendChat("/me провел визуальный осмотр ангара")
+        wait(2000)
+        sampChat("/try визуальных повреждений не обнаружено")
+        wait(5000)
+        sampSendChat("/me достал кпк из сумки")
+        wait(4000)
+        sampSendChat("/do КПК в руках.")
+        wait(4000)
+        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
+        wait(4000)
+        sampSendChat("/do Данные внесены")
+        end 
+      },
+      {
+        title = '{ffffff}» Визуальный осмотр взлетной полосы',
+        onclick = function()
+        sampSendChat("/me провел визуальный осмотр взлетной полосы")
+        wait(2000)
+        sampChat("/try визуальных повреждений не обнаружено")
+        wait(5000)
+        sampSendChat("/me достал кпк из сумки")
+        wait(4000)
+        sampSendChat("/do КПК в руках.")
+        wait(4000)
+        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
+        wait(4000)
+        sampSendChat("/do Данные внесены")
+        end 
+      },
+      {
+        title = '{ffffff}» Оценка взлетной полосы',
+        onclick = function()
+        sampSendChat("/me поставил оценку взлетной полосы и нажал на кнопку выдать чек.")
+        wait(2000)
+        sampChat("/do КПК выдал чек с оценкой 5")
+        wait(5000)
+        sampSendChat("/me взял степлер со стола и прикрепил чек к ордеру на проверку.")
+        wait(4000)
+        sampSendChat("/me внес данные в бланк на столе")
+        end 
+      },
+      {
+        title = '{ffffff}» Результат проверки - положительный',
+        onclick = function()
+        sampSendChat("/do Результат проверки 'положительный'. ")
+        end 
+      },
+      {
+        title = '{ffffff}» Если хотя бы одна из проверок показала неисправность',
+        onclick = function()
+        sampSendChat("/do Результат проверки 'отрицательны'. ")
+        wait(4000)
+        sampSendChat("Дается 24 часа на исправление.")
+        wait(5000)
+        sampSendChat("/me установил табличку на стекло")
+        wait(4000)
+        sampSendChat("/do Надпись на табличке 'Закрыто на ремонт'.")
+        end 
+      },
+    }
+end
+
 
 function cto(id)
     return
@@ -1504,7 +1701,7 @@ function fthmenu(id)
  return
 {
   {
-    title = "{FFFFFF}Лекция для {9966cc}Стажёра",
+    title = "{FFFFFF}Лекция для {008B8B}Стажёра",
     onclick = function()
 	    sampSendChat("Приветствую. Вы приняты на Стажировку в Автошколу. ")
         wait(cfg.commands.zaderjka * 1000)
@@ -1564,7 +1761,7 @@ function fthmenu(id)
     end
   },
    {
-    title = "{FFFFFF}Лекция для {9966cc}Экзаменатора",
+    title = "{FFFFFF}Лекция для {008B8B}Экзаменатора",
     onclick = function()
 	sampSendChat("Приветствую")
         wait(cfg.commands.zaderjka * 1000)
@@ -1612,7 +1809,7 @@ function fthmenu(id)
 	end
    },
    {
-    title = "{FFFFFF}Лекция про {9966cc}ПДД",
+    title = "{FFFFFF}Лекция про {008B8B}ПДД",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1672,7 +1869,7 @@ function fthmenu(id)
 	end
    },
       {
-    title = "{FFFFFF}Лекция про {9966cc}Правила этикета",
+    title = "{FFFFFF}Лекция про {008B8B}Правила этикета",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         wait(cfg.commands.zaderjka * 1000)
@@ -1718,7 +1915,7 @@ function fthmenu(id)
 	end
 	},
    {
-    title = "{FFFFFF}Лекция про {9966cc}Правильное обращение с оружием",
+    title = "{FFFFFF}Лекция про {008B8B}Правильное обращение с оружием",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1764,7 +1961,7 @@ function fthmenu(id)
 	end
    },
       {
-    title = "{FFFFFF}Лекция про {9966cc}Правила управления водным транспортом",
+    title = "{FFFFFF}Лекция про {008B8B}Правила управления водным транспортом",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1812,7 +2009,7 @@ function fthmenu(id)
 	end
    },
          {
-    title = '{FFFFFF}Лекция {9966cc}"Как вести себя в экстремальных ситуациях"',
+    title = '{FFFFFF}Лекция {008B8B}"Как вести себя в экстремальных ситуациях"',
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1876,7 +2073,7 @@ function fthmenu(id)
 	end
    },
         {
-    title = "{FFFFFF}Лекция про {9966cc}Правила рыбной ловли",
+    title = "{FFFFFF}Лекция про {008B8B}Правила рыбной ловли",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -1912,7 +2109,7 @@ function fthmenu(id)
 	end
    },
       {
-    title = "{FFFFFF}Лекция про {9966cc}Пилотирование",
+    title = "{FFFFFF}Лекция про {008B8B}Пилотирование",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
         local myname = sampGetPlayerNickname(myid)
@@ -2034,7 +2231,7 @@ function imgui.OnDrawFrame()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(iScreenWidth/2, iScreenHeight / 2), imgui.Cond.FirstUseEver)
                 imgui.Begin(u8('Inst Tools | Устав АШ'), ystwindow)
-                for line in io.lines('moonloader\\instools\\ystavnew.txt') do
+                for line in io.lines('moonloader\\instools\\yst.txt') do
                     imgui.TextWrapped(u8(line))
                 end
                 imgui.End()
@@ -2048,11 +2245,16 @@ function imgui.OnDrawFrame()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
     imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 5))
     imgui.Begin('Inst Tools | Main Menu | Version: '..thisScript().version, second_window, mainw,  imgui.WindowFlags.NoResize)
-	local text = 'Авторы:'
+	local text = 'Автор:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Damien Requeste, Roma Mizantrop')
+	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Damien Requeste')
+	local text = 'Скрипт доработал:'
+    imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
+    imgui.Text(u8(text))
+	imgui.SameLine()
+	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Roma Mizantrop')
     imgui.Separator()
 	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
       bMainWindow.v = not bMainWindow.v
@@ -2097,14 +2299,11 @@ function imgui.OnDrawFrame()
   end
   	if infbar.v then
                 _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-                local myname = sampGetPlayerNickname(myid)
-                local myping = sampGetPlayerPing(myid)
                 imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
-                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 200), imgui.Cond.FirstUseEver)
-                imgui.Begin('Inst Tools', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar) 
-                imgui.CentrText('Inst Tools') 
+                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 180), imgui.Cond.FirstUseEver)
+                imgui.Begin('Продано лицензий', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar) 
+                imgui.CentrText(u8'Продано лицензий за сеанс:') 
                 imgui.Separator()
-                imgui.Text((u8"Информация: %s [%s] | Пинг: %s"):format(myname, myid, myping))
                 imgui.Text(u8 'Продано водительских прав:') imgui.SameLine() imgui.Text(u8 ''..prava..'')
 				imgui.Text(u8 'Продано лицензий пилота:') imgui.SameLine() imgui.Text(u8 ''..pilot..'')
 				imgui.Text(u8 'Продано лицензий на катера:') imgui.SameLine() imgui.Text(u8 ''..kater..'')
@@ -2354,7 +2553,7 @@ function f(pam)
     end
 end
 function ftext(message)
-    sampAddChatMessage(string.format('%s %s', ctag, message), 0x139BEC)
+    sampAddChatMessage(string.format('%s %s', ctag, message), 0x008B8B)
 end
 
 function it()
@@ -2509,7 +2708,7 @@ function pkmmenu(id)
         title = "{ffffff}» Инструктор",
         onclick = function()
         pID = tonumber(args)
-        submenus_show(instmenu(id), "{9966cc}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(instmenu(id), "{008B8B}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
         end
       },
 	  {
@@ -2518,7 +2717,7 @@ function pkmmenu(id)
         pID = tonumber(args)
 	    pX, pY, pZ = getCharCoordinates(playerPed)
 	    if sampGetPlayerNickname(Damien_Requeste) or dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
-        submenus_show(pricemenu(id), "{9966cc}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(pricemenu(id), "{008B8B}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
 		end
@@ -2530,7 +2729,7 @@ function pkmmenu(id)
         pID = tonumber(args)
 		pX, pY, pZ = getCharCoordinates(playerPed)
 		if sampGetPlayerNickname(Damien_Requeste) or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
-        submenus_show(questimenu(id), "{9966cc}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(questimenu(id), "{008B8B}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
 		end
@@ -2542,7 +2741,7 @@ function pkmmenu(id)
         pID = tonumber(args)
 		pX, pY, pZ = getCharCoordinates(playerPed)
 		if sampGetPlayerNickname(Damien_Requeste) or dostavka or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' or getDistanceBetweenCoords3d(pX, pY, pZ, 2345.4177, 1667.5751, 3040.9524) < 2 or getDistanceBetweenCoords3d(pX, pY, pZ, 357.9535, 173.4858, 1008.3893) < 6 then
-        submenus_show(oformenu(id), "{9966cc}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
+        submenus_show(oformenu(id), "{008B8B}Inst Tools {ffffff}| {"..color.."}"..sampGetPlayerNickname(id).."["..id.."] ")
 		else
 	    ftext('Вы должны находиться за стойкой')
         end
@@ -2935,8 +3134,8 @@ function instmenu(id)
     }
 end
 function ystf()
-    if not doesFileExist('moonloader/instools/ystavnew.txt') then
-        local file = io.open("moonloader/instools/ystavnew.txt", "w")
+    if not doesFileExist('moonloader/instools/yst.txt') then
+        local file = io.open("moonloader/instools/yst.txt", "w")
         file:write(fpt)
         file:close()
         file = nil
@@ -3475,13 +3674,13 @@ function sampev.onServerMessage(color, text)
 		end)
     end
 	if text:find('передал(- а) удостоверение (.+)') then
-        local inv1 = text:match('передал(- а) удостоверение (.+)')
+        local inv1, inv2 = text:match('передал(- а) удостоверение (.+)')
 		lua_thread.create(function()
 		wait(5000)
 		if cfg.main.tarb then
-        sampSendChat(string.format('/r [%s]: Новый сотрудник Автошколы - %s. Добро пожаловать.', cfg.main.tarr, inv1:gsub('_', ' ')))
+        sampSendChat(string.format('/r [%s]: Новый сотрудник Автошколы - %s. Добро пожаловать.', cfg.main.tarr, inv1:gsub('_', ' '), inv2))
         else
-		sampSendChat(string.format('/r Новый сотрудник Автошколы - %s. Добро пожаловать.', inv1:gsub('_', ' ')))
+		sampSendChat(string.format('/r Новый сотрудник Автошколы - %s. Добро пожаловать.', inv1:gsub('_', ' '), inv2))
 		end
 		end)
     end
