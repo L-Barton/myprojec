@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('2.8')
+script_version('2.9')
 script_author('Damien_Requeste')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -1097,7 +1097,7 @@ function lodka(id)
         onclick = function()
         sampSendChat("/me поставил оценку взлетной полосы и нажал на кнопку выдать чек.")
         wait(2000)
-        sampChat("/do КПК выдал чек с оценкой 5")
+        sampSendChat("/do КПК выдал чек с оценкой 5")
         wait(5000)
         sampSendChat("/me взял степлер со стола и прикрепил чек к ордеру на проверку.")
         wait(4000)
