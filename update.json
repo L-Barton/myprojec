@@ -1,7 +1,6 @@
 {
-"latest": "3.0",
+"latest": "3.1",
 "updateurl": "http://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua",
 "updlist": "
-1. Добавлено меню проверок аэропортов/пирсов
-2. Обновлён устав АШ"
+1. Исправлены ошибки в лекциях."
 }
