@@ -3,7 +3,7 @@
 "updateurl": "http://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua", 
 "updlist": "
 1. !ВНИМАНИЕ! Чтобы скрипт нормально работал, Вам необходимо удалить файл config.ini в moonloader -> config -> в папке instools
-  
+
 2. Из меню F2 было убрано:
 - Меню собеседования
 - Меню расценок для экзамена
