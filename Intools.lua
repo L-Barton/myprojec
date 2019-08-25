@@ -1,10 +1,22 @@
 script_name('Inst Tools')
-script_version('3.1')
-script_author('Damien_Requeste')
+script_version('3.2')
+script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
 local inicfg = require 'inicfg'
-local sampev = require 'lib.samp.events'
+local sampev, sp = require 'lib.samp.events'
+local lsg, sf               = pcall(require, 'sampfuncs')
+local lkey, key             = pcall(require, 'vkeys')
+local lsampev, sp           = pcall(require, 'lib.samp.events')
+local lsphere, Sphere       = pcall(require, 'Sphere')
+local lrkeys, rkeys         = pcall(require, 'rkeys')
+local limadd, imadd         = pcall(require, 'imgui_addons')
+local dlstatus              = require('moonloader').download_status
+local limgui, imgui         = pcall(require, 'imgui')
+local lrequests, requests   = pcall(require, 'requests')
+local wm                    = require 'lib.windows.message'
+local gk                    = require 'game.keys'
+local encoding              = require 'encoding'
 local imgui = require 'imgui' -- загружаем библиотеку
 local encoding = require 'encoding' -- загружаем библиотеку
 local wm = require 'lib.windows.message'
@@ -55,76 +67,68 @@ vixodid = {}
 local config_keys = {
     fastsms = { v = {}}
 }
-function apply_custom_style() -- паблик дизайн андровиры, который юзался в скрипте ранее
-
+function apply_custom_style()
 	imgui.SwitchContext()
-    local style = imgui.GetStyle()
-    local colors = style.Colors
-    local clr = imgui.Col
-    local ImVec4 = imgui.ImVec4
-    local ImVec2 = imgui.ImVec2
+	local style = imgui.GetStyle()
+	local colors = style.Colors
+	local clr = imgui.Col
+	local ImVec4 = imgui.ImVec4
 
-    style.WindowPadding = ImVec2(15, 15)
-    style.WindowRounding = 5.0
-    style.FramePadding = ImVec2(5, 5)
-    style.FrameRounding = 4.0
-    style.ItemSpacing = ImVec2(12, 8)
-    style.ItemInnerSpacing = ImVec2(8, 6)
-    style.IndentSpacing = 25.0
-    style.ScrollbarSize = 15.0
-    style.ScrollbarRounding = 9.0
-    style.GrabMinSize = 5.0
-	style.GrabRounding = 3.0
-	style.WindowTitleAlign = ImVec2(0.5, 0.5)
+	style.WindowRounding = 2.0
+	style.WindowTitleAlign = imgui.ImVec2(0.5, 0.5)
+	style.ChildWindowRounding = 2.0
+	style.FrameRounding = 2.0
+	style.ItemSpacing = imgui.ImVec2(5.0, 4.0)
+	style.ScrollbarSize = 13.0
+	style.ScrollbarRounding = 0
+	style.GrabMinSize = 8.0
+	style.GrabRounding = 1.0
 
-
-	colors[clr.Text] = ImVec4(0.80, 0.80, 0.83, 1.00)
-    colors[clr.TextDisabled] = ImVec4(0.24, 0.23, 0.29, 1.00)
-    colors[clr.ChildWindowBg] = ImVec4(0.07, 0.07, 0.09, 0.50)
-    colors[clr.PopupBg] = ImVec4(0.07, 0.07, 0.09, 0.80)
-    colors[clr.Border] = ImVec4(0.80, 0.80, 0.83, 0.88)
-    colors[clr.BorderShadow] = ImVec4(0.92, 0.91, 0.88, 0.00)
-	--colors[clr.TitleBgCollapsed] = ImVec4(0.00, 0.00, 0.00, 0.51)
-	colors[clr.TitleBgCollapsed] = ImVec4(0.24, 0.23, 0.29, 1.00)
-    colors[clr.TitleBgActive] = ImVec4(0.07, 0.61, 0.92, 0.83)
-	colors[clr.MenuBarBg] = ImVec4(0.10, 0.09, 0.12, 0.50) 	
-    colors[clr.ScrollbarBg] = ImVec4(0.10, 0.09, 0.12, 1.00)
-    colors[clr.ScrollbarGrab] = ImVec4(0.80, 0.80, 0.83, 0.31)
-    colors[clr.ScrollbarGrabHovered] = ImVec4(0.56, 0.56, 0.58, 1.00)
-    colors[clr.ScrollbarGrabActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
-    colors[clr.ComboBg] = ImVec4(0.19, 0.18, 0.21, 0.50)
-    colors[clr.CheckMark] = ImVec4(0.80, 0.80, 0.83, 0.31)
-    colors[clr.SliderGrab] = ImVec4(0.80, 0.80, 0.83, 0.31)
-    colors[clr.SliderGrabActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
-    colors[clr.Button] = ImVec4(0.10, 0.09, 0.12, 1.00)
-    colors[clr.ButtonHovered] = ImVec4(0.24, 0.23, 0.29, 1.00)
-    colors[clr.ButtonActive] = ImVec4(0.56, 0.56, 0.58, 1.00)
-    colors[clr.Header] = ImVec4(0.10, 0.09, 0.12, 1.00)
-    --colors[clr.HeaderHovered] = ImVec4(0.56, 0.56, 0.58, 1.00)
-    colors[clr.HeaderHovered] = ImVec4(0.24, 0.23, 0.29, 1.00)
-    colors[clr.HeaderActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
-    colors[clr.ResizeGrip] = ImVec4(0.00, 0.00, 0.00, 0.00)
-    colors[clr.ResizeGripHovered] = ImVec4(0.56, 0.56, 0.58, 1.00)
-    colors[clr.ResizeGripActive] = ImVec4(0.06, 0.05, 0.07, 1.00)
-    colors[clr.CloseButton] = ImVec4(0.40, 0.39, 0.38, 0.16)
-    colors[clr.CloseButtonHovered] = ImVec4(0.40, 0.39, 0.38, 0.39)
-    colors[clr.CloseButtonActive] = ImVec4(0.40, 0.39, 0.38, 1.00)
-    colors[clr.PlotLines] = ImVec4(0.40, 0.39, 0.38, 0.63)
-    colors[clr.PlotLinesHovered] = ImVec4(0.25, 1.00, 0.00, 1.00)
-    colors[clr.PlotHistogram] = ImVec4(0.40, 0.39, 0.38, 0.63)
-    colors[clr.PlotHistogramHovered] = ImVec4(0.25, 1.00, 0.00, 1.00)
-    colors[clr.TextSelectedBg] = ImVec4(0.25, 1.00, 0.00, 0.43)
-    --colors[clr.ModalWindowDarkening] = ImVec4(1.00, 0.98, 0.95, 0.70)
-    colors[clr.ModalWindowDarkening] = ImVec4(0.00, 0.00, 0.00, 0.80)
-
-	colors[clr.WindowBg] = ImVec4(0.06, 0.05, 0.07, 0.98)
-    --colors[clr.FrameBg] = ImVec4(0.10, 0.09, 0.12, 1.00)
-    colors[clr.FrameBg] = ImVec4(0.13, 0.12, 0.15, 1.00)
-    colors[clr.FrameBgHovered] = ImVec4(0.24, 0.23, 0.29, 1.00)
-    colors[clr.FrameBgActive] = ImVec4(0.56, 0.56, 0.58, 1.00)
-	colors[clr.TitleBg] = ImVec4(0.07, 0.61, 0.92, 0.83)
-
+	colors[clr.Text]                   = ImVec4(1.00, 1.00, 1.00, 1.00)
+	colors[clr.TextDisabled]           = ImVec4(0.50, 0.50, 0.50, 1.00)
+	colors[clr.WindowBg]               = ImVec4(0.06, 0.06, 0.06, 0.94)
+	colors[clr.ChildWindowBg]          = ImVec4(1.00, 1.00, 1.00, 0.00)
+	colors[clr.PopupBg]                = ImVec4(0.08, 0.08, 0.08, 0.94)
+	colors[clr.ComboBg]                = colors[clr.PopupBg]
+	colors[clr.Border]                 = ImVec4(0.43, 0.43, 0.50, 0.50)
+	colors[clr.BorderShadow]           = ImVec4(0.00, 0.00, 0.00, 0.00)
+	colors[clr.FrameBg]                = ImVec4(0.16, 0.29, 0.48, 0.54)
+	colors[clr.FrameBgHovered]         = ImVec4(0.26, 0.59, 0.98, 0.40)
+	colors[clr.FrameBgActive]          = ImVec4(0.26, 0.59, 0.98, 0.67)
+	colors[clr.TitleBg]                = ImVec4(0.04, 0.04, 0.04, 1.00)
+	colors[clr.TitleBgActive]          = ImVec4(0.16, 0.29, 0.48, 1.00)
+	colors[clr.TitleBgCollapsed]       = ImVec4(0.00, 0.00, 0.00, 0.51)
+	colors[clr.MenuBarBg]              = ImVec4(0.14, 0.14, 0.14, 1.00)
+	colors[clr.ScrollbarBg]            = ImVec4(0.02, 0.02, 0.02, 0.53)
+	colors[clr.ScrollbarGrab]          = ImVec4(0.31, 0.31, 0.31, 1.00)
+	colors[clr.ScrollbarGrabHovered]   = ImVec4(0.41, 0.41, 0.41, 1.00)
+	colors[clr.ScrollbarGrabActive]    = ImVec4(0.51, 0.51, 0.51, 1.00)
+	colors[clr.CheckMark]              = ImVec4(0.26, 0.59, 0.98, 1.00)
+	colors[clr.SliderGrab]             = ImVec4(0.24, 0.52, 0.88, 1.00)
+	colors[clr.SliderGrabActive]       = ImVec4(0.26, 0.59, 0.98, 1.00)
+	colors[clr.Button]                 = ImVec4(0.26, 0.59, 0.98, 0.40)
+	colors[clr.ButtonHovered]          = ImVec4(0.26, 0.59, 0.98, 1.00)
+	colors[clr.ButtonActive]           = ImVec4(0.06, 0.53, 0.98, 1.00)
+	colors[clr.Header]                 = ImVec4(0.26, 0.59, 0.98, 0.31)
+	colors[clr.HeaderHovered]          = ImVec4(0.26, 0.59, 0.98, 0.80)
+	colors[clr.HeaderActive]           = ImVec4(0.26, 0.59, 0.98, 1.00)
+	colors[clr.Separator]              = colors[clr.Border]
+	colors[clr.SeparatorHovered]       = ImVec4(0.26, 0.59, 0.98, 0.78)
+	colors[clr.SeparatorActive]        = ImVec4(0.26, 0.59, 0.98, 1.00)
+	colors[clr.ResizeGrip]             = ImVec4(0.26, 0.59, 0.98, 0.25)
+	colors[clr.ResizeGripHovered]      = ImVec4(0.26, 0.59, 0.98, 0.67)
+	colors[clr.ResizeGripActive]       = ImVec4(0.26, 0.59, 0.98, 0.95)
+	colors[clr.CloseButton]            = ImVec4(0.41, 0.41, 0.41, 0.50)
+	colors[clr.CloseButtonHovered]     = ImVec4(0.98, 0.39, 0.36, 1.00)
+	colors[clr.CloseButtonActive]      = ImVec4(0.98, 0.39, 0.36, 1.00)
+	colors[clr.PlotLines]              = ImVec4(0.61, 0.61, 0.61, 1.00)
+	colors[clr.PlotLinesHovered]       = ImVec4(1.00, 0.43, 0.35, 1.00)
+	colors[clr.PlotHistogram]          = ImVec4(0.90, 0.70, 0.00, 1.00)
+	colors[clr.PlotHistogramHovered]   = ImVec4(1.00, 0.60, 0.00, 1.00)
+	colors[clr.TextSelectedBg]         = ImVec4(0.26, 0.59, 0.98, 0.35)
+	colors[clr.ModalWindowDarkening]   = ImVec4(0.80, 0.80, 0.80, 0.35)
 end
+
 apply_custom_style()
 
 local fileb = getWorkingDirectory() .. "\\config\\instools.bind"
@@ -156,7 +160,10 @@ local instools =
     clear == false,
     hud = false,
     tar = 'Стажер',
-	tarr = 'тэг',
+    parol = 'Password',
+    parolb = false,
+	tarr = 'Сотрудник',
+	tchat = false,
 	tarb = false,
 	clistb = false,
 	clisto = false,
@@ -181,8 +188,8 @@ local libs = {'sphere.lua', 'rkeys.lua', 'imcustom/hotkey.lua', 'imgui.lua', 'Mo
 function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
-    ftext("Inst Tools успешно загружен. Введите: /it для получения дальнейшей информации", -1)
-    ftext("Автор: Damien Requeste, Roma Mizantrop")
+    ftext("Inst Tools успешно загрузился. Введите: /it для открытия меню скрипта", -1)
+    ftext("Авторы: Damien Requeste, Roma Mizantrop")
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
   if cfg == nil then
@@ -254,6 +261,7 @@ function main()
   sampRegisterChatCommand('invite', invite)
   sampRegisterChatCommand('nick', nick)
   sampRegisterChatCommand('oinv', oinv)
+  sampRegisterChatCommand('lecture', lecture)
   sampRegisterChatCommand('find', cmd_find)
   sampRegisterChatCommand('uninvite', uninvite)
     sampRegisterChatCommand('sethud', function()
@@ -355,12 +363,11 @@ I. ОБЩИЕ ПОЛОЖЕНИЯ
 1.2 Сотрудники Автошколы в обязательном порядке должны подчиняться коллегам, которые выше их по должности. (Исключение: Главы отделов и их заместители подчиняются исключительно Старшему составу)
 1.3 Каждый сотрудник Автошколы обязан качественно и своевременно обслуживать клиентов.
 1.4 Сотруднику Автошколы категорически запрещено не обслуживать клиентов из-за личной неприязни.
-1.5 Сотрудник Автошколы с должности Младшего Инструктора [4 ранг] может покидать офис для доставки лицензии.
-1.6 Незнание Устава Автошколы никаким образом не освобождает Вас от ответственности.
-1.7 Запрещено выпрашивать повышения в любые чаты и в любой форме. (Исключение: при наступлении срока, Вы можете подойти к сотруднику из Старшего состава и сообщить ему об этом)
-1.8 Устав Автошколы может быть изменён Управляющим в любое время. (Примечание: Управляющий в праве не оповестить Вас об этом, поэтому не пренебрегайте прочтением документации)
-1.9 Данный Устав вступил в силу с 24.07.2019.
-1.10 Управляющий имеет право нарушить Устав Автошколы.
+1.5 Незнание Устава Автошколы никаким образом не освобождает Вас от ответственности.
+1.6 Запрещено выпрашивать повышения в любые чаты и в любой форме. (Исключение: при наступлении срока, Вы можете подойти к сотруднику из Старшего состава и сообщить ему об этом)
+1.7 Устав Автошколы может быть изменён Управляющим в любое время. (Примечание: Управляющий в праве не оповестить Вас об этом, поэтому не пренебрегайте прочтением документации)
+1.8 Данный Устав вступил в силу с 08.08.2019.
+1.9 Управляющий имеет право нарушить Устав Автошколы.
 
 II. ОБЯЗАННОСТИ ШТАТНЫХ СОТРУДНИКОВ АВТОШКОЛЫ
 
@@ -377,22 +384,16 @@ II. ОБЯЗАННОСТИ ШТАТНЫХ СОТРУДНИКОВ АВТОШКОЛЫ
 2.8 Следить за своим поведением и избегать любых провокационных действий.
 2.9 Отвечать на вопросы посетителей, которые касаются ПДД и видов лицензий. В остальных темах, Вы вправе отказаться от диалога.
 2.10 Обязаны носить бейджик согласно тому или инному отделу, а так же без него:
-2.10.1 Бейджик Стажеров - Консультантов (по собеседованию) - № 23.
-2.10.2 Бейджик Экзаменатора (по заявлению) - № 10.
-2.10.3 Бейджик Экзаменатора без отдела - № 4.
-2.10.4 Бейджик сотрудника Отдела Стажировки - № 6.
-2.10.5 Бейджик сотрудника Отдела Контроля - № 21.
-2.10.6 Бейджик Заместителя Главы Отдела Стажировки - № 8. 
-2.10.7 Бейджик Заместителя Главы Отдела Контроля - № 31.
-2.10.8 Бейджик Глав Отделов - № 12.
-2.10.9 Бейджик Куратора Автошколы - № 26.
-2.10.10 Бейджик Старшего Состава Автошколы - № 15.
+2.10.1 Бейджик Стажеров - Консультантов - № 23.
+2.10.2 Бейджик Экзаменатора - № 10.
+2.10.3 Бейджик Заместителя Главы Отдела - № 8. 
+2.10.4 Бейджик Глав Отделов - № 12.
+2.10.5 Бейджик Старшего Состава Автошколы - № 15.
 2.11 В рабочее время сотрудник обязан носить униформу выданную в офисе.
-2.12 Выбрать отдел, где он продолжит свою деятельность. (Без отдела дальнейшие повышения в должности проходить не будут!)
+2.12 Младший Инструктор обязан выбрать отдел, где он продолжит свою деятельность. (Без отдела дальнейшие повышения в должности проходить не будут)
 2.13 Закрывать за собой двери в комнату отдыха, после входа или выхода из неё.
-2.14 При наличии должности Младшего Менеджера и выше [4+ ранг], выезжать на доставку лицензии. (Исключение: Старший состав выезжает так же, если коллег ниже по должности нет в штате).
-2.15 В случае если за стойкой отсутствует персонал, все штатные сотрудники отделов обязаны занять её. (Наказание - выговор).
-2.16 Брать вертолет будучи в должности Координатор. (Без разрешения)
+2.14 В случае если за стойкой отсутствует персонал, все штатные сотрудники отделов обязаны занять её. (Наказание - выговор).
+2.15 Брать вертолет будучи в должности Координатор. (Без разрешения)
 
 
 III. ОБЯЗАННОСТИ ГЛАВ ОТДЕЛОВ АВТОШКОЛЫ И ИХ ЗАМЕСТИТЕЛЕЙ
@@ -404,10 +405,9 @@ III. ОБЯЗАННОСТИ ГЛАВ ОТДЕЛОВ АВТОШКОЛЫ И ИХ ЗАМЕСТИТЕЛЕЙ
 3.3 Глава Отдела вправе сам выбрать своего заместителя.
 3.4 Главы Отдела вправе выдавать выговоры сотрудникам в пределах Устава Автошколы и своих полномочий:
 3.5 Глава Отдела каждые 7 дней должен предоставлять отчетность в специальную тему на форуме о своей работе и работе отдела в целом. (Примечание: до 21-00 в день сдачи отчета).
-3.6 Назначение на должность Главы отдела в полном объёме относится к Куратору Отделов.
+3.6 Назначение на должность Главы отдела в полном объёме относится к Старшему Составу.
 3.7 В случае если за стойкой отсутствует персонал, Глава или Заместитель любого отдела обязан послать за неё подчиненного из своего отдела или же встать самому.
 3.8 Если от сотрудника Старшего Состава поступило поручение встать за стойку, при условии отсутствия за ней менее 3-ёх человек из персонала - это обязательно к исполнению. (Наказание - выговор).
-3.9 В случае если Глава Отдела был снят или ушел по собственному желанию, он увольняется из организации и заносится в ЧС с пометкой "Глава Отдела".
 
 
 IV. РАБОЧИЙ ДЕНЬ В АВТОШКОЛЕ
@@ -490,6 +490,20 @@ function dmb()
 		gcount = nil
 	end)
 end
+
+    function sp.onShowDialog(id, style, title, button1, button2, text)
+        if id == 50 and msda then
+            sampSendDialogResponse(id, 1, getMaskList(msvidat), _)
+            msid = nil
+            msda = false
+            msvidat = nil
+            return false
+        end
+        if id == 1 and cfg.main.parolb and #tostring(cfg.main.parol) >= 6 then
+            sampSendDialogResponse(id, 1, _, tostring(cfg.main.parol))
+            return false
+        end
+        end
         
 function blag(arg)
   if #arg == 0 then
@@ -586,7 +600,7 @@ end
 end
 
 function where(params) -- запрос местоположения
-   if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == "Инструктор" or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
+   if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
 	if params:match("^%d+") then
 		params = tonumber(params:match("^(%d+)"))
 		if sampIsPlayerConnected(params) then
@@ -603,7 +617,7 @@ function where(params) -- запрос местоположения
 		ftext('{FFFFFF} Используйте: /where [ID].', 0x046D63)
 		end
 		else
-		ftext('{FFFFFF}Данная команда доступна с 4 ранга.', 0x046D63)
+		ftext('{FFFFFF}Данная команда доступна с 7 ранга.', 0x046D63)
 	end
 end
 
@@ -732,6 +746,37 @@ function invite(pam)
 	  end)
    end
    
+   function lecture(pam)
+    lua_thread.create(function()
+        local id = pam:match('(%d+)')
+		local _, handle = sampGetCharHandleBySampPlayerId(id)
+	if id then
+	if doesCharExist(handle) then
+		local x, y, z = getCharCoordinates(handle)
+		local mx, my, mz = getCharCoordinates(PLAYER_PED)
+		local dist = getDistanceBetweenCoords3d(mx, my, mz, x, y, z)	
+	  if dist <= 5 then
+	  if cfg.main.tarb then
+		if sampIsPlayerConnected(id) then
+                submenus_show(lectures(id), "{008B8B}Inst Tools {ffffff}| Меню лекций для отделов")
+				else 
+			ftext('Игрок с данным ID не подключен к серверу или указан ваш ID')
+            end
+		else 
+			ftext('Включите автотег в настройках')
+		end
+		else 
+			ftext('Рядом с вами нет данного человека')
+	  end
+	  else 
+			ftext('Рядом с вами нет данного человека')
+	end
+	  else 
+			ftext('Введите: /lecture [id]')
+	end
+	  end)
+   end
+   
 function nick(args)
   if #args == 0 then ftext("Введите: /nick [id] [0 - RP nick, 1 - NonRP nick]") return end
   args = string.split(args, " ")
@@ -810,35 +855,88 @@ end
    end)
  end
  
-function oinvite(id)
+ function lectures(id)
  return
 {
   {
-   title = "{FFFFFF}Отдел {008B8B}Стажировки",
+   title = "{008B8B}Инспекцонно-Лекционный {FFFFFF}Отдел",
     onclick = function()
-	sampSendChat('/me достал(а) бейджик Сотрудника ОС и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
-	wait(1500)
-	sampSendChat('/b /clist 6')
-	wait(1500)
-	sampSendChat('/b тег в /r [Сотрудник ОС]')
-	wait(1500)
-	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник ОС.', cfg.main.tarr))
+	sampSendChat('Приветствую, ты попал в «Инспекционно-Лекцийонный Отдел»')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Сейчас я тебе расскажу наши обязанности отдела:')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Перед проверкой/лекции обговаривать время с руководством государственной организации.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Проводить плановые проверки и лекции для гос. структур.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Выполнять поручения руководства отдела.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Носить бейдж своего отдела.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('В свободное от проверок время обслуживать клиентов автошколы.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Обязанности я сказал(а), теперь можете идти работать. Подробнее Вы можете почитать на офф.портале')
 	end
    },
    {
-   title = "{FFFFFF}Отдел {008B8B}Контроля",
+   title = "{008B8B}Внештатный {FFFFFF}Отдел",
     onclick = function()
-	sampSendChat('/me достал(а) бейджик Сотрудника ОК и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
-	wait(1500)
-	sampSendChat('/b /clist 21')
-	wait(1500)
-	sampSendChat('/b тег в /r [Сотрудник ОК]')
-	wait(1500)
-	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый Сотрудник ОК.', cfg.main.tarr))
+	sampSendChat('Приветствую, ты попал в «Внештатный Отдел»')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Сейчас я тебе расскажу наши обязанности отдела:')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Перед выездом оповестить руководство или старших состав в рацию.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Доставлять лицензии по государственным структурам штата Evolve. ')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('По окончанию доставки лицензии сообщить в рацию.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Оставлять недельный отчет о проделанной работе. В день минимум 3 выезда')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Выполнять поручения руководителя отдела и его заместителя а так же старшего состава. ')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Носить бейджик своего отдела.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('В свободное от доставки время помогать мл.составу в офисе.')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('При радиообмене использовать ТЕГ и должность своего отдела')
+	wait(cfg.commands.zaderjka * 1000)
+	sampSendChat('Обязанности я сказал(а), теперь можете идти работать. Подробнее Вы можете почитать на офф.портале')
 	end
    },
  }
 end
+ 
+function oinvite(id)
+ return
+{
+  {
+   title = "{008B8B}Инспекцонно-Лекционный {FFFFFF}Отдел",
+    onclick = function()
+	sampSendChat('/me достал(а) бейджик Сотрудника Инспекцонно-Лекционный Отдел и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	wait(1500)
+	sampSendChat('/b /clist 16')
+	wait(1500)
+	sampSendChat('/b Тег в /r [Сотрудник ИЛО]')
+	wait(1500)
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый сотрудник Инспекцонно-Лекционного Отдела.', cfg.main.tarr))
+	end
+   },
+   {
+   title = "{008B8B}Внештатный {FFFFFF}Отдел",
+    onclick = function()
+	sampSendChat('/me достал(а) бейджик Внештатный Отдел и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
+	wait(1500)
+	sampSendChat('/b /clist 12')
+	wait(1500)
+	sampSendChat('/b тег в /r [Сотрудник ВО]')
+	wait(1500)
+	sampSendChat(string.format('/r [%s]: '..sampGetPlayerNickname(id):gsub('_', ' ')..' - новый сотрудник Внештатного Отдела.', cfg.main.tarr))
+	end
+   },
+ }
+end
+
 function fastmenu(id)
  return
 {
@@ -851,7 +949,7 @@ function fastmenu(id)
     {
    title = "{FFFFFF}Меню {008B8B}гос.новостей {ff0000}(Для Ст.Состава)",
     onclick = function()
-	if rank == 'Инструктор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+	if rank == 'Директор' or  rank == 'Управляющий' then
 	submenus_show(govmenu(id), "{008B8B}Inst Tools {ffffff}| Меню гос.новостей")
 	else
 	ftext('Вы не находитесь в Ст.Составе')
@@ -868,18 +966,6 @@ function fastmenu(id)
 	end
 	end
    },
-   {
-   title = "{FFFFFF}Меню {008B8B}собеседования",
-    onclick = function()
-	submenus_show(sobes(id), "{008B8B}Inst Tools {ffffff}| Меню собеседования")
-	end
-   },
-   {
-   title = "{FFFFFF}Меню {008B8B}расценок для экзамена",
-    onclick = function()
-	submenus_show(rascenki(id), "{008B8B}Inst Tools {ffffff}| Меню расценок для экзамена")
-	end
-   },   
    {
    title = "{FFFFFF}Доставка лицензий {008B8B}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
     onclick = function()
@@ -912,529 +998,6 @@ function fastmenu(id)
 		dostavka = true
 	end
    },
-   {
-    title = '{FFFFFF}Меню {008B8B}проверок аэропортов',
-     onclick = function()
-     submenus_show(lodka(id), "{008B8B}Inst Tools {ffffff}| Меню аэропортов")
-   end
-  },
-  {
-    title = '{FFFFFF}Меню {008B8B}проверок пирса',
-     onclick = function()
-     submenus_show(oryj(id), "{008B8B}Inst Tools {ffffff}| Меню проверок в PD, Army")
-   end
-  },
-   {
-    title = '{FFFFFF}Меню {008B8B}RP осмотра СТО ',
-     onclick = function()
-     submenus_show(cto(id), "{008B8B}Inst Tools {ffffff}| Меню RP осмотра СТО")
-   end
-  },
-  {
-    title = '{FFFFFF}Меню {008B8B}RP заданий',
-     onclick = function()
-     submenus_show(rpwka(id), "{008B8B}Inst Tools {ffffff}| Меню RP заданий")
-   end
-  },
-}
-end
-
-function oryj(id)
-    return
-    {
-      {
-        title = '{ffffff}» Передача ордера для подписки',
-        onclick = function()
-        sampSendChat("Здравствуйте, подпишите пожалуйста ордер")
-        wait(2000)
-        sampSendChat("/me передал ордер и ручку")
-        wait(5000)
-        sampSendChat("/do Ордер на проверку лодочной LS")
-        wait(4000)
-        sampSendChat("/do Ордер на проверку лодочной SF")
-        wait(4000)
-        sampSendChat("/do Ордер на проверку лодочной LV")
-        end 
-      },     
-      {
-        title = '{ffffff}» Взять подписанный ордер',
-        onclick = function()
-        sampSendChat("/me взял подписанный ордер")
-        wait(4000) 
-        sampSendChat("/do Подписанный ордер в руках.")
-        wait(4000) 
-        sampSendChat("/me положил в сумку")
-		end
-      },
-      {
-        title = '{ffffff}» Осмотр пирса ',
-        onclick = function()
-        sampSendChat("/me начал визуальный осмотр пирса")
-        wait(2000)
-        sampSendChat("/me осмотрел кнехты для крепление тросса")
-        wait(5000)
-        sampSendChat("/try кнехты не повреждены")
-        wait(4000)
-        sampSendChat("/me достал кпк из сумки")
-        wait(4000)
-        sampSendChat("/do КПК в руках.")
-        wait(4000)
-        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
-        wait(4000)
-        sampSendChat("/do Данные внесены")
-        wait(4000)
-        sampSendChat("/me проверил целостность пирса")
-        wait(4000)
-        sampSendChat("/try пирс в полном порядке ")
-        wait(4000)
-        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
-        wait(4000)
-        sampSendChat("/do Данные внесены")
-        wait(4000)
-        sampSendChat("/me достал уровень и положил на пирс ")
-        wait(4000)
-        sampSendChat("/try уровень не показал отклонение в норме ")
-        wait(4000)
-        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
-        wait(4000)
-        sampSendChat("/do Данные внесены")
-        end 
-      },
-      {
-        title = '{ffffff}» Оценка лодочной',
-        onclick = function()
-        sampSendChat("/me поставил оценку лодочной и нажал на кнопку выдать чек. ")
-        wait(2000)
-        sampSendChat("/do КПК выдал чек с оценкой 5")
-        wait(5000)
-        sampSendChat("/me взял степлер со стола и прикрепил чек к ордеру на проверку.")
-        wait(4000)
-        sampSendChat("/me внес данные в бланк на столе ")
-        end 
-      },
-      {
-        title = '{ffffff}» Результат проверки - положительный',
-        onclick = function()
-        sampSendChat("/do Результат проверки 'положительный'. ")
-        end 
-      },
-      {
-        title = '{ffffff}» Если хотя бы одна из проверок показала неисправность',
-        onclick = function()
-        sampSendChat("/do Результат проверки 'отрицательны'. ")
-        wait(4000)
-        sampSendChat("Дается 24 часа на исправление.")
-        wait(5000)
-        sampSendChat("/me установил табличку на стекло")
-        wait(4000)
-        sampSendChat("/do Надпись на табличке 'Закрыто на ремонт'.")
-        end 
-      },
-    }
-end
-
-function lodka(id)
-    return
-    {
-      {
-        title = '{ffffff}» Передача ордера для подписки',
-        onclick = function()
-        sampSendChat("Здравствуйте, подпишите пожалуйста ордер")
-        wait(2000)
-        sampSendChat("/me передал ордер и ручку")
-        wait(5000)
-        sampSendChat("/do Ордер на проверку аэропорта LS")
-        wait(4000)
-        sampSendChat("/do Ордер на проверку аэропорта SF")
-        wait(4000)
-        sampSendChat("/do Ордер на проверку аэропорта LV")
-        end 
-      },     
-      {
-        title = '{ffffff}» Взять подписанный ордер',
-        onclick = function()
-        sampSendChat("/me взял подписанный ордер")
-        wait(4000) 
-        sampSendChat("/do Подписанный ордер в руках.")
-        wait(4000) 
-        sampSendChat("/me положил в сумку")
-		end
-      },
-      {
-        title = '{ffffff}» Для сотрудника проверяющего ангары',
-        onclick = function()
-        sampSendChat("/me провел визуальный осмотр ангара")
-        wait(2000)
-        sampSendChat("/try визуальных повреждений не обнаружено")
-        wait(5000)
-        sampSendChat("/me достал кпк из сумки")
-        wait(4000)
-        sampSendChat("/do КПК в руках.")
-        wait(4000)
-        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
-        wait(4000)
-        sampSendChat("/do Данные внесены")
-        end 
-      },
-      {
-        title = '{ffffff}» Визуальный осмотр взлетной полосы',
-        onclick = function()
-        sampSendChat("/me провел визуальный осмотр взлетной полосы")
-        wait(2000)
-        sampSendChat("/try визуальных повреждений не обнаружено")
-        wait(5000)
-        sampSendChat("/me достал кпк из сумки")
-        wait(4000)
-        sampSendChat("/do КПК в руках.")
-        wait(4000)
-        sampSendChat("/me сделал пометки в кпк марки 'instructor-2000'")
-        wait(4000)
-        sampSendChat("/do Данные внесены")
-        end 
-      },
-      {
-        title = '{ffffff}» Оценка взлетной полосы',
-        onclick = function()
-        sampSendChat("/me поставил оценку взлетной полосы и нажал на кнопку выдать чек.")
-        wait(2000)
-        sampSendChat("/do КПК выдал чек с оценкой 5")
-        wait(5000)
-        sampSendChat("/me взял степлер со стола и прикрепил чек к ордеру на проверку.")
-        wait(4000)
-        sampSendChat("/me внес данные в бланк на столе")
-        end 
-      },
-      {
-        title = '{ffffff}» Результат проверки - положительный',
-        onclick = function()
-        sampSendChat("/do Результат проверки 'положительный'. ")
-        end 
-      },
-      {
-        title = '{ffffff}» Если хотя бы одна из проверок показала неисправность',
-        onclick = function()
-        sampSendChat("/do Результат проверки 'отрицательны'. ")
-        wait(4000)
-        sampSendChat("Дается 24 часа на исправление.")
-        wait(5000)
-        sampSendChat("/me установил табличку на стекло")
-        wait(4000)
-        sampSendChat("/do Надпись на табличке 'Закрыто на ремонт'.")
-        end 
-      },
-    }
-end
-
-
-function cto(id)
-    return
-    {
-      {
-        title = '{ffffff}» Начало осмотра',
-        onclick = function()
-        sampSendChat("/do Блокнот и авторучка в кейсе Инструктора.")
-        wait(2000)
-        sampSendChat("/me достал блокнот и авторучку из кейса, предварительно открыв его.")
-        wait(2000)
-        sampSendChat("/do Перед Инструктором находятся всё что необходимо для ремонта Автотранспорта.")
-        wait(4000)
-        sampSendChat("/me начал осматривать приспособления для ремонта автотранспорта.")
-        wait(4000)
-        sampSendChat("/me подошел к автоматическому подъёмнику автомобиля.")
-        wait(4000)
-        sampSendChat("/do Инструктор визуально начал осматривать состояние подъёмника.")
-        wait(4000) 
-        sampSendChat("/try Подъёмник в исправном состоянии?")                  
-		end
-      },
-      {
-        title = '{ffffff}» Изменения в блокнот о состоянии подъёмника | {ff0000}Если удачно',
-        onclick = function()
-        sampSendChat("/me внёс изменения в блокнот с пометкой 'Исправно'.")
-		end
-      },
-      {
-        title = '{ffffff}» Изменения в блокнот о состояниии подъёмника | {ff0000}Если неудачно',
-        onclick = function()
-        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("/me внёс изменения в блокнот с пометкой 'Не исправно'.")
-        wait(4000)
-        sampSendChat("/do Ходя по СТО, Инструктор выявляет некоторые недочеты.")
-        end
-      },
-      {
-        title = '{ffffff}» Ящик с инструментами',
-        onclick = function()
-        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("/do Перед Инструктором стоит полка, а на ней ящики с инструментами.")
-        wait(4000)
-        sampSendChat("/try В ящиках находятся новые инструменты?")
-        end
-      },      
-      {
-        title = '{ffffff}» Изменения в блокнот о новых инструментах | {ff0000}Если удачно',
-        onclick = function()
-		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("/me внёс изменения в блокнот с пометкой 'Без изменений'.")
-		end
-      },
-      {
-        title = '{ffffff}» Изменения в блокнот о новых инструментах | {ff0000}Если неудачно',
-        onclick = function()
-        sampSendChat("/me внёс изменения в блокнот с пометкой 'Требует замены'.")
-        wait(4000)
-        sampSendChat("/me посмотрел в блокнот.")
-        wait(4000)
-        sampSendChat("/do Инструктор оценивает ситуацию данной СТО исходя из записей сделанных ранее.")                         
-		end
-      },
-      {
-        title = '{ffffff}» Успешное прохождение проверки',
-        onclick = function()
-        sampSendChat("/me внёс в блокнот заключение о успешном прохождении проверки и поставил печать 'AutoSchool SF'.")
-		end
-      },
-      {
-        title = '{ffffff}» Неуспешное прохождение проверки',
-        onclick = function()
-        sampSendChat("/me внёс в блокнот заключение о неудачном прохождении проверки и поставил печать 'AutoSchool SF'.")
-		end
-      }            
-    }
-end
-
-function sobes(id)
-    return
-    {
-      {
-        title = '{ffffff}» Приветствие и паспорт.',
-        onclick = function()
-		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Приветствую, покажите пожалуйста свой паспорт, и мед.карту")
-        wait(1500)
-        sampSendChat("/b /showpass "..myid..", /me передал(а) мед.карту человеку напротив") 
-		end
-      },
-      {
-        title = '{ffffff}» Просмотр паспорта и мед.карты',
-        onclick = function()
-        sampSendChat("/me взял(а) паспорт в руки и мед.карту, после начал(а) вниматель осматривать")
-        wait(4000)
-        sampSendChat("/do Паспорт и мед.карта в руке.")
-		end
-      },
-      {
-        title = '{ffffff}» Информация о себе',
-        onclick = function()
-        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Хорошо, расскажите о себе пожалуйста.")
-        end
-      },
-      {
-        title = '{ffffff}» Прошлое место работы',
-        onclick = function()
-		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("Хорошо, раньше где-нибудь работали? Если да, скажите где, если не сложно.")
-		end
-      },
-      {
-        title = '{ffffff}» Опыт в сфере Автошколы',
-        onclick = function()
-        sampSendChat("Хорошо, имели раньше опыт в такой сфере как автошкола?")
-		end
-      },
-      {
-        title = '{ffffff}» IC термины',
-        onclick = function()
-        sampSendChat("Что по-вашему означает таково понятие как 'РП и МГ'?")
-		end
-      },
-      {
-        title = '{ffffff}» Что у меня над головой',
-        onclick = function()
-        sampSendChat("Что у меня над головой?")
-		end
-      },
-      {
-        title = '{ffffff}» Бланк с ответами, OOC термины',
-        onclick = function()
-        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-        local myname = sampGetPlayerNickname(myid)
-        sampSendChat("/me взял(а) бланк со стола с вопросами и ручку")
-        wait(4000)
-        sampSendChat("/do Бланк и ручка в руке.")
-        wait(4000)
-        sampSendChat("/me передал(а) бланк с вопросами человеку на против")
-        wait(4000)
-        sampSendChat("/do На бланке написаны различные вопросы.")
-        wait(4000)
-        sampSendChat("/b ДМ, МГ, СК, ТК в /sms "..myid.."")
-        wait(4000)
-        sampSendChat("/me передал(а) бланк и ручку человеку напротив")                                                       
-		end
-      },
-      {
-        title = '{ffffff}» Просмотр бланка с ответами',
-        onclick = function()
-        sampSendChat("/me взял(а) бланк и ручку с рук человека на против, и начал(а) внимательно осматривать")
-        wait(4000)
-        sampSendChat("/do На бланке не найдено ошибок")
-        wait(4000)
-        sampSendChat("Хорошо, и я думаю...")
-        wait(4000)
-        sampSendChat("Вы нам подходите! Сейчас вам выдадут форму и бейджик.")
-		end
-      }            
-    }
-end
-
-function rascenki(args)
-    return
-    {
-      {
-        title = '{ffffff}» Лицензия рыболовля',
-        onclick = function()
-        sampSendChat("Сколько стоит лицензия на рыболовлю?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}2.000$", -1)
-		end
-      },
-      {
-        title = '{ffffff}» Лицензия водный транспорт',
-        onclick = function()
-        sampSendChat("Сколько стоит лицензия на водный транспорт?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}5.000$", -1)
-		end
-      },
-      {
-        title = '{ffffff}» Лицензия воздушный транспорт',
-        onclick = function()
-        sampSendChat("Сколько стоит лицензия на воздушный транспорт?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}10.000$", -1)
-		end
-      },
-      {
-        title = '{ffffff}» Лицензия оружие',
-        onclick = function()
-        sampSendChat("Сколько стоит лицензия на оружие?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}50.000$", -1)
-		end
-      },
-      {
-        title = '{ffffff}» Лицензия на бизнес',
-        onclick = function()
-        sampSendChat("Сколько стоит лицензия на бизнес?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}100.000$", -1)
-		end
-      },
-      {
-        title = '{ffffff}» Права от 3-х лет в штате',
-        onclick = function()
-        sampSendChat("Сколько стоят права от трех лет в штате?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}500$", -1)
-		end
-      },
-      {
-        title = '{ffffff}» Права от 6-и лет в штате',
-        onclick = function()
-        sampSendChat("Сколько стоят права от шести лет в штате?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}10.000$", -1)
-		end
-      },
-      {
-        title = '{ffffff}» Права от 16-и лет в штате',
-        onclick = function()
-        sampSendChat("Сколько стоят права от шестнадцати лет в штате?")
-        wait(1500)
-		ftext("{FFFFFF}- Правильный ответ: {A52A2A}30.000$", -1)
-		end
-      }            
-    }
-end
-
-function rpwka(id)
-return
-{
- {
-     title = 'Полив цветов {ff0000}(Нужно стоять около цветка)',
-     onclick = function()
-     sampSendChat("/do В руках ведро с водой")
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat("/me полил(а) цветы с ведра")
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/do Почва цветков влажная')
-     wait(1000)
-     sampSendChat('/time')
-     wait(500)
-     setVirtualKeyDown(key.VK_F8, true)
-     wait(150)
-     setVirtualKeyDown(key.VK_F8, false)
-     wait(3500)
-     ftext('Готово, приятной игры. :)')
-     end 
- },
- {
-     title = 'Чистка компьютеров от вирусов {ff0000}(Встаньте к компьютеру)',
-     onclick = function()
-     sampSendChat('/me наклонившись нажал(а) кнопку, от чего компьютер включился')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/do Компьютер издал звук, чем дал понять что он включился')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/me взяв в руки мышку открыл(а) браузер, после чего скачал(а) антивирус')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/do Антивирус скачался')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/me открыл(а) антивирус, после чего запустил(а) проверку от вирусов')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/do Антивирус проверил компьютер, после чего перезагрузил его')
-     wait(1000)
-     sampSendChat('/time')
-     wait(500)
-     setVirtualKeyDown(key.VK_F8, true)
-     wait(150)
-     setVirtualKeyDown(key.VK_F8, false)
-     wait(500)
-     ftext('Готово, приятной игры. :)')
-     end 
- },
- {
-     title = 'Помыть машину{ff0000} (Подойдите к машине)',
-     onclick = function()
-     sampSendChat('/do Ведро с водой в руках')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/me поставил(а) ведро с водой на землю, после чего взяв тряпку намочил(а) ее и выжал')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/me помыл(а) тряпкой фары')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/me помыл(а) тряпкой корпус машины')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/me опять намочил(а) тряпку, после чего выжал(а) ее')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/me помыл(а) стекло машины')
-     wait(cfg.commands.zaderjka * 1000)
-     sampSendChat('/do Машина чистая')
-     wait(2500)
-     sampSendChat('/time')
-     wait(500)
-     setVirtualKeyDown(key.VK_F8, true)
-     wait(150)
-     setVirtualKeyDown(key.VK_F8, false)
-     wait(3500)
-     ftext('Готово, приятной игры. :)')
-     end 
- },
 }
 end
 
@@ -1442,12 +1005,14 @@ function otmenu(id)
  return
 {
   {
-   title = "{FFFFFF}Пиар отдела в рацию (ОС) {ff0000}(Для глав/замов отдела)",
+   title = "{FFFFFF}Пиар отдела в рацию (ИЛО) {ff0000}(Для глав/замов отдела)",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: В Отдел Стажировки производится пополнение сотрудников.', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: Желаете проводить лекции полиции, армии?', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: Тогда тебе в «Инспекцонно-Лекционный Отдел»', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -1455,12 +1020,14 @@ function otmenu(id)
 	end
    },
     {
-   title = "{FFFFFF}Пиар отдела в рацию (OK) {ff0000}(Для глав/замов отдела)",
+   title = "{FFFFFF}Пиар отдела в рацию (ВО) {ff0000}(Для глав/замов отдела)",
     onclick = function()
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: В Отдел Контроля производится пополнение сотрудников.', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: Надоело сидеть в офисе или мало клиентов?', cfg.main.tarr))
+    wait(5000)
+    sampSendChat(string.format('/r [%s]: Тогда тебе в «Внештатный Отдел»', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -2157,6 +1724,9 @@ do
 function imgui.OnDrawFrame()
    if first_window.v then
 	local tagfr = imgui.ImBuffer(u8(cfg.main.tarr), 256)
+	local parolb = imgui.ImBool(cfg.main.parolb)
+	local parolf = imgui.ImBuffer(u8(tostring(cfg.main.parol)), 256)
+	local tchatb = imgui.ImBool(cfg.main.tchat)
 	local tagb = imgui.ImBool(cfg.main.tarb)
 	local clistb = imgui.ImBool(cfg.main.clistb)
 	local autoscr = imgui.ImBool(cfg.main.hud)
@@ -2179,13 +1749,28 @@ function imgui.OnDrawFrame()
 	if imgui.InputText(u8'Введите ваш Тег.', tagfr) then
     cfg.main.tarr = u8:decode(tagfr.v)
     end
+    end
 	imgui.Text(u8("Инфо-бар продаж лицензий"))
 	imgui.SameLine()
 	if imgui.ToggleButton(u8'Включить/Выключить инфо-бар', hudik) then
         cfg.main.givra = not cfg.main.givra
 		ftext(cfg.main.givra and 'Инфо-бар включен, установить положение /sethud' or 'Инфо-бар выключен')
     end
-	end
+    imgui.Text(u8("Автологин"))
+	imgui.SameLine()
+	if imgui.ToggleButton(u8'Автологин', parolb) then
+	cfg.main.parolb = parolb.v saveData(cfg, 'moonloader/config/instools/config.ini') end; 
+        if parolb.v then
+        if imgui.InputText(u8'Введите ваш пароль.', parolf, imgui.InputTextFlags.Password) then 
+        cfg.main.parol = u8:decode(parolf.v) saveData(cfg, 'moonloader/config/instools/config.ini') end
+        if imgui.Button(u8'Узнать пароль') then 
+        ftext('Ваш пароль: {9966cc}'..cfg.main.parol) end
+    end
+    imgui.Text(u8 'Открывать чат на T')
+    imgui.SameLine()
+    if imadd.ToggleButton(u8'Открывать чат на T', tchatb) then
+    saveData(cfg, 'moonloader/config/instools/config.ini') 
+    cfg.main.tchat = tchatb.v end   
 	imgui.Text(u8("Быстрый ответ на последнее смс"))
 	imgui.SameLine()
     if imgui.HotKey(u8'##Быстрый ответ смс', config_keys.fastsms, tLastKeys, 100) then
@@ -2227,6 +1812,9 @@ function imgui.OnDrawFrame()
     end
     imgui.End()
    end
+   if wasKeyPressed(key.VK_T) and cfg.main.tchat and not sampIsChatInputActive() and not sampIsDialogActive() and not isSampfuncsConsoleActive() then
+            sampSetChatInputEnabled(true)
+        end
     if ystwindow.v then
                 imgui.LockPlayer = true
                 imgui.ShowCursor = true
@@ -2234,7 +1822,7 @@ function imgui.OnDrawFrame()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(iScreenWidth/2, iScreenHeight / 2), imgui.Cond.FirstUseEver)
                 imgui.Begin(u8('Inst Tools | Устав АШ'), ystwindow)
-                for line in io.lines('moonloader\\instools\\ystavchic.txt') do
+                for line in io.lines('moonloader\\instools\\ystavnews.txt') do
                     imgui.TextWrapped(u8(line))
                 end
                 imgui.End()
@@ -2247,8 +1835,8 @@ function imgui.OnDrawFrame()
 	local btn_size = imgui.ImVec2(130, 0)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
     imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 5))
-    imgui.Begin('Inst Tools | Main Menu | Version: '..thisScript().version, second_window, mainw,  imgui.WindowFlags.NoResize)
-	local text = 'Автор:'
+    imgui.Begin('Inst Tools | Main Menu | Actual version: '..thisScript().version, second_window, mainw,  imgui.WindowFlags.NoResize)
+	local text = 'Авторы:'
     imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
     imgui.Text(u8(text))
 	imgui.SameLine()
@@ -2262,7 +1850,7 @@ function imgui.OnDrawFrame()
       first_window.v = not first_window.v
     end
     imgui.SameLine()
-    if imgui.Button(u8 'Сообщить об ошибке/баге', imgui.ImVec2(170, 30)) then os.execute('explorer "https://vk.com/ortemelyan"')
+    if imgui.Button(u8 'Сообщить об ошибке/идеи', imgui.ImVec2(170, 30)) then os.execute('explorer "https://vk.com/ortemelyan"')
     btn_size = not btn_size
     end
 	imgui.SameLine()
@@ -2279,26 +1867,23 @@ function imgui.OnDrawFrame()
       helps.v = not helps.v
     end
 	imgui.Separator()
-	imgui.BeginChild("Информация", imgui.ImVec2(410, 150), true)
+	imgui.BeginChild("Информация", imgui.ImVec2(250, 100), true)
 	imgui.Text(u8 'Имя и Фамилия:   '..sampGetPlayerNickname(myid):gsub('_', ' ')..'')
 	imgui.Text(u8 'Должность:') imgui.SameLine() imgui.Text(u8(rank))
-	imgui.Text(u8 'Номер телефона:   '..tel..'')
+	imgui.Text(u8 'Номер телефона: '..tel..'')
 	if cfg.main.tarb then
 	imgui.Text(u8 'Тег в рацию:') imgui.SameLine() imgui.Text(u8(cfg.main.tarr))
 	end
 	if cfg.main.clistb then
-	imgui.Text(u8 'Номер бейджика:   '..cfg.main.clist..'')
+	imgui.Text(u8 'Номер бейджика: '..cfg.main.clist..'')
 	end
 	imgui.EndChild()
-	imgui.Separator()
-	imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8("Текущая дата: %s")).x)/1.5)
-	imgui.Text(u8(string.format("Текущая дата: %s", os.date())))
     imgui.End()
   end
   	if infbar.v then
                 _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
                 imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
-                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 180), imgui.Cond.FirstUseEver)
+                imgui.SetNextWindowSize(imgui.ImVec2(cfg.main.widehud, 140), imgui.Cond.FirstUseEver)
                 imgui.Begin('Продано лицензий', infbar, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar) 
                 imgui.CentrText(u8'Продано лицензий за сеанс:') 
                 imgui.Separator()
@@ -2314,7 +1899,7 @@ function imgui.OnDrawFrame()
                 local iScreenWidth, iScreenHeight = getScreenResolution()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(3, 7))
                 imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
-				imgui.BeginChild("Список команд", imgui.ImVec2(525, 385), true, imgui.WindowFlags.VerticalScrollbar)
+				imgui.BeginChild("Список команд", imgui.ImVec2(600, 340), true, imgui.WindowFlags.VerticalScrollbar)
                 imgui.TextColoredRGB('{FF0000}/it{CCCCCC} - Открыть меню скрипта')
                 imgui.Separator()
                 imgui.TextColoredRGB('{FF0000}/vig [id] [Причина]{CCCCCC} - Выдать выговор по рации')
@@ -2324,8 +1909,10 @@ function imgui.OnDrawFrame()
 				imgui.TextColoredRGB('{FF0000}/smsjob{CCCCCC} - Вызвать на работу весь мл.состав по смс')
                 imgui.TextColoredRGB('{FF0000}/dlog{CCCCCC} - Открыть лог 25 последних сообщений в департамент')
 				imgui.TextColoredRGB('{FF0000}/sethud{CCCCCC} - Установить позицию инфо-бара')
+				imgui.TextColoredRGB('{FF0000}/oinv [id]{CCCCCC} - Принять к себе в отдел сотрудника')
+                imgui.TextColoredRGB('{FF0000}/lecture [id]{CCCCCC} - Прочитать лекцию об отделе') 
 				imgui.TextColoredRGB('{FF0000}/cchat{CCCCCC} - Очищает чат')
-				imgui.TextColoredRGB('{FF0000}/blag [ид] [фракция] [тип]{CCCCCC} - Выразить игроку благодарность в департамент')
+				imgui.TextColoredRGB('{FF0000}/blag [id] [фракция] [тип]{CCCCCC} - Выразить игроку благодарность в департамент')
 				imgui.TextColoredRGB('{FF0000}/nick [id] [0-1]{CCCCCC} - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
 				imgui.TextColoredRGB('{FF0000}/find [id]{CCCCCC} - Установить на указанного игрока маркер')
 				imgui.Separator()
@@ -2485,8 +2072,19 @@ addEventHandler("onWindowMessage", function (msg, wparam, lparam)
 				consumeWindowMessage(true, true)
 			end
 		end
-	end
-end)
+		if wparam == key.VK_ESCAPE then
+                if not sampIsChatInputActive() and not sampIsDialogActive() and not sampIsScoreboardOpen() then
+                    if second_window.v then second_window.v = false consumeWindowMessage(true, true) end
+                    if ystwindow.v then ystwindow.v = false consumeWindowMessage(true, true) end
+                    if updwindows.v then updwindows.v = false consumeWindowMessage(true, true) end
+                    if memw.v then memw.v = false consumeWindowMessage(true, true) end
+                    if bMainWindow.v then bMainWindow.v = false consumeWindowMessage(true, true) end
+                    if helps.v then helps.v = false consumeWindowMessage(true, true) end
+                    if first_window.v then first_window.v = false consumeWindowMessage(true, true) end
+                end
+            end
+        end
+    end)
 
 function submenus_show(menu, caption, select_button, close_button, back_button)
     select_button, close_button, back_button = select_button or '»', close_button or 'x', back_button or '«'
@@ -3132,8 +2730,8 @@ function instmenu(id)
     }
 end
 function ystf()
-    if not doesFileExist('moonloader/instools/ystavchic.txt') then
-        local file = io.open("moonloader/instools/ystavchic.txt", "w")
+    if not doesFileExist('moonloader/instools/ystavnews.txt') then
+        local file = io.open("moonloader/instools/ystavnews.txt", "w")
         file:write(fpt)
         file:close()
         file = nil
@@ -3490,7 +3088,7 @@ end
 
 
 function smsjob()
-  if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+  if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
     lua_thread.create(function()
         vixodid = {}
 		status = true
@@ -3498,7 +3096,7 @@ function smsjob()
         while not gotovo do wait(0) end
         wait(1200)
         for k, v in pairs(vixodid) do
-            sampSendChat('/sms '..v..' На работу')
+            sampSendChat('/sms '..v..' На данный момент сотрудников на работе мало. Поэтому держите путь на работу!')
             wait(1200)
         end
         players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
@@ -3508,7 +3106,7 @@ function smsjob()
         vixodid = {}
 	end)
 	else 
-	ftext('Данная команда доступна с 3 ранга')
+	ftext('Данная команда доступна с 7 ранга')
 	end
 end
 
