@@ -1,5 +1,5 @@
 script_name('Inst Tools')
-script_version('3.2')
+script_version('3.3')
 script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -967,6 +967,12 @@ function fastmenu(id)
 	end
    },
    {
+   title = "{FFFFFF}Меню {7FFF00}собеседования",
+    onclick = function()
+	submenus_show(sobes(id), "{7FFF00}IT {ffffff}| Меню собеседования")
+	end
+   },
+   {
    title = "{FFFFFF}Доставка лицензий {008B8B}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
     onclick = function()
 	if rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
@@ -1001,6 +1007,94 @@ function fastmenu(id)
 }
 end
 
+function sobes(id)
+    return
+    {
+      {
+        title = '{ffffff}» Приветствие и паспорт.',
+        onclick = function()
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("Приветствую, покажите пожалуйста свой паспорт, и мед.карту")
+        wait(1500)
+        sampSendChat("/b /showpass "..myid..", /me передал(а) мед.карту человеку напротив") 
+		end
+      },
+      {
+        title = '{ffffff}» Просмотр паспорта и мед.карты',
+        onclick = function()
+        sampSendChat("/me взял(а) паспорт в руки и мед.карту, после начал(а) вниматель осматривать")
+        wait(4000)
+        sampSendChat("/do Паспорт и мед.карта в руке.")
+		end
+      },
+      {
+        title = '{ffffff}» Информация о себе',
+        onclick = function()
+        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("Хорошо, расскажите о себе пожалуйста.")
+        end
+      },
+      {
+        title = '{ffffff}» Прошлое место работы',
+        onclick = function()
+		local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("Хорошо, раньше где-нибудь работали? Если да, скажите где, если не сложно.")
+		end
+      },
+      {
+        title = '{ffffff}» Опыт в сфере Автошколы',
+        onclick = function()
+        sampSendChat("Хорошо, имели раньше опыт в такой сфере как автошкола?")
+		end
+      },
+      {
+        title = '{ffffff}» IC термины',
+        onclick = function()
+        sampSendChat("Что по-вашему означает таково понятие как 'РП и МГ'?")
+		end
+      },
+      {
+        title = '{ffffff}» Что у меня над головой',
+        onclick = function()
+        sampSendChat("Что у меня над головой?")
+		end
+      },
+      {
+        title = '{ffffff}» Бланк с ответами, OOC термины',
+        onclick = function()
+        local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
+        local myname = sampGetPlayerNickname(myid)
+        sampSendChat("/me взял(а) бланк со стола с вопросами и ручку")
+        wait(4000)
+        sampSendChat("/do Бланк и ручка в руке.")
+        wait(4000)
+        sampSendChat("/me передал(а) бланк с вопросами человеку на против")
+        wait(4000)
+        sampSendChat("/do На бланке написаны различные вопросы.")
+        wait(4000)
+        sampSendChat("/b ДМ, МГ, СК, ТК в /sms "..myid.."")
+        wait(4000)
+        sampSendChat("/me передал(а) бланк и ручку человеку напротив")                                                       
+		end
+      },
+      {
+        title = '{ffffff}» Просмотр бланка с ответами',
+        onclick = function()
+        sampSendChat("/me взял(а) бланк и ручку с рук человека на против, и начал(а) внимательно осматривать")
+        wait(4000)
+        sampSendChat("/do На бланке не найдено ошибок")
+        wait(4000)
+        sampSendChat("Хорошо, и я думаю...")
+        wait(4000)
+        sampSendChat("Вы нам подходите! Сейчас вам выдадут форму и бейджик.")
+		end
+      }            
+    }
+end
+
 function otmenu(id)
  return
 {
@@ -1010,9 +1104,9 @@ function otmenu(id)
 	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
 	sampSendChat(string.format('/r [%s]: Уважаемые сотрудники, минуточку внимания.', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: Желаете проводить лекции полиции, армии?', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: Желаете проводить лекции государственным организациям?', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: Тогда тебе в «Инспекцонно-Лекционный Отдел»', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: Тогда тебе во «Инспекцонно-Лекционный Отдел»', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -1027,7 +1121,7 @@ function otmenu(id)
     wait(5000)
     sampSendChat(string.format('/r [%s]: Надоело сидеть в офисе или мало клиентов?', cfg.main.tarr))
     wait(5000)
-    sampSendChat(string.format('/r [%s]: Тогда тебе в «Внештатный Отдел»', cfg.main.tarr))
+    sampSendChat(string.format('/r [%s]: Тогда тебе во «Внештатный Отдел»', cfg.main.tarr))
     wait(5000)
     sampSendChat(string.format('/r [%s]: Вступить в отдел можно с должности "Экзаменатор".', cfg.main.tarr))
     wait(5000)
@@ -1315,7 +1409,7 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat('/b В теме "Помощь для новичков" есть все нужные бинды, без них не работать! ')
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("Если возникнут вопросы обращайтесь к Сотрудникам ОС либо к ст. Составу. ")
+        sampSendChat("Если возникнут вопросы обращайтесь к ст. Составу. ")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("Спасибо,что прослушали мою лекцию. ")
 		wait(cfg.commands.zaderjka * 1000)
@@ -1339,11 +1433,11 @@ function fthmenu(id)
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("/b /clist 10")
         wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("ОС - Отдел Стажировки, занимающийся непосредственно обучением стажёров.")
-        wait(cfg.commands.zaderjka * 1000)
-        sampSendChat("ОК - Отдел Контроля, занимающийся профилактикой нарушений и аварийных ситуаций.")
+        sampSendChat("ИЛО - Отдел занимается проверкой государственных организаций")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("С участием транспорта, через проведение лекций и проверок гос. структур")
+        wait(cfg.commands.zaderjka * 1000)
+        sampSendChat("ВО - Отдел занимается доставкой лицензий госудрственным структурам штата Evolve")
         wait(cfg.commands.zaderjka * 1000)
         sampSendChat("После 4-х дней активной работы.")
         wait(cfg.commands.zaderjka * 1000)
