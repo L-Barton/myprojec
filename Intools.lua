@@ -1309,10 +1309,17 @@ function govmenu(id)
 	end
    },
    {
-   title = "{FFFFFF}Занять гос. волну",
+   title = "{FFFFFF}Возражения на гос.волну",
     onclick = function()
 	sampSetChatInputEnabled(true)
 	sampSetChatInputText("/d OG, Занимаю гос.волну на X. Возражения на п.")
+	end
+   },
+   {
+   title = "{FFFFFF}Занять гос. волну",
+    onclick = function()
+	sampSetChatInputEnabled(true)
+	sampSetChatInputText("/d OG, Возражений не поступило. Занимаю гос.волну на X")
 	end
    },
    {
