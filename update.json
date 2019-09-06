@@ -1,7 +1,7 @@
 { 
 "latest": "3.4 ", 
 "updateurl": "http://raw.githubusercontent.com/Misanthrope123/myprojec/master/Intools.lua", 
-"список обновлений": " 
+"updateurl": " 
 1. !ВНИМАНИЕ! Чтобы скрипт нормально работал. 
 Вам необходимо удалить файл config.ini в moonloader -> config -> в папке instools 
 2. В данном обновление ничего нового нет. Только изменено для ст.состава/глав/заместителей отделов.
