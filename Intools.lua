@@ -1,5 +1,6 @@
 script_name('Inst Tools')
-script_version('3.4')
+script_version('3.5')
+test_version = "3.5-preview 1"
 script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -13,6 +14,8 @@ local lrkeys, rkeys         = pcall(require, 'rkeys')
 local limadd, imadd         = pcall(require, 'imgui_addons')
 local dlstatus              = require('moonloader').download_status
 local limgui, imgui         = pcall(require, 'imgui')
+local lcopas, copas         = pcall(require, 'copas')
+local lhttp, http           = pcall(require, 'copas.http')
 local lrequests, requests   = pcall(require, 'requests')
 local wm                    = require 'lib.windows.message'
 local gk                    = require 'game.keys'
@@ -64,6 +67,7 @@ biznes = 0
 departament = {}
 tMembers = {}
 vixodid = {}
+adminsList = {}
 local config_keys = {
     fastsms = { v = {}}
 }
@@ -128,7 +132,6 @@ function apply_custom_style()
 	colors[clr.TextSelectedBg]         = ImVec4(0.26, 0.59, 0.98, 0.35)
 	colors[clr.ModalWindowDarkening]   = ImVec4(0.80, 0.80, 0.80, 0.35)
 end
-
 apply_custom_style()
 
 local fileb = getWorkingDirectory() .. "\\config\\instools.bind"
@@ -152,7 +155,7 @@ local instools =
 {
   main =
   {
-    posX = 1738,
+    posX = 1358,
     posY = 974,
     widehud = 320,
     male = true,
@@ -189,7 +192,7 @@ function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
     ftext("Inst Tools успешно загрузился. Введите: /it для открытия меню скрипта", -1)
-    ftext("Авторы: Damien Requeste, Roma Mizantrop")
+    ftext("Вы используете тестовую версию - "..test_version)
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
   if cfg == nil then
@@ -240,6 +243,7 @@ function main()
   print(telephone)
   ystf()
   update()
+  loadAdmins()
   sampCreate3dTextEx(641, '{ffffff}Место для продажи лицензий', 4294927974, 2346.1362,1666.7819,3040.9387, 3, true, -1, -1)
   local spawned = sampIsLocalPlayerSpawned()
   for k, v in pairs(tBindList) do
@@ -253,6 +257,7 @@ function main()
   sampRegisterChatCommand('dmb', dmb)
   sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
+  sampRegisterChatCommand('admins', adm)
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
@@ -538,6 +543,65 @@ function cmd_cchat()
   memory.fill(sampGetChatInfoPtr() + 306, 0x0, 25200)
   memory.write(sampGetChatInfoPtr() + 306, 25562, 4, 0x0)
   memory.write(sampGetChatInfoPtr() + 0x63DA, 1, 1)
+end
+
+function httpRequest(request, body, handler) -- copas.http
+  -- start polling task
+  if not copas.running then
+    copas.running = true
+    lua_thread.create(function()
+      wait(0)
+      while not copas.finished() do
+        local ok, err = copas.step(0)
+        if ok == nil then error(err) end
+        wait(0)
+      end
+      copas.running = false
+    end)
+  end
+  -- do request
+  if handler then
+    return copas.addthread(function(r, b, h)
+      copas.setErrorHandler(function(err) h(nil, err) end)
+      h(http.request(r, b))
+    end, request, body, handler)
+  else
+    local results
+    local thread = copas.addthread(function(r, b)
+      copas.setErrorHandler(function(err) results = {nil, err} end)
+      results = table.pack(http.request(r, b))
+    end, request, body)
+    while coroutine.status(thread) ~= 'dead' do wait(0) end
+    return table.unpack(results)
+  end
+end
+
+function adm()
+  sampAddChatMessage(' Админы Online:', 0xFFFF00)
+  for i = 0, 1000 do
+    if sampIsPlayerConnected(i) then
+      for j = 1, #adminsList do
+        if adminsList[j].nick == sampGetPlayerNickname(i) then
+          sampAddChatMessage((" %s | ID: %d | Level: %d"):format(adminsList[j].nick, i, adminsList[j].level), 0xF5DEB3)
+          break
+        end
+      end
+    end
+  end
+end
+
+function loadAdmins()
+  local file = io.open("moonloader/instools/admins.txt", "a+")
+  local count = 0
+  adminsList = {}
+  for line in file:lines() do
+    local n, l = line:match("(.+)=(.+)")
+    if n ~= nil and tonumber(l) ~= nil then
+      adminsList[#adminsList + 1] = { nick = n, level = tonumber(l) }
+      count = count + 1
+    end
+  end
+  file:close()
 end
 
 function dmch()
@@ -964,7 +1028,7 @@ function fastmenu(id)
    {
    title = "{FFFFFF}Доставка лицензий {008B8B}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
     onclick = function()
-	if rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
+	if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
 	sampSendChat(string.format('/d OG, Осуществляется доставка лицензий в любую точку штата. Тел: %s.', tel))
 	else
 	ftext('Ваш ранг недостаточно высок')
@@ -1880,6 +1944,33 @@ function imgui.OnDrawFrame()
 	if imgui.ToggleButton(u8'Автоскрин лекций', autoscr) then
         cfg.main.hud = not cfg.main.hud
     end
+    if imgui.Button(u8'Обновить список админов') then
+    imgui.SameLine()
+      ftext('Запрос отправлен. Ожидание ответа от сервера...')
+      local ip, port = sampGetCurrentServerAddress()
+      httpRequest('http://opentest3.000webhostapp.com/api.php?act=getadmins&server='..ip..':'..port, nil, function(response, code, headers, status)
+        if response then
+          local info = decodeJson(response)
+          if info.success == true then
+            local output = ""
+            local count = 0
+            for key, value in ipairs(info.answer) do
+              output = output..string.format("%s=%s\n", value.nick, value.level)
+              count = count + 1
+            end
+            local file = io.open("moonloader/instools/admins.txt", "w+")
+            file:write(output)
+            file:close()
+            ftext('Список админов успешно обновлен! Загружено '..count..' админов')
+            loadAdmins()
+          else
+            ftext(string.format('Ошибка сервера: ', info.error == nil and "Подробности не были получены" or info.error))
+          end
+        else
+          ftext('При обработке запроса произошла ошибка. Попробуйте позже')
+        end
+      end)
+    end
     if imgui.CustomButton(u8('Сохранить настройки'), imgui.ImVec4(0.08, 0.61, 0.92, 0.40), imgui.ImVec4(0.08, 0.61, 0.92, 1.00), imgui.ImVec4(0.08, 0.61, 0.92, 0.76), btn_size) then
 	ftext('Настройки успешно сохранены.', -1)
     inicfg.save(cfg, 'instools/config.ini') -- сохраняем все новые значения в конфиге
@@ -1902,56 +1993,35 @@ function imgui.OnDrawFrame()
                 imgui.End()
             end
   if second_window.v then
-    imgui.LockPlayer = true
     imgui.ShowCursor = true
-    local iScreenWidth, iScreenHeight = getScreenResolution()
-    local btn_size1 = imgui.ImVec2(70, 0)
-	local btn_size = imgui.ImVec2(130, 0)
-	local _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
-    imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(7, 5))
-    imgui.Begin('Inst Tools | Main Menu | Actual version: '..thisScript().version, second_window, mainw,  imgui.WindowFlags.NoResize)
-	local text = 'Авторы:'
-    imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8(text)).x)/3)
-    imgui.Text(u8(text))
-	imgui.SameLine()
-	imgui.TextColored(imgui.ImVec4(0.43, 0.65 , 0.44, 2.0), 'Damien Requeste, Roma Mizantrop')
-    imgui.Separator()
-	if imgui.Button(u8'Биндер', imgui.ImVec2(50, 30)) then
-      bMainWindow.v = not bMainWindow.v
-    end
-	imgui.SameLine()
-    if imgui.Button(u8'Настройки скрипта', imgui.ImVec2(120, 30)) then
-      first_window.v = not first_window.v
-    end
-    imgui.SameLine()
-    if imgui.Button(u8 'Сообщить об ошибке/идеи', imgui.ImVec2(170, 30)) then os.execute('explorer "https://vk.com/ortemelyan"')
+            local x, y = getScreenResolution()
+            local btn_size = imgui.ImVec2(-0.1, 0)
+            imgui.SetNextWindowSize(imgui.ImVec2(300, 300), imgui.Cond.FirstUseEver)
+            imgui.SetNextWindowPos(imgui.ImVec2(x/2, y/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+    imgui.Begin('Inst Tools | Main Menu ', second_window, mainw,  imgui.WindowFlags.NoResize)
+	if imgui.Button(u8'Биндер', btn_size) then
+                bMainWindow.v = not bMainWindow.v
+            end
+    if imgui.Button(u8'Настройки скрипта', btn_size) then
+                first_window.v = not first_window.v
+            end
+    if imgui.Button(u8 'Сообщить об ошибке/идеи', btn_size) then os.execute('explorer "https://vk.com/ortemelyan"')
     btn_size = not btn_size
     end
-	imgui.SameLine()
-    if imgui.Button(u8'Перезагрузить скрипт', imgui.ImVec2(150, 30)) then
+    if imgui.Button(u8 'Пожертвование', btn_size) then os.execute('explorer "https://www.donationalerts.com/r/Speqzz"')
+    btn_size = not btn_size
+    end
+    if imgui.Button(u8'Перезагрузить скрипт', btn_size) then
       showCursor(false)
       thisScript():reload()
     end
-    if imgui.Button(u8 'Отключить скрипт', imgui.ImVec2(120, 30), btn_size) then
+    if imgui.Button(u8 'Отключить скрипт', btn_size) then
       showCursor(false)
       thisScript():unload()
     end
-	imgui.SameLine()
-    if imgui.Button(u8'Помощь', imgui.ImVec2(55, 30)) then
+    if imgui.Button(u8'Помощь', btn_size) then
       helps.v = not helps.v
     end
-	imgui.Separator()
-	imgui.BeginChild("Информация", imgui.ImVec2(250, 100), true)
-	imgui.Text(u8 'Имя и Фамилия:   '..sampGetPlayerNickname(myid):gsub('_', ' ')..'')
-	imgui.Text(u8 'Должность:') imgui.SameLine() imgui.Text(u8(rank))
-	imgui.Text(u8 'Номер телефона: '..tel..'')
-	if cfg.main.tarb then
-	imgui.Text(u8 'Тег в рацию:') imgui.SameLine() imgui.Text(u8(cfg.main.tarr))
-	end
-	if cfg.main.clistb then
-	imgui.Text(u8 'Номер бейджика: '..cfg.main.clist..'')
-	end
-	imgui.EndChild()
     imgui.End()
   end
   	if infbar.v then
@@ -1984,7 +2054,8 @@ function imgui.OnDrawFrame()
                 imgui.TextColoredRGB('{FF0000}/dlog{CCCCCC} - Открыть лог 25 последних сообщений в департамент')
 				imgui.TextColoredRGB('{FF0000}/sethud{CCCCCC} - Установить позицию инфо-бара')
 				imgui.TextColoredRGB('{FF0000}/oinv [id]{CCCCCC} - Принять к себе в отдел сотрудника')
-                imgui.TextColoredRGB('{FF0000}/lecture [id]{CCCCCC} - Прочитать лекцию об отделе') 
+                imgui.TextColoredRGB('{FF0000}/lecture [id]{CCCCCC} - Прочитать лекцию об отделе')
+                imgui.TextColoredRGB('{FF0000}/admins {CCCCCC} - Альтернативая команда /admins (Доступно для всех)') 
 				imgui.TextColoredRGB('{FF0000}/cchat{CCCCCC} - Очищает чат')
 				imgui.TextColoredRGB('{FF0000}/blag [id] [фракция] [тип]{CCCCCC} - Выразить игроку благодарность в департамент')
 				imgui.TextColoredRGB('{FF0000}/nick [id] [0-1]{CCCCCC} - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
@@ -2694,19 +2765,19 @@ function pricemenu(args)
         title = '{ffffff}» Права.',
         onclick = function()
 		if gmegaflvl <= 2 then
-          sampSendChat("Стоимость данной лицензии составляет - 500$.")
+          sampSendChat("Стоимость лицензии на права составляет - 500$.")
 		  wait(1500)
 		  sampSendChat("Оформляем?")	  
 		else if gmegaflvl <= 5 then
-		  sampSendChat("Стоимость данной лицензии составляет - 5.000$.")
+		  sampSendChat("Стоимость лицензии на права составляет - 5.000$.")
 		  wait(1500)
 		  sampSendChat("Оформляем?")	  
 		else if gmegaflvl <= 15 then
-		  sampSendChat("Стоимость данной лицензии составляет - 10.000$.")
+		  sampSendChat("Стоимость лицензии на права составляет - 10.000$.")
 		  wait(1500)
 		  sampSendChat("Оформляем?")	  
 		else if gmegaflvl >= 16 then
-		  sampSendChat("Стоимость данной лицензии составляет - 30.000$.")
+		  sampSendChat("Стоимость лицензии на права составляет - 30.000$.")
 		  wait(1500)
 		  sampSendChat("Оформляем?")	  
         end
@@ -2718,7 +2789,7 @@ function pricemenu(args)
       {
         title = '{ffffff}» Рыбалка',
         onclick = function()
-        sampSendChat("Стоимость данной лицензии составляет - 2.000$.")
+        sampSendChat("Стоимость лицензии на рыбалку составляет - 2.000$.")
 		wait(1500)
 		sampSendChat("Оформляем?")
         end
@@ -2726,7 +2797,7 @@ function pricemenu(args)
       {
         title = '{ffffff}» Пилот',
         onclick = function()
-        sampSendChat("Стоимость данной лицензии составляет - 10.000$.")
+        sampSendChat("Стоимость лицензии на пилотирование составляет - 10.000$.")
 		wait(1500)
 		sampSendChat("Оформляем?")
         end
@@ -2735,7 +2806,7 @@ function pricemenu(args)
         title = '{ffffff}» Оружие{ff0000} со 2 уровня.',
         onclick = function()
 		if gmegaflvl > 1 then
-        sampSendChat("Стоимость данной лицензии составляет - 50.000$.")
+        sampSendChat("Стоимость лицензии на оружие составляет - 50.000$.")
 		wait(1500)
 		sampSendChat("Оформляем?")
 		else
@@ -2746,7 +2817,7 @@ function pricemenu(args)
 	  {
         title = '{ffffff}» Бизнес{ff0000} при наличии бизнеса.',
         onclick = function()
-        sampSendChat("Стоимость данной лицензии составляет - 100.000$.")
+        sampSendChat("Стоимость лицензии на бизнес составляет - 100.000$.")
 		wait(1500)
 		sampSendChat("Оформляем?")
         end
@@ -2754,7 +2825,7 @@ function pricemenu(args)
       {
         title = '{ffffff}» Катер',
         onclick = function()
-        sampSendChat("Стоимость данной лицензии составляет - 5.000$.")
+        sampSendChat("Стоимость лицензии на водные транспорты составляет - 5.000$.")
 		wait(1500)
 		sampSendChat("Оформляем?")
         end
@@ -3150,8 +3221,9 @@ function update()
                     if version > tonumber(thisScript().version) then
                         ftext('Обнаружено обновление до версии '..updversion..'.')
 					    updwindows.v = true
+                        canupdate = true
                     else
-                        ftext('Обновлений скрипта не обнаружено. Приятной игры.', -1)
+                        print('Обновлений скрипта не обнаружено. Приятной игры.')
                         update = false
 				    end
 			    end
