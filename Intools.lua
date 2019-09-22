@@ -1,6 +1,6 @@
 script_name('Inst Tools')
-script_version('1.0')
-test_version = "1.0-preview 1"
+script_version('1.1')
+test_version = "1.1-preview 2"
 script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -134,6 +134,88 @@ end
 apply_custom_style()
 
 local fileb = getWorkingDirectory() .. "\\config\\instools.bind"
+local help = {
+    {
+        cmd = '/it',
+        desc = 'Открыть меню скрипта',
+        use = '/it'
+    },
+    {
+        cmd = '/vig',
+        desc = 'Выдать выговор по рации',
+        use = '/vig [id] [Причина]'
+    },
+    {
+        cmd = '/unvig',
+        desc = 'Снять выговор по рации',
+        use = '/unvig [id] [Причина]'
+    },
+    {
+        cmd = '/dmb',
+        desc = 'Открыть /members в диалоге',
+        use = '/dmb'
+    },
+    {
+        cmd = '/where',
+        desc = 'Запросить местоположение по рации',
+        use = '/where [id]'
+    },
+    {
+        cmd = '/yst',
+        desc = 'Открыть устав АШ (Текст устава можно изменить в файле moonloader/instools/ystavautoschool.txt)',
+        use = '/yst'
+    },
+    {
+        cmd = '/pys',
+        desc = 'Поиск по уставу АШ',
+        use = '/pys [текст]'
+    },
+    {
+        cmd = '/smsjob',
+        desc = 'Вызвать на работу весь мл.состав по смс',
+        use = '/smsjob'
+    },
+    {
+        cmd = '/dlog',
+        desc = 'Открыть лог 25 последних сообщений в департамент',
+        use = '/dlog'
+    },
+    {
+        cmd = '/sethud',
+        desc = 'Установить позицию инфо-бара',
+        use = '/sethud'
+    },
+    {
+        cmd = '/oinv',
+        desc = 'Принять к себе в отдел сотрудника',
+        use = '/oinv [id]'
+    },
+    {
+        cmd = '/lecture',
+        desc = 'Прочитать лекцию об отделе',
+        use = '/lecture [id]'
+    },
+    {
+        cmd = '/cchat',
+        desc = 'Очищает чат',
+        use = '/cchat'
+    },
+    {
+        cmd = '/blag',
+        desc = 'Выразить игроку благодарность в департамент',
+        use = '/blag [id] [фракция] [тип]'
+    },
+    {
+        cmd = '/nick',
+        desc = 'Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник',
+        use = '/nick [id] [0-1]'
+    },
+    {
+        cmd = '/find',
+        desc = 'Установить на указанного игрока маркер',
+        use = '/find [id]'
+    }
+}
 local tBindList = {}
 if doesFileExist(fileb) then
 	local f = io.open(fileb, "r")
@@ -253,10 +335,12 @@ function main()
   sampRegisterChatCommand('dlog', dlog)
   sampRegisterChatCommand('dcol', cmd_color)
   sampRegisterChatCommand('dmb', dmb)
+  sampRegisterChatCommand('pys', pys)
   sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
+  sampRegisterChatCommand('unvig', unvig)
   sampRegisterChatCommand('giverank', giverank)
   sampRegisterChatCommand('blag', blag)
   sampRegisterChatCommand('cchat', cmd_cchat)
@@ -375,7 +459,7 @@ II. ОБЯЗАННОСТИ ШТАТНЫХ СОТРУДНИКОВ АВТОШКОЛЫ
 
 2.1 Штатными сотрудниками являются: Стажеры, Консультанты, Экзаменаторы не состоящие в отделе и сотрудники отделов (кроме заместителя и Главы отдела).
 
-Штатные сотрудники обязаны:
+Штатные сотрудники обязаны: 
 
 2.2 Знать и соблюдать Устав Автошколы.
 2.3 Знать и соблюдать все правила, а так же законы Штата.
@@ -388,18 +472,18 @@ II. ОБЯЗАННОСТИ ШТАТНЫХ СОТРУДНИКОВ АВТОШКОЛЫ
 2.10 Обязаны носить бейджик согласно тому или инному отделу, а так же без него:
 2.10.1 Бейджик Стажеров - Консультантов - № 23.
 2.10.2 Бейджик Экзаменатора - № 10.
-2.10.3 Бейджик Заместителя Главы Отдела - № 8.
+2.10.3 Бейджик Заместителя Главы Отдела - № 8. 
 2.10.4 Бейджик Глав Отделов - № 12.
 2.10.5 Бейджик Старшего Состава Автошколы - № 15.
 2.11 В рабочее время сотрудник обязан носить униформу выданную в офисе.
 2.12 Младший Инструктор обязан выбрать отдел, где он продолжит свою деятельность. (Без отдела дальнейшие повышения в должности проходить не будут)
 2.13 Закрывать за собой двери в комнату отдыха, после входа или выхода из неё.
 2.14 В случае если за стойкой отсутствует персонал, все штатные сотрудники отделов обязаны занять её.
-2.15 Брать вертолет будучи в должности Координатор.
+2.15 Брать вертолет будучи в должности Координатор. 
 
 III. ОБЯЗАННОСТИ ГЛАВ ОТДЕЛОВ АВТОШКОЛЫ И ИХ ЗАМЕСТИТЕЛЕЙ
 
-Главы отделов и из заместители обязаны:
+Главы отделов и из заместители обязаны: 
 
 3.1 Соблюдать пункты Устава, которые предназначены для штатных сотрудников. (Пункт Устава II - полностью).
 3.2 Глава Отдела должен следить и своевременно вносить информацию по отделу в специальную таблицу созданной в Google-формах. (Каждый день: до 21-00).
@@ -430,11 +514,11 @@ V. СОТРУДНИКАМ АВТОШКОЛЫ ЗАПРЕЩАЕТСЯ
 5.5 Сотруднику Автошколы категорически запрещено не обслуживать клиентов из-за личной неприязни.
 5.6 Обманывать Старший Состав и коллег. (Наказание: увольнение из организации).
 5.7 Находиться в AFK без ESC. (Наказание: увольнение из организации).
-5.8 Использовать транспорт, принадлежащий Автошколе, в личных целях.
-5.9 Работать на любой государственной работе, не снимая рабочую форму.
-5.10 В открытую употреблять наркотические средства.
+5.8 Использовать транспорт, принадлежащий Автошколе, в личных целях. 
+[color=#0080FF]5.9 Работать на любой государственной работе, не снимая рабочую форму. 
+[color=#0080FF]5.10 В открытую употреблять наркотические средства. 
 5.11 Использовать дверь в комнате отдыха в развлекательных намерениях.
-5.12 Использовать нецензурные выражения будь это рация или обычное общение (как в IC так и в OOC чаты).
+[color=#0080FF]5.12 Использовать нецензурные выражения будь это рация или обычное общение (как в IC так и в OOC чаты).
 5.13 Писать в департамент во время ЧС- Чрезвычайной ситуации.
 5.14 Играть в казино в рабочее время..
 5.15 Игнорировать Старший Состав.
@@ -558,13 +642,63 @@ function dmch()
 	end)
 end
 
-function dlog()
-    sampShowDialog(97987, '{008B8B}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
+local russian_characters = {
+    [168] = 'Ё', [184] = 'ё', [192] = 'А', [193] = 'Б', [194] = 'В', [195] = 'Г', [196] = 'Д', [197] = 'Е', [198] = 'Ж', [199] = 'З', [200] = 'И', [201] = 'Й', [202] = 'К', [203] = 'Л', [204] = 'М', [205] = 'Н', [206] = 'О', [207] = 'П', [208] = 'Р', [209] = 'С', [210] = 'Т', [211] = 'У', [212] = 'Ф', [213] = 'Х', [214] = 'Ц', [215] = 'Ч', [216] = 'Ш', [217] = 'Щ', [218] = 'Ъ', [219] = 'Ы', [220] = 'Ь', [221] = 'Э', [222] = 'Ю', [223] = 'Я', [224] = 'а', [225] = 'б', [226] = 'в', [227] = 'г', [228] = 'д', [229] = 'е', [230] = 'ж', [231] = 'з', [232] = 'и', [233] = 'й', [234] = 'к', [235] = 'л', [236] = 'м', [237] = 'н', [238] = 'о', [239] = 'п', [240] = 'р', [241] = 'с', [242] = 'т', [243] = 'у', [244] = 'ф', [245] = 'х', [246] = 'ц', [247] = 'ч', [248] = 'ш', [249] = 'щ', [250] = 'ъ', [251] = 'ы', [252] = 'ь', [253] = 'э', [254] = 'ю', [255] = 'я',
+}
+function string.rlower(s)
+    s = s:lower()
+    local strlen = s:len()
+    if strlen == 0 then return s end
+    s = s:lower()
+    local output = ''
+    for i = 1, strlen do
+        local ch = s:byte(i)
+        if ch >= 192 and ch <= 223 then
+            output = output .. russian_characters[ch + 32]
+        elseif ch == 168 then
+            output = output .. russian_characters[184]
+        else
+            output = output .. string.char(ch)
+        end
+    end
+    return output
+end
+function string.rupper(s)
+    s = s:upper()
+    local strlen = s:len()
+    if strlen == 0 then return s end
+    s = s:upper()
+    local output = ''
+    for i = 1, strlen do
+        local ch = s:byte(i)
+        if ch >= 224 and ch <= 255 then
+            output = output .. russian_characters[ch - 32]
+        elseif ch == 184 then
+            output = output .. russian_characters[168]
+        else
+            output = output .. string.char(ch)
+        end
+    end
+    return output
+end
+
+function pys(pam)
+    if #pam ~= 0 then
+        local f = io.open('moonloader\\instools\\ystavautoschool.txt')
+        for line in f:lines() do
+            if string.find(line, pam) or string.rlower(line):find(pam) or string.rupper(line):find(pam) then
+                sampAddChatMessage('{CD5C5C} '..line, -1)
+            end
+        end
+        f:close()
+    else
+        ftext('Введите /pys [текст]')
+    end
 end
 
 function vig(pam)
   local id, pric = string.match(pam, '(%d+)%s+(.+)')
-if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == "Инструктор" or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
+if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
   if id == nil then
     sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Введите: /vig [id] [причина]", -1)
   end
@@ -584,6 +718,34 @@ if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == "Инструктор" or r
 		name = sampGetPlayerNickname(id)
         rpname = name:gsub('_', ' ')
 		sampSendChat(string.format("/r %s - Получает выговор по причине: %s.", rpname, pric))
+      end
+  end
+end
+end
+end
+
+function unvig(pam)
+  local id, pric = string.match(pam, '(%d+)%s+(.+)')
+  if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
+  if id == nil then
+    sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Введите: /unvig ID Причина", -1)
+  end
+  if id ~=nil and not sampIsPlayerConnected(id) then
+    sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Игрок с ID: "..id.." не подключен к серверу.", -1)
+  end
+  if id ~= nil and sampIsPlayerConnected(id) then
+      if pric == nil then
+        sampAddChatMessage("{008B8B}Inst Tools {ffffff}| Введите: /unvig [id] [причина]", -1)
+      end
+      if pric ~= nil then
+	   if cfg.main.tarb then
+        name = sampGetPlayerNickname(id)
+        rpname = name:gsub('_', ' ')
+        sampSendChat(string.format("/r [%s]: %s - Получает cнятие выговора по причине: %s.", cfg.main.tarr, rpname, pric))
+		else 
+		name = sampGetPlayerNickname(id)
+        rpname = name:gsub('_', ' ')
+		sampSendChat(string.format("/r %s - Получает cнятие выговора по причине: %s.", rpname, pric))
       end
   end
 end
@@ -1898,7 +2060,7 @@ function imgui.OnDrawFrame()
                 imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
                 imgui.SetNextWindowSize(imgui.ImVec2(iScreenWidth/2, iScreenHeight / 2), imgui.Cond.FirstUseEver)
                 imgui.Begin(u8('Inst Tools | Устав АШ'), ystwindow)
-                for line in io.lines('moonloader\\instools\\ystavnewss.txt') do
+                for line in io.lines('moonloader\\instools\\ystavautoschool.txt') do
                     imgui.TextWrapped(u8(line))
                 end
                 imgui.End()
@@ -1913,6 +2075,9 @@ function imgui.OnDrawFrame()
 	if imgui.Button(u8'Биндер', btn_size) then
                 bMainWindow.v = not bMainWindow.v
             end
+            if imgui.Button(u8'Команды скрипта', btn_size) then
+      helps.v = not helps.v
+    end
     if imgui.Button(u8'Настройки скрипта', btn_size) then
                 first_window.v = not first_window.v
             end
@@ -1922,19 +2087,30 @@ function imgui.OnDrawFrame()
     if imgui.Button(u8 'Пожертвование', btn_size) then os.execute('explorer "https://www.donationalerts.com/r/Speqzz"')
     btn_size = not btn_size
     end
-    if imgui.Button(u8'Перезагрузить скрипт', btn_size) then
-      showCursor(false)
-      thisScript():reload()
-    end
-    if imgui.Button(u8 'Отключить скрипт', btn_size) then
-      showCursor(false)
-      thisScript():unload()
-    end
-    if imgui.Button(u8'Помощь', btn_size) then
-      helps.v = not helps.v
-    end
+    if imgui.CollapsingHeader(u8 'Прочее', btn_size) then
+                if imgui.Button(u8'Перезагрузить скрипт', btn_size) then
+                    thisScript():reload()
+                end
+                if imgui.Button(u8 'Отключить скрипт', btn_size) then
+                    thisScript():unload()
+                end
+            end
     imgui.End()
   end
+  
+  if helps.v then
+                local x, y = getScreenResolution()
+                imgui.SetNextWindowSize(imgui.ImVec2(500, 500), imgui.Cond.FirstUseEver)
+                imgui.SetNextWindowPos(imgui.ImVec2(x/2, y/2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+                imgui.Begin(u8'Inst Tools | Команды', helps, second_window, mainw,  imgui.WindowFlags.NoResize)
+                for k, v in ipairs(help) do
+                    if imgui.CollapsingHeader(v['cmd']..'##'..k) then
+                        imgui.TextWrapped(u8('Описание: %s'):format(u8(v['desc'])))
+                        imgui.TextWrapped(u8("Использование: %s"):format(u8(v['use'])))
+                    end
+                end
+                imgui.End()
+            end
   	if infbar.v then
                 _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
                 imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
@@ -1948,34 +2124,6 @@ function imgui.OnDrawFrame()
 				imgui.Text(u8 'Продано лицензий рыболова:') imgui.SameLine() imgui.Text(u8 ''..ribolov..'')
 				imgui.Text(u8 'Продано лицензий на оружие:') imgui.SameLine() imgui.Text(u8 ''..gun..'')
 				imgui.Text(u8 'Продано лицензий на бизнес:') imgui.SameLine() imgui.Text(u8 ''..biznes..'')
-                imgui.End()
-    end
-    if helps.v then
-                local iScreenWidth, iScreenHeight = getScreenResolution()
-                imgui.SetNextWindowPos(imgui.ImVec2(iScreenWidth / 2, iScreenHeight / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(3, 7))
-                imgui.Begin(u8 'Помощь по скрипту', helps, imgui.WindowFlags.NoResize, imgui.WindowFlags.NoCollapse)
-				imgui.BeginChild("Список команд", imgui.ImVec2(600, 340), true, imgui.WindowFlags.VerticalScrollbar)
-                imgui.TextColoredRGB('{FF0000}/it{CCCCCC} - Открыть меню скрипта')
-                imgui.Separator()
-                imgui.TextColoredRGB('{FF0000}/vig [id] [Причина]{CCCCCC} - Выдать выговор по рации')
-                imgui.TextColoredRGB('{FF0000}/dmb{CCCCCC} - Открыть /members в диалоге')
-                imgui.TextColoredRGB('{FF0000}/where [id]{CCCCCC} - Запросить местоположение по рации')
-                imgui.TextColoredRGB('{FF0000}/yst{CCCCCC} - Открыть устав АШ')
-				imgui.TextColoredRGB('{FF0000}/smsjob{CCCCCC} - Вызвать на работу весь мл.состав по смс')
-                imgui.TextColoredRGB('{FF0000}/dlog{CCCCCC} - Открыть лог 25 последних сообщений в департамент')
-				imgui.TextColoredRGB('{FF0000}/sethud{CCCCCC} - Установить позицию инфо-бара')
-				imgui.TextColoredRGB('{FF0000}/oinv [id]{CCCCCC} - Принять к себе в отдел сотрудника')
-                imgui.TextColoredRGB('{FF0000}/lecture [id]{CCCCCC} - Прочитать лекцию об отделе')
-                imgui.TextColoredRGB('{FF0000}/adm {CCCCCC} - Альтернативая команда /admins (Доступно для всех)') 
-				imgui.TextColoredRGB('{FF0000}/cchat{CCCCCC} - Очищает чат')
-				imgui.TextColoredRGB('{FF0000}/blag [id] [фракция] [тип]{CCCCCC} - Выразить игроку благодарность в департамент')
-				imgui.TextColoredRGB('{FF0000}/nick [id] [0-1]{CCCCCC} - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
-				imgui.TextColoredRGB('{FF0000}/find [id]{CCCCCC} - Установить на указанного игрока маркер')
-				imgui.Separator()
-                imgui.TextColoredRGB('Клавиши: ')
-                imgui.TextColoredRGB('{FF0000}ПКМ+Z на игрока{CCCCCC} - Меню взаимодействия')
-                imgui.TextColoredRGB('{FF0000}F2{CCCCCC} - "Быстрое меню"')
-				imgui.EndChild()
                 imgui.End()
     end
     if updwindows.v then
@@ -2786,8 +2934,8 @@ function instmenu(id)
     }
 end
 function ystf()
-    if not doesFileExist('moonloader/instools/ystavnewss.txt') then
-        local file = io.open("moonloader/instools/ystavnewss.txt", "w")
+    if not doesFileExist('moonloader/instools/ystavautoschool.txt') then
+        local file = io.open("moonloader/instools/ystavautoschool.txt", "w")
         file:write(fpt)
         file:close()
         file = nil
