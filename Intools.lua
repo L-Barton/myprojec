@@ -14,8 +14,8 @@ local lrkeys, rkeys         = pcall(require, 'rkeys')
 local limadd, imadd         = pcall(require, 'imgui_addons')
 local dlstatus              = require('moonloader').download_status
 local limgui, imgui         = pcall(require, 'imgui')
-local lcopas, copas         = pcall(require, 'copas')
-local lhttp, http           = pcall(require, 'copas.http')
+local lcopas, copas       = pcall(require, 'copas')
+local lhttp, http         = pcall(require, 'copas.http')
 local lrequests, requests   = pcall(require, 'requests')
 local wm                    = require 'lib.windows.message'
 local gk                    = require 'game.keys'
@@ -67,7 +67,6 @@ biznes = 0
 departament = {}
 tMembers = {}
 vixodid = {}
-adminsList = {}
 local config_keys = {
     fastsms = { v = {}}
 }
@@ -243,7 +242,6 @@ function main()
   print(telephone)
   ystf()
   update()
-  loadAdmins()
   sampCreate3dTextEx(641, '{ffffff}Место для продажи лицензий', 4294927974, 2346.1362,1666.7819,3040.9387, 3, true, -1, -1)
   local spawned = sampIsLocalPlayerSpawned()
   for k, v in pairs(tBindList) do
@@ -257,7 +255,6 @@ function main()
   sampRegisterChatCommand('dmb', dmb)
   sampRegisterChatCommand('smsjob', smsjob)
   sampRegisterChatCommand('where', where)
-  sampRegisterChatCommand('admins', adm)
   sampRegisterChatCommand('it', it)
   sampRegisterChatCommand('vig', vig)
   sampRegisterChatCommand('giverank', giverank)
@@ -543,65 +540,6 @@ function cmd_cchat()
   memory.fill(sampGetChatInfoPtr() + 306, 0x0, 25200)
   memory.write(sampGetChatInfoPtr() + 306, 25562, 4, 0x0)
   memory.write(sampGetChatInfoPtr() + 0x63DA, 1, 1)
-end
-
-function httpRequest(request, body, handler) -- copas.http
-  -- start polling task
-  if not copas.running then
-    copas.running = true
-    lua_thread.create(function()
-      wait(0)
-      while not copas.finished() do
-        local ok, err = copas.step(0)
-        if ok == nil then error(err) end
-        wait(0)
-      end
-      copas.running = false
-    end)
-  end
-  -- do request
-  if handler then
-    return copas.addthread(function(r, b, h)
-      copas.setErrorHandler(function(err) h(nil, err) end)
-      h(http.request(r, b))
-    end, request, body, handler)
-  else
-    local results
-    local thread = copas.addthread(function(r, b)
-      copas.setErrorHandler(function(err) results = {nil, err} end)
-      results = table.pack(http.request(r, b))
-    end, request, body)
-    while coroutine.status(thread) ~= 'dead' do wait(0) end
-    return table.unpack(results)
-  end
-end
-
-function adm()
-  sampAddChatMessage(' Админы Online:', 0xFFFF00)
-  for i = 0, 1000 do
-    if sampIsPlayerConnected(i) then
-      for j = 1, #adminsList do
-        if adminsList[j].nick == sampGetPlayerNickname(i) then
-          sampAddChatMessage((" %s | ID: %d | Level: %d"):format(adminsList[j].nick, i, adminsList[j].level), 0xF5DEB3)
-          break
-        end
-      end
-    end
-  end
-end
-
-function loadAdmins()
-  local file = io.open("moonloader/instools/admins.txt", "a+")
-  local count = 0
-  adminsList = {}
-  for line in file:lines() do
-    local n, l = line:match("(.+)=(.+)")
-    if n ~= nil and tonumber(l) ~= nil then
-      adminsList[#adminsList + 1] = { nick = n, level = tonumber(l) }
-      count = count + 1
-    end
-  end
-  file:close()
 end
 
 function dmch()
@@ -1944,33 +1882,6 @@ function imgui.OnDrawFrame()
 	if imgui.ToggleButton(u8'Автоскрин лекций', autoscr) then
         cfg.main.hud = not cfg.main.hud
     end
-    if imgui.Button(u8'Обновить список админов') then
-    imgui.SameLine()
-      ftext('Запрос отправлен. Ожидание ответа от сервера...')
-      local ip, port = sampGetCurrentServerAddress()
-      httpRequest('http://opentest3.000webhostapp.com/api.php?act=getadmins&server='..ip..':'..port, nil, function(response, code, headers, status)
-        if response then
-          local info = decodeJson(response)
-          if info.success == true then
-            local output = ""
-            local count = 0
-            for key, value in ipairs(info.answer) do
-              output = output..string.format("%s=%s\n", value.nick, value.level)
-              count = count + 1
-            end
-            local file = io.open("moonloader/instools/admins.txt", "w+")
-            file:write(output)
-            file:close()
-            ftext('Список админов успешно обновлен! Загружено '..count..' админов')
-            loadAdmins()
-          else
-            ftext(string.format('Ошибка сервера: ', info.error == nil and "Подробности не были получены" or info.error))
-          end
-        else
-          ftext('При обработке запроса произошла ошибка. Попробуйте позже')
-        end
-      end)
-    end
     if imgui.CustomButton(u8('Сохранить настройки'), imgui.ImVec4(0.08, 0.61, 0.92, 0.40), imgui.ImVec4(0.08, 0.61, 0.92, 1.00), imgui.ImVec4(0.08, 0.61, 0.92, 0.76), btn_size) then
 	ftext('Настройки успешно сохранены.', -1)
     inicfg.save(cfg, 'instools/config.ini') -- сохраняем все новые значения в конфиге
@@ -2055,7 +1966,7 @@ function imgui.OnDrawFrame()
 				imgui.TextColoredRGB('{FF0000}/sethud{CCCCCC} - Установить позицию инфо-бара')
 				imgui.TextColoredRGB('{FF0000}/oinv [id]{CCCCCC} - Принять к себе в отдел сотрудника')
                 imgui.TextColoredRGB('{FF0000}/lecture [id]{CCCCCC} - Прочитать лекцию об отделе')
-                imgui.TextColoredRGB('{FF0000}/admins {CCCCCC} - Альтернативая команда /admins (Доступно для всех)') 
+                imgui.TextColoredRGB('{FF0000}/adm {CCCCCC} - Альтернативая команда /admins (Доступно для всех)') 
 				imgui.TextColoredRGB('{FF0000}/cchat{CCCCCC} - Очищает чат')
 				imgui.TextColoredRGB('{FF0000}/blag [id] [фракция] [тип]{CCCCCC} - Выразить игроку благодарность в департамент')
 				imgui.TextColoredRGB('{FF0000}/nick [id] [0-1]{CCCCCC} - Копирует ник игрока по его id. Параметр 0 копирует РПник, 1 копирует НОНрп ник')
