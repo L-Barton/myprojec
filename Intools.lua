@@ -1,6 +1,6 @@
 script_name('Inst Tools')
-script_version('1.1')
-test_version = "1.1-preview 2"
+script_version('1.2')
+test_version = "1.2-preview 3"
 script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -566,6 +566,10 @@ function dmb()
 	end)
 end
 
+function dlog()
+    sampShowDialog(97987, '{008B8B}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
+end
+
     function sp.onShowDialog(id, style, title, button1, button2, text)
         if id == 50 and msda then
             sampSendDialogResponse(id, 1, getMaskList(msvidat), _)
@@ -850,7 +854,7 @@ function giverank(pam)
 function invite(pam)
     lua_thread.create(function()
         local id = pam:match('(%d+)')
-	  if rank == 'Директор' or  rank == 'Управляющий' then
+	  if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
         if id then
 		if sampIsPlayerConnected(id) then
                 sampSendChat('/me достал(а) бейджик и передал(а) его '..sampGetPlayerNickname(id):gsub('_', ' ')..'')
@@ -1102,7 +1106,7 @@ function fastmenu(id)
     {
    title = "{FFFFFF}Меню {008B8B}гос.новостей {ff0000}(Для Ст.Состава)",
     onclick = function()
-	if rank == 'Директор' or  rank == 'Управляющий' then
+	if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or  rank == 'Директор' or  rank == 'Управляющий' then
 	submenus_show(govmenu(id), "{008B8B}Inst Tools {ffffff}| Меню гос.новостей")
 	else
 	ftext('Вы не находитесь в Ст.Составе')
