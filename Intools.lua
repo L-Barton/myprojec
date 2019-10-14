@@ -1,6 +1,6 @@
 script_name('Inst Tools')
-script_version('1.2')
-test_version = "1.2-preview 3"
+script_version('1.3')
+script_version = "1.3"
 script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -273,7 +273,7 @@ function main()
   while not isSampAvailable() do wait(1000) end
   if seshsps == 1 then
     ftext("Inst Tools успешно загрузился. Введите: /it для открытия меню скрипта", -1)
-    ftext("Вы используете тестовую версию - "..test_version)
+    ftext("Вы используете версию скрипта - "..script_version)
   end
   if not doesDirectoryExist('moonloader/config/instools/') then createDirectory('moonloader/config/instools/') end
   if cfg == nil then
@@ -1351,7 +1351,7 @@ function govmenu(id)
     wait(5000)
     sampSendChat('/gov [Instructors]: В данный момент в офисе Автошколы проходит собеседование на должность "Стажер".')
     wait(5000)
-    sampSendChat("/gov [Instructors]: Требования к соискателям: Шесть лет проживания в штате, стрессоустойчивость, опрятный вид.")
+    sampSendChat("/gov [Instructors]: Требования к соискателям: Четёрых лет проживания в штате, стрессоустойчивость, опрятный вид.")
     wait(5000)
     sampSendChat("/d OG, освободил волну государственных новостей.")
     wait(1200)
