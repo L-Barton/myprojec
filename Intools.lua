@@ -1,6 +1,6 @@
 script_name('Inst Tools')
-script_version('1.3')
-script_version = "1.3"
+script_version('1.4')
+script_version = "1.4"
 script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -66,7 +66,7 @@ ribolov = 0
 biznes = 0
 departament = {}
 tMembers = {}
-vixodid = {}
+vixodid = {}                                             
 local config_keys = {
     fastsms = { v = {}}
 }
@@ -134,6 +134,8 @@ end
 apply_custom_style()
 
 local fileb = getWorkingDirectory() .. "\\config\\instools.bind"
+local tMembers = {}
+local Player = {}
 local help = {
     {
         cmd = '/it',
@@ -547,27 +549,80 @@ VII. ПОЛОЖЕНИЯ ДЛЯ СТАРШЕГО СОСТАВА
 ]]
 
 function dmb()
-	lua_thread.create(function()
-		status = true
-		players2 = {'{ffffff}Дата принятия\t{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
-		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
-		sampSendChat('/members')
-		while not gotovo do wait(0) end
-		if gosmb then
-			sampShowDialog(716, "{ffffff}В сети: "..gcount.." | {ae433d}Организация | {ffffff}Time: "..os.date("%H:%M:%S"), table.concat(players2, "\n"), "x", _, 5) -- Показываем информацию.
-		elseif krimemb then
-			sampShowDialog(716, "{ffffff}В сети: "..gcount.." | {ae433d}Организация | {ffffff}Time: "..os.date("%H:%M:%S"), table.concat(players1, "\n"), "x", _, 5) -- Показываем информацию.
-		end
-		gosmb = false
-		krimemb = false
-		gotovo = false
-		status = false
-		gcount = nil
+    lua_thread.create(function()
+        if sampIsDialogActive() then
+            if sampIsDialogClientside() then
+                tMembers = {}
+                status = true
+                sampSendChat('/members')
+                while not gotovo do wait(0) end
+                memw.v = true
+                gosmb = false
+                krimemb = false
+                gotovo = false
+                status = true
+                gcount = nil
+            end
+        else
+            tMembers = {}
+            status = true
+            sampSendChat('/members')
+            while not gotovo do wait(0) end
+            memw.v = true
+            gosmb = false
+            krimemb = false
+            gotovo = false
+            status = true
+            gcount = nil
+        end
 	end)
 end
 
 function dlog()
     sampShowDialog(97987, '{008B8B}Inst Tools {ffffff} | Лог сообщений департамента', table.concat(departament, '\n'), '»', 'x', 0)
+end
+
+function Player:new(id, sRang, iRang, status, invite, afk, sec, nick)
+	local obj = {
+		id = id,
+		nickname = nick,
+		iRang = tonumber(iRang),
+		sRang = u8(sRang),
+		status = u8(status),
+		invite = invite,
+		afk = afk,
+		sec = tonumber(sec)
+	}
+
+	setmetatable(obj, self)
+	self.__index = self
+
+	return obj
+end
+function getColorForSeconds(sec)
+	if sec > 0 and sec <= 50 then
+		return imgui.ImVec4(1, 1, 0, 1)
+	elseif sec > 50 and sec <= 100 then
+		return imgui.ImVec4(1, 159/255, 32/255, 1)
+	elseif sec > 100 and sec <= 200 then
+		return imgui.ImVec4(1, 93/255, 24/255, 1)
+	elseif sec > 200 and sec <= 300 then
+		return imgui.ImVec4(1, 43/255, 43/255, 1)
+	elseif sec > 300 then
+		return imgui.ImVec4(1, 0, 0, 1)
+	end
+end
+function getColor(ID)
+	PlayerColor = sampGetPlayerColor(ID)
+	a, r, g, b = explode_argb(PlayerColor)
+	return r/255, g/255, b/255, 1
+end
+function explode_argb(argb)
+    local a = bit.band(bit.rshift(argb, 24), 0xFF)
+    local r = bit.band(bit.rshift(argb, 16), 0xFF)
+    local g = bit.band(bit.rshift(argb, 8), 0xFF)
+    local b = bit.band(argb, 0xFF)
+    return a, r, g, b
 end
 
     function sp.onShowDialog(id, style, title, button1, button2, text)
@@ -1130,7 +1185,7 @@ function fastmenu(id)
 	end
    },
    {
-   title = "{FFFFFF}Доставка лицензий {008B8B}в любую точку штата в /d{ff0000} (Для 4+ ранга)",
+   title = "{FFFFFF}Доставка лицензий {008B8B}в любую точку штата в /d{ff0000} (Для 3+ ранга)",
     onclick = function()
 	if rank == 'Экзаменатор' or rank == 'Мл.Инструктор' or rank == 'Инструктор' or rank == 'Координатор' or rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
 	sampSendChat(string.format('/d OG, Осуществляется доставка лицензий в любую точку штата. Тел: %s.', tel))
@@ -1351,7 +1406,7 @@ function govmenu(id)
     wait(5000)
     sampSendChat('/gov [Instructors]: В данный момент в офисе Автошколы проходит собеседование на должность "Стажер".')
     wait(5000)
-    sampSendChat("/gov [Instructors]: Требования к соискателям: Четёрых лет проживания в штате, стрессоустойчивость, опрятный вид.")
+    sampSendChat("/gov [Instructors]: Требования к соискателям: Четыре года проживания в штате, стрессоустойчивость, опрятный вид.")
     wait(5000)
     sampSendChat("/d OG, освободил волну государственных новостей.")
     wait(1200)
@@ -2093,9 +2148,13 @@ function imgui.OnDrawFrame()
     end
     if imgui.CollapsingHeader(u8 'Прочее', btn_size) then
                 if imgui.Button(u8'Перезагрузить скрипт', btn_size) then
+                ftext('{FF7F50}Скрипт успешно перезагружен!')
+                showCursor(false)
                     thisScript():reload()
                 end
                 if imgui.Button(u8 'Отключить скрипт', btn_size) then
+                ftext('{FF7F50}Скрипт успешно отключен!')
+                showCursor(false)
                     thisScript():unload()
                 end
             end
@@ -2115,6 +2174,57 @@ function imgui.OnDrawFrame()
                 end
                 imgui.End()
             end
+            if memw.v then
+            imgui.ShowCursor = true
+            local sw, sh = getScreenResolution()
+            --imgui.SetWindowPos('##' .. thisScript().name, imgui.ImVec2(sw/2 - imgui.GetWindowSize().x/2, sh/2 - imgui.GetWindowSize().y/2))
+            --imgui.SetWindowSize('##' .. thisScript().name, imgui.ImVec2(670, 500))
+            imgui.SetNextWindowPos(imgui.ImVec2(sw / 2, sh / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+            imgui.SetNextWindowSize(imgui.ImVec2(670, 330), imgui.Cond.FirstUseEver)
+            imgui.Begin(u8('Inst Tools | Список сотрудников [Всего: %s]'):format(#tMembers), memw)
+            imgui.BeginChild('##1', imgui.ImVec2(670, 300))
+            imgui.Columns(5, _)
+            imgui.SetColumnWidth(-1, 180) imgui.Text(u8 'Ник игрока'); imgui.NextColumn()
+            imgui.SetColumnWidth(-1, 190) imgui.Text(u8 'Должность');  imgui.NextColumn()
+            imgui.SetColumnWidth(-1, 80) imgui.Text(u8 'Статус') imgui.NextColumn()
+            imgui.SetColumnWidth(-1, 120) imgui.Text(u8 'Дата приема') imgui.NextColumn() 
+            imgui.SetColumnWidth(-1, 70) imgui.Text(u8 'AFK') imgui.NextColumn() 
+            imgui.Separator()
+            for _, v in ipairs(tMembers) do
+                imgui.TextColored(imgui.ImVec4(getColor(v.id)), u8('%s[%s]'):format(v.nickname, v.id))
+                if imgui.IsItemHovered() then
+                    imgui.BeginTooltip();
+                    imgui.PushTextWrapPos(450.0);
+                    imgui.TextColored(imgui.ImVec4(getColor(v.id)), u8("%s\nУровень: %s"):format(v.nickname, sampGetPlayerScore(v.id)))
+                    imgui.PopTextWrapPos();
+                    imgui.EndTooltip();
+                end
+                imgui.NextColumn()
+                imgui.Text(('%s [%s]'):format(v.sRang, v.iRang))
+                imgui.NextColumn()
+                if v.status ~= u8("На работе") then
+                    imgui.TextColored(imgui.ImVec4(0.80, 0.00, 0.00, 1.00), v.status);
+                else
+                    imgui.TextColored(imgui.ImVec4(0.00, 0.80, 0.00, 1.00), v.status);
+                end
+                imgui.NextColumn()
+                imgui.Text(v.invite)
+                imgui.NextColumn()
+                if v.sec ~= 0 then
+                    if v.sec < 360 then 
+                        imgui.TextColored(getColorForSeconds(v.sec), tostring(v.sec .. u8(' сек.')));
+                    else          
+                        imgui.TextColored(getColorForSeconds(v.sec), tostring("360+" .. u8(' сек.')));
+                    end
+                else
+                    imgui.TextColored(imgui.ImVec4(0.00, 0.80, 0.00, 1.00), u8("Нет"));
+                end
+                imgui.NextColumn()
+            end
+            imgui.Columns(1)
+            imgui.EndChild()
+            imgui.End()
+        end
   	if infbar.v then
                 _, myid = sampGetPlayerIdByCharHandle(PLAYER_PED)
                 imgui.SetNextWindowPos(imgui.ImVec2(cfg.main.posX, cfg.main.posY), imgui.ImVec2(0.5, 0.5))
@@ -3493,7 +3603,7 @@ function sampev.onServerMessage(color, text)
         local colors = ("{%06X}"):format(bit.rshift(color, 8))
         table.insert(departament, os.date(colors.."[%H:%M:%S] ") .. text)
     end
-	if statusc then
+    if statusc then
 		if text:match('ID: .+ | .+: .+ %- .+') and not fstatus then
 			gosmb = true
 			local id, nick, rang, stat = text:match('ID: (%d+) | (.+): (.+) %- (.+)')
@@ -3540,35 +3650,35 @@ function sampev.onServerMessage(color, text)
         end
     end
 	if status then
-		if text:match('ID: .+ | .+ | .+: .+ %- .+') and not fstatus then
-			gosmb = true
-			local id, data, nick, rang, stat = text:match('ID: (%d+) | (.+) | (.+): (.+) %- (.+)')
-			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
-			local nmrang = rang:match('.+%[(%d+)%]')
-            if stat:find('Выходной') and tonumber(nmrang) < 7 then
-                table.insert(vixodid, id)
+            if text:find("ID: %d+ | .+ | %g+: .+%[%d+%] %- %{......%}.+%{......%}") then
+                if not text:find("AFK") then
+                    local id, invDate, nickname, sRang, iRang, status = text:match("ID: (%d+) | (.+) | (%g+): (.+)%[(%d+)%] %- %{.+%}(.+)%{.+%}")
+                    table.insert(tMembers, Player:new(id, sRang, iRang, status, invDate, false, 0, nickname))
+                else
+                    local id, invDate, nickname, sRang, iRang, status, sec = text:match("ID: (%d+) | (.+) | (%g+): (.+)%[(%d+)%] %- %{.+%}(.+)%{.+%} | %{.+%}%[AFK%]: (%d+).+")
+                    table.insert(tMembers, Player:new(id, sRang, iRang, status, invDate, true, sec, nickname))
+                end
+                return false
             end
-			table.insert(players2, string.format('{ffffff}%s\t {'..color..'}%s[%s]{ffffff}\t%s\t%s', data, nick, id, rang, stat))
-			return false
-		end
-		if text:match('Всего: %d+ человек') then
-			local count = text:match('Всего: (%d+) человек')
-			gcount = count
-			gotovo = true
-			return false
-		end
-		if color == -1 then
-			return false
-		end
-		if color == 647175338 then
-			return false
+            if text:find("ID: %d+ | .+ | %g+: .+%[%d+%]") then
+                if not text:find("AFK") then
+                    local id, invDate, nickname, sRang, iRang = text:match("ID: (%d+) | (.+) | (%g+): (.+)%[(%d+)%]")
+                    table.insert(tMembers, Player:new(id, sRang, iRang, "Недоступно", invDate, false, 0, nickname))
+                else
+                    local id, invDate, nickname, sRang, iRang, sec = text:match("ID: (%d+) | (.+) | (%g+): (.+)%[(%d+)%] | %{.+%}%[AFK%]: (%d+).+")
+                    table.insert(tMembers, Player:new(id, sRang, iRang, "Недоступно", invDate, true, sec, nickname))
+                end
+                return false
+            end
+            if text:match('Всего: %d+ человек') then
+                gotovo = true
+                return false
+            end
+            if color == -1 then
+                return false
+            end
+            if color == 647175338 then
+                return false
+            end
         end
-        if text:match('ID: .+ | .+: .+') and not fstatus then
-			krimemb = true
-			local id, nick, rang = text:match('ID: (%d+) | (.+): (.+)')
-			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
-			table.insert(players1, string.format('{'..color..'}%s[%s]{ffffff}\t%s', nick, id, rang))
-			return false
-        end
-    end
 end
