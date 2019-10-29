@@ -1,6 +1,6 @@
 script_name('Inst Tools')
-script_version('1.4')
-script_version = "1.4"
+script_version('1.5')
+script_version = "1.5"
 script_author('Damien_Requeste, Roma_Mizantrop')
 local sf = require 'sampfuncs'                                                                           
 local key = require "vkeys"
@@ -2471,11 +2471,7 @@ function ftext(message)
 end
 
 function it()
-  if frac == 'Driving School' then
   second_window.v = not second_window.v
-  else
-  ftext('Возможно вы не состоите в автошколе {ff0000}[ctrl+R]')
-  end
 end	
 
 function tloadtk()
@@ -3410,7 +3406,7 @@ function smsjob()
   if rank == 'Мл.Менеджер' or rank == 'Ст.Менеджер' or rank == 'Директор' or  rank == 'Управляющий' then
     lua_thread.create(function()
         vixodid = {}
-		status = true
+		statusk = true
 		sampSendChat('/members')
         while not gotovo do wait(0) end
         wait(1200)
@@ -3421,7 +3417,7 @@ function smsjob()
         players2 = {'{ffffff}Ник\t{ffffff}Ранг\t{ffffff}Статус'}
 		players1 = {'{ffffff}Ник\t{ffffff}Ранг'}
 		gotovo = false
-        status = false
+        statusk = false
         vixodid = {}
 	end)
 	else 
@@ -3628,6 +3624,38 @@ function sampev.onServerMessage(color, text)
 			return false
 		end
 		end
+		end
+		if text:match('Всего: %d+ человек') then
+			local count = text:match('Всего: (%d+) человек')
+			gcount = count
+			gotovo = true
+			return false
+		end
+		if color == -1 then
+			return false
+		end
+		if color == 647175338 then
+			return false
+        end
+        if text:match('ID: .+ | .+: .+') and not fstatus then
+			krimemb = true
+			local id, nick, rang = text:match('ID: (%d+) | (.+): (.+)')
+			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+			table.insert(players1, string.format('{'..color..'}%s[%s]{ffffff}\t%s', nick, id, rang))
+			return false
+        end
+    end
+    if statusk then
+		if text:match('ID: .+ | .+ | .+: .+ %- .+') and not fstatus then
+			gosmb = true
+			local id, data, nick, rang, stat = text:match('ID: (%d+) | (.+) | (.+): (.+) %- (.+)')
+			local color = ("%06X"):format(bit.band(sampGetPlayerColor(id), 0xFFFFFF))
+			local nmrang = rang:match('.+%[(%d+)%]')
+            if stat:find('Выходной') and tonumber(nmrang) < 7 then
+                table.insert(vixodid, id)
+            end
+			table.insert(players2, string.format('{ffffff}%s\t {'..color..'}%s[%s]{ffffff}\t%s\t%s', data, nick, id, rang, stat))
+			return false
 		end
 		if text:match('Всего: %d+ человек') then
 			local count = text:match('Всего: (%d+) человек')
